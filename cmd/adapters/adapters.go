@@ -2,6 +2,7 @@ package adapters
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -20,7 +21,14 @@ type VampCloudApiClient interface {
 	ListIngresses(applicationId uint64) ([]model.Ingress, error)
 }
 
-func NewVampCloudHttpClient(config model.VampCloudCliConfiguration) (*VampCloudHttpClient, error) {
+var ApplicationNotFoundError = errors.New("application not found")
+var ClusterNotFoundError = errors.New("cluster not found")
+
+func NewVampCloudHttpClient(apiVersion string, config model.VampCloudCliConfiguration) (*VampCloudHttpClient, error) {
+
+	if apiVersion == "" {
+		return nil, fmt.Errorf("api version is not set")
+	}
 
 	if config.APIKey == "" {
 		return nil, fmt.Errorf("api key is not set")
@@ -31,14 +39,16 @@ func NewVampCloudHttpClient(config model.VampCloudCliConfiguration) (*VampCloudH
 	}
 
 	return &VampCloudHttpClient{
-		apiKey: config.APIKey,
-		url:    config.VampCloudAddr,
+		apiKey:     config.APIKey,
+		url:        config.VampCloudAddr,
+		apiVersion: apiVersion,
 	}, nil
 }
 
 type VampCloudHttpClient struct {
-	apiKey string
-	url    string
+	apiKey     string
+	apiVersion string
+	url        string
 }
 
 func (a *VampCloudHttpClient) GetApplication(name string) (*model.Application, error) {
@@ -54,8 +64,7 @@ func (a *VampCloudHttpClient) GetApplication(name string) (*model.Application, e
 		}
 	}
 
-	return nil, fmt.Errorf("couldn't retrieve application")
-
+	return nil, ApplicationNotFoundError
 }
 
 func (a *VampCloudHttpClient) GetCluster(name string) (*model.Cluster, error) {
@@ -71,7 +80,7 @@ func (a *VampCloudHttpClient) GetCluster(name string) (*model.Cluster, error) {
 		}
 	}
 
-	return nil, fmt.Errorf("couldn't retrieve cluster")
+	return nil, ClusterNotFoundError
 
 }
 
@@ -84,8 +93,6 @@ func (a *VampCloudHttpClient) ListApplications() ([]model.Application, error) {
 		return nil, fmt.Errorf("failed to list applications: %w", err)
 	}
 
-	logging.Info("Retrieved applications list")
-
 	var results []dto.Application
 	err = json.Unmarshal(body, &results)
 	if err != nil {
@@ -93,19 +100,21 @@ func (a *VampCloudHttpClient) ListApplications() ([]model.Application, error) {
 		return nil, err
 	}
 
-	logging.Info("Unmarshalled applications list")
-
 	models := make([]model.Application, len(results))
 
 	for _, result := range results {
 		models = append(models, dto.ApplicationDTOtoModel(result))
 	}
 
+	logging.Info("Retrieved applications list")
+
 	return models, nil
 
 }
 
 func (a *VampCloudHttpClient) ListClusters() ([]model.Cluster, error) {
+
+	logging.Info("Retrieving clusters list")
 
 	body, err := a.getResponse("clusters")
 	if err != nil {
@@ -125,11 +134,15 @@ func (a *VampCloudHttpClient) ListClusters() ([]model.Cluster, error) {
 		models = append(models, dto.ClusterToModel(result))
 	}
 
+	logging.Info("Retrieved clusters list")
+
 	return models, nil
 
 }
 
 func (a *VampCloudHttpClient) ListIngresses(applicationId uint64) ([]model.Ingress, error) {
+
+	logging.Info("Retrieving ingresses list", logging.NewPair("application", applicationId))
 
 	body, err := a.getResponse(fmt.Sprintf("applications/%d/ingresses", applicationId))
 	if err != nil {
@@ -149,6 +162,8 @@ func (a *VampCloudHttpClient) ListIngresses(applicationId uint64) ([]model.Ingre
 		models = append(models, dto.IngressDTOToModel(result))
 	}
 
+	logging.Info("Retrieved ingresses list", logging.NewPair("application", applicationId))
+
 	return models, nil
 
 }
@@ -164,6 +179,8 @@ func (a *VampCloudHttpClient) getResponse(path string) ([]byte, error) {
 		return nil, err
 	}
 
+	req.Header.Add("Accept", fmt.Sprintf("application/vnd.vamp.%v+json", a.apiVersion))
+	req.Header.Add("Content-Type", "application/json")
 	req.Header.Add("X-Vamp-Token", a.apiKey)
 	resp, err := client.Do(req)
 	if err != nil {

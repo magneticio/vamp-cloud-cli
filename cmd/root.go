@@ -19,8 +19,11 @@ import (
 // AppName - application name
 const AppName string = "vamp-cloud-cli"
 
-// Version - should be in format d.d.d where d is a decimal number
+// Version - version of the cli
 const Version string = "v1.0.0"
+
+// ApiVersion - supported version of the api
+const ApiVersion string = "v1.0.0"
 
 // AddAppName - Application name can change over time so it is made parameteric
 func AddAppName(str string) string {

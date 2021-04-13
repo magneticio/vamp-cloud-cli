@@ -26,7 +26,7 @@ var describeApplicationCmd = &cobra.Command{
 
 		logging.Info("Describing application", logging.NewPair("application", applicationName))
 
-		client, err := adapters.NewVampCloudHttpClient(Config)
+		client, err := adapters.NewVampCloudHttpClient(ApiVersion, Config)
 		if err != nil {
 			return err
 		}
