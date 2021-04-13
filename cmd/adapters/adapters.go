@@ -157,7 +157,7 @@ func (a *VampCloudHttpClient) getResponse(path string) ([]byte, error) {
 
 	client := &http.Client{}
 
-	url := strings.Join([]string{a.url, path, "59"}, "/")
+	url := strings.Join([]string{a.url, path}, "/")
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
