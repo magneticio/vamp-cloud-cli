@@ -6,6 +6,7 @@ import (
 	"github.com/magneticio/vamp-cloud-cli/cmd/adapters"
 	applicationAdapters "github.com/magneticio/vamp-cloud-cli/cmd/adapters/applications"
 	clusterAdapters "github.com/magneticio/vamp-cloud-cli/cmd/adapters/clusters"
+	"github.com/magneticio/vamp-cloud-cli/cmd/models"
 	"github.com/magneticio/vamp-cloud-cli/cmd/usecase"
 	"github.com/magneticio/vamp-cloud-cli/cmd/utils/logging"
 	"github.com/spf13/cobra"
@@ -20,14 +21,18 @@ var createApplicationCmd = &cobra.Command{
 	Short: "Create an application",
 	Long: AddAppName(`Create an application
     Usage:
-    $AppName create application <application_name> --cluster=<cluster_name>`),
+    $AppName create application <application_name> --cluster=<cluster_name> --namespace=<namespace> --ingress-type=<ingress-type>`),
 	SilenceUsage:  true,
 	SilenceErrors: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) < 1 {
-			return fmt.Errorf("Not enough arguments - application name needed")
+			return fmt.Errorf("not enough arguments - application name needed")
 		}
 		name := args[0]
+
+		if ingressType != models.CONTOUR_INGRESS_TYPE && ingressType != models.NGINX_INGRESS_TYPE {
+			return fmt.Errorf("invalid ingres type. Choose either CONTOUR or NGINX")
+		}
 
 		logging.Info("Creating application", logging.NewPair("name", name))
 

@@ -59,3 +59,8 @@ func NewIngress(id int64, domainName string) Ingress {
 		DomainName: domainName,
 	}
 }
+
+const (
+	NGINX_INGRESS_TYPE   string = "NGINX"
+	CONTOUR_INGRESS_TYPE string = "CONTOUR"
+)
