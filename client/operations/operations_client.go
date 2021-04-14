@@ -39,7 +39,11 @@ type ClientService interface {
 
 	PostApplications(params *PostApplicationsParams, authInfo runtime.ClientAuthInfoWriter) (*PostApplicationsOK, error)
 
+	PostApplicationsIDIngresses(params *PostApplicationsIDIngressesParams, authInfo runtime.ClientAuthInfoWriter) (*PostApplicationsIDIngressesOK, error)
+
 	PostClusters(params *PostClustersParams, authInfo runtime.ClientAuthInfoWriter) (*PostClustersOK, error)
+
+	PutApplicationsApplicationIDServicesServiceID(params *PutApplicationsApplicationIDServicesServiceIDParams, authInfo runtime.ClientAuthInfoWriter) (*PutApplicationsApplicationIDServicesServiceIDOK, error)
 
 	SetTransport(transport runtime.ClientTransport)
 }
@@ -283,6 +287,40 @@ func (a *Client) PostApplications(params *PostApplicationsParams, authInfo runti
 }
 
 /*
+  PostApplicationsIDIngresses creates a new ingress
+*/
+func (a *Client) PostApplicationsIDIngresses(params *PostApplicationsIDIngressesParams, authInfo runtime.ClientAuthInfoWriter) (*PostApplicationsIDIngressesOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewPostApplicationsIDIngressesParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "PostApplicationsIDIngresses",
+		Method:             "POST",
+		PathPattern:        "/applications/{id}/ingresses",
+		ProducesMediaTypes: []string{"application/json", "application/vnd.vamp.v1+json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &PostApplicationsIDIngressesReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*PostApplicationsIDIngressesOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*PostApplicationsIDIngressesDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
   PostClusters creates a new cluster
 */
 func (a *Client) PostClusters(params *PostClustersParams, authInfo runtime.ClientAuthInfoWriter) (*PostClustersOK, error) {
@@ -313,6 +351,40 @@ func (a *Client) PostClusters(params *PostClustersParams, authInfo runtime.Clien
 	}
 	// unexpected success response
 	unexpectedSuccess := result.(*PostClustersDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+  PutApplicationsApplicationIDServicesServiceID attaches service into application
+*/
+func (a *Client) PutApplicationsApplicationIDServicesServiceID(params *PutApplicationsApplicationIDServicesServiceIDParams, authInfo runtime.ClientAuthInfoWriter) (*PutApplicationsApplicationIDServicesServiceIDOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewPutApplicationsApplicationIDServicesServiceIDParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "PutApplicationsApplicationIDServicesServiceID",
+		Method:             "PUT",
+		PathPattern:        "/applications/{applicationID}/services/{serviceID}",
+		ProducesMediaTypes: []string{"application/json", "application/vnd.vamp.v1+json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &PutApplicationsApplicationIDServicesServiceIDReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*PutApplicationsApplicationIDServicesServiceIDOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*PutApplicationsApplicationIDServicesServiceIDDefault)
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

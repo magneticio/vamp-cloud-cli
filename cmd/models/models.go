@@ -45,7 +45,7 @@ func NewCluster(id int64, name, description string, isOwner bool) Cluster {
 	}
 }
 
-// Ingress represents a vamp cloud cluster
+// Ingress represents a vamp cloud ingress
 type Ingress struct {
 	ID            int64
 	ApplicationID int64

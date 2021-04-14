@@ -17,6 +17,9 @@ import (
 // swagger:model Cluster
 type Cluster struct {
 
+	// description
+	Description string `json:"description,omitempty"`
+
 	// id
 	// Read Only: true
 	ID int64 `json:"id,omitempty"`

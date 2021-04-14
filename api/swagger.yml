@@ -104,6 +104,40 @@ paths:
           $ref: "#/responses/InternalServerError"
         default:
           $ref: "#/responses/GenericError"
+    post:
+      summary: Create a new ingress
+      consumes:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          format: int64
+          minimum: 1
+        - name: ingress
+          in: body
+          description: The application to create
+          schema:
+            $ref: "#/definitions/IngressInput"
+      responses:
+        200:
+          description: ID of created ingress
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+                format: int64
+                description: The ingress ID
+        401:
+          $ref: "#/responses/Unauthorized"
+        409:
+          $ref: "#/responses/Conflict"
+        500:
+          $ref: "#/responses/InternalServerError"
+        default:
+          $ref: "#/responses/GenericError"
   /applications/{id}/installation:
     get:
       summary: Returns list of ingresses for an application
@@ -121,6 +155,42 @@ paths:
             $ref: "#/definitions/Installer"
         401:
           $ref: "#/responses/Unauthorized"
+        500:
+          $ref: "#/responses/InternalServerError"
+        default:
+          $ref: "#/responses/GenericError"
+  /applications/{applicationID}/services/{serviceID}:
+    put:
+      summary: Attach service into application
+      consumes:
+        - application/json
+      parameters:
+        - name: applicationID
+          in: path
+          description: application ID
+          required: true
+          type: integer
+          format: int64
+          minimum: 1
+        - name: serviceID
+          in: path
+          description: application ID
+          required: true
+          type: integer
+          format: int64
+          minimum: 1
+        - name: PolicySelectionStrategyInput
+          in: body
+          description: Policy selection strategy for service
+          schema:
+            $ref: "#/definitions/PolicySelectionStrategyInput"
+      responses:
+        200:
+          description: OK
+        401:
+          $ref: "#/responses/Unauthorized"
+        409:
+          $ref: "#/responses/Conflict"
         500:
           $ref: "#/responses/InternalServerError"
         default:
@@ -223,7 +293,7 @@ definitions:
         format: int64
       ingressType:
         type: string
-        enum: [NGINX, Contour]
+        enum: [NGINX, CONTOUR]
       namespace:
         type: string
   Metadata:
@@ -261,6 +331,8 @@ definitions:
       name:
         type: string
         minLength: 1
+      description:
+        type: string
       isOwner:
         type: boolean
   ClusterInput:
@@ -313,6 +385,23 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/Route"
+  IngressInput:
+    type: object
+    required:
+      - domainName
+    properties:
+      domainName:
+        type: string
+        minLength: 1
+      tlsType:
+        type: string
+        enum: [NO_TLS, TLS_EDGE]
+      tlsSecretName:
+        type: string
+      routes:
+        type: array
+        items:
+          $ref: "#/definitions/Route"
   Route:
     type: object
     properties:
@@ -326,6 +415,21 @@ definitions:
     properties:
       command:
         type: string
+  PolicySelectionStrategyInput:
+    type: object
+    properties:
+      defaultPolicyID:
+        type: integer
+        format: int64
+      majorPolicyID:
+        type: integer
+        format: int64
+      minorPolicyID:
+        type: integer
+        format: int64
+      patchPolicyID:
+        type: integer
+        format: int64
 responses:
   Unauthorized:
     description: The requester is not authorized.
@@ -337,6 +441,10 @@ responses:
       $ref: "#/definitions/Error"
   NotFound:
     description: The server can not find the requested resource.
+    schema:
+      $ref: "#/definitions/Error"
+  Conflict:
+    description: The request cannot be completed due to a conflict with the current state of the resource.
     schema:
       $ref: "#/definitions/Error"
   InternalServerError:

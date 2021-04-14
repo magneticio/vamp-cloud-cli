@@ -105,7 +105,7 @@ func (c *VampCloudAnansiClustersClient) PostCluster(cluster models.Cluster) (int
 
 func clusterDTOToModel(cluster dto.Cluster) models.Cluster {
 
-	return models.NewCluster(cluster.ID, cluster.Name, "", cluster.IsOwner)
+	return models.NewCluster(cluster.ID, cluster.Name, cluster.Description, cluster.IsOwner)
 }
 
 func clusterModelToInput(cluster models.Cluster) dto.ClusterInput {
