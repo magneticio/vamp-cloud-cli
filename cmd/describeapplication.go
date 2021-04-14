@@ -4,10 +4,13 @@ import (
 	"fmt"
 
 	"github.com/magneticio/vamp-cloud-cli/cmd/adapters"
+	applicationAdapters "github.com/magneticio/vamp-cloud-cli/cmd/adapters/applications"
+	ingressAdapters "github.com/magneticio/vamp-cloud-cli/cmd/adapters/ingresses"
 	"github.com/magneticio/vamp-cloud-cli/cmd/usecase"
+	"github.com/magneticio/vamp-cloud-cli/cmd/utils"
 	"github.com/magneticio/vamp-cloud-cli/cmd/utils/logging"
+	"github.com/magneticio/vamp-cloud-cli/cmd/views"
 	"github.com/spf13/cobra"
-	yaml "gopkg.in/yaml.v3"
 )
 
 var describeApplicationCmd = &cobra.Command{
@@ -26,24 +29,22 @@ var describeApplicationCmd = &cobra.Command{
 
 		logging.Info("Describing application", logging.NewPair("application", applicationName))
 
-		client, err := adapters.NewVampCloudHttpClient(ApiVersion, Config)
-		if err != nil {
-			return err
-		}
+		httpClient := adapters.NewApiClient(Config.VampCloudHost, Config.VampCloudBasePath, ApiVersion, Config.APIKey)
 
-		getApplication := usecase.NewGetApplicationUsecase(client)
+		applicationClient := applicationAdapters.NewVampCloudApplicationsClient(httpClient)
+
+		ingressClient := ingressAdapters.NewVampCloudIngressClient(httpClient)
+
+		getApplication := usecase.NewGetApplicationUsecase(applicationClient, ingressClient)
 
 		application, err := getApplication(applicationName)
 		if err != nil {
 			return err
 		}
 
-		output, err := yaml.Marshal(application)
-		if err != nil {
-			return err
-		}
+		applicationView := views.ApplicationModelToView(*application)
 
-		fmt.Print(string(output))
+		utils.PrintFormatted(outputType, applicationView)
 
 		return nil
 	},

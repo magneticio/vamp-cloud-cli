@@ -1,0 +1,503 @@
+swagger: "2.0"
+info:
+  description: Public API for Vamp Cloud
+  title: Anansi
+  version: 1.0.0
+schemes:
+  - http
+consumes:
+  - application/vnd.vamp.v1+json
+produces:
+  - application/vnd.vamp.v1+json
+  - application/json
+securityDefinitions:
+  VampTokenHeader:
+    type: apiKey
+    in: header
+    name: X-Vamp-Token
+security:
+  - VampTokenHeader: []
+paths:
+  /applications:
+    get:
+      summary: Returns list of all applications that can be accessed with provided api key.
+      responses:
+        200:
+          description: List of application objects
+          schema:
+            $ref: "#/definitions/Applications"
+        401:
+          $ref: "#/responses/Unauthorized"
+        500:
+          $ref: "#/responses/InternalServerError"
+        default:
+          $ref: "#/responses/GenericError"
+    post:
+      summary: Create a new application
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: application
+          description: The application to create
+          schema:
+            $ref: "#/definitions/ApplicationInput"
+      responses:
+        200:
+          description: ID of created application
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+                format: int64
+                description: The application ID
+        401:
+          $ref: "#/responses/Unauthorized"
+        500:
+          $ref: "#/responses/InternalServerError"
+        default:
+          $ref: "#/responses/GenericError"
+  /applications/{id}:
+    get:
+      summary: Returns application by ID.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          format: int64
+          minimum: 1
+      responses:
+        200:
+          description: An application object.
+          schema:
+            $ref: "#/definitions/Application"
+        401:
+          $ref: "#/responses/Unauthorized"
+        403:
+          $ref: "#/responses/Forbidden"
+        404:
+          $ref: "#/responses/NotFound"
+        500:
+          $ref: "#/responses/InternalServerError"
+        default:
+          $ref: "#/responses/GenericError"
+  /applications/{id}/ingresses:
+    get:
+      summary: Returns list of ingresses for an application
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          format: int64
+          minimum: 1
+      responses:
+        200:
+          description: List of ingress objects
+          schema:
+            $ref: "#/definitions/Ingresses"
+        401:
+          $ref: "#/responses/Unauthorized"
+        404:
+          $ref: "#/responses/NotFound"
+        500:
+          $ref: "#/responses/InternalServerError"
+        default:
+          $ref: "#/responses/GenericError"
+    post:
+      summary: Create a new ingress
+      consumes:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          format: int64
+          minimum: 1
+        - name: ingress
+          in: body
+          description: The application to create
+          schema:
+            $ref: "#/definitions/IngressInput"
+      responses:
+        200:
+          description: ID of created ingress
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+                format: int64
+                description: The ingress ID
+        401:
+          $ref: "#/responses/Unauthorized"
+        403:
+          $ref: "#/responses/Forbidden"
+        409:
+          $ref: "#/responses/Conflict"
+        500:
+          $ref: "#/responses/InternalServerError"
+        default:
+          $ref: "#/responses/GenericError"
+  /applications/{applicationID}/ingresses/{ingressID}:
+    patch:
+      summary: Update ingress for an application
+      parameters:
+        - name: applicationID
+          description: application ID
+          in: path
+          required: true
+          type: integer
+          format: int64
+          minimum: 1
+        - name: ingressID
+          description: ingress ID
+          in: path
+          required: true
+          type: integer
+          format: int64
+          minimum: 1
+        - name: ingress
+          in: body
+          description: The application to create
+          schema:
+            $ref: "#/definitions/IngressInput"
+      responses:
+        200:
+          description: OK
+        401:
+          $ref: "#/responses/Unauthorized"
+        403:
+          $ref: "#/responses/Forbidden"
+        404:
+          $ref: "#/responses/NotFound"
+        500:
+          $ref: "#/responses/InternalServerError"
+        default:
+          $ref: "#/responses/GenericError"
+  /applications/{id}/installation:
+    get:
+      summary: Returns list of ingresses for an application
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          format: int64
+          minimum: 1
+      responses:
+        200:
+          description: Installation command
+          schema:
+            $ref: "#/definitions/Installer"
+        401:
+          $ref: "#/responses/Unauthorized"
+        404:
+          $ref: "#/responses/NotFound"
+        500:
+          $ref: "#/responses/InternalServerError"
+        default:
+          $ref: "#/responses/GenericError"
+  /applications/{applicationID}/services/{serviceID}:
+    put:
+      summary: Attach service into application
+      consumes:
+        - application/json
+      parameters:
+        - name: applicationID
+          in: path
+          description: application ID
+          required: true
+          type: integer
+          format: int64
+          minimum: 1
+        - name: serviceID
+          in: path
+          description: application ID
+          required: true
+          type: integer
+          format: int64
+          minimum: 1
+        - name: PolicySelectionStrategyInput
+          in: body
+          description: Policy selection strategy for service
+          schema:
+            $ref: "#/definitions/PolicySelectionStrategyInput"
+      responses:
+        200:
+          description: OK
+        401:
+          $ref: "#/responses/Unauthorized"
+        403:
+          $ref: "#/responses/Forbidden"
+        404:
+          $ref: "#/responses/NotFound"
+        409:
+          $ref: "#/responses/Conflict"
+        500:
+          $ref: "#/responses/InternalServerError"
+        default:
+          $ref: "#/responses/GenericError"
+  /clusters:
+    get:
+      summary: Returns list of accessible clusters for provided api key
+      responses:
+        200:
+          description: List of cluster objects
+          schema:
+            $ref: "#/definitions/Clusters"
+        401:
+          $ref: "#/responses/Unauthorized"
+        500:
+          $ref: "#/responses/InternalServerError"
+        default:
+          $ref: "#/responses/GenericError"
+    post:
+      summary: Create a new cluster
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: cluster
+          description: The cluster to create
+          schema:
+            $ref: "#/definitions/ClusterInput"
+      responses:
+        200:
+          description: ID of created cluster
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+                format: int64
+                description: The cluster ID
+        401:
+          $ref: "#/responses/Unauthorized"
+        500:
+          $ref: "#/responses/InternalServerError"
+        default:
+          $ref: "#/responses/GenericError"
+  /services:
+    get:
+      summary: Returns list of accessible services for provided api key
+      responses:
+        200:
+          description: List of service objects
+          schema:
+            $ref: "#/definitions/Services"
+        401:
+          $ref: "#/responses/Unauthorized"
+        500:
+          $ref: "#/responses/InternalServerError"
+        default:
+          $ref: "#/responses/GenericError"
+definitions:
+  Applications:
+    type: object
+    properties:
+      items:
+        type: array
+        items:
+          $ref: "#/definitions/Application"
+  Application:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+        readOnly: true
+      name:
+        type: string
+        minLength: 1
+      metadata:
+        type: array
+        items:
+          $ref: "#/definitions/Metadata"
+      isOwner:
+        type: boolean
+      clusterID:
+        type: integer
+        format: int64
+  ApplicationInput:
+    type: object
+    required:
+      - name
+      - clusterID
+      - ingressType
+      - namespace
+    properties:
+      name:
+        type: string
+      description:
+        type: string
+      clusterID:
+        type: integer
+        format: int64
+      ingressType:
+        type: string
+        enum: [NGINX, CONTOUR]
+      namespace:
+        type: string
+  Metadata:
+    type: object
+    properties:
+      key:
+        type: string
+        minLength: 1
+      value:
+        type: string
+  Error:
+    type: object
+    required:
+      - message
+    properties:
+      code:
+        type: integer
+        format: int64
+      message:
+        type: string
+  Clusters:
+    type: object
+    properties:
+      items:
+        type: array
+        items:
+          $ref: "#/definitions/Cluster"
+  Cluster:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+        readOnly: true
+      name:
+        type: string
+        minLength: 1
+      description:
+        type: string
+      isOwner:
+        type: boolean
+  ClusterInput:
+    type: object
+    required:
+      - name
+      - provider
+    properties:
+      name:
+        type: string
+      description:
+        type: string
+      provider:
+        type: string
+  Services:
+    type: object
+    properties:
+      items:
+        type: array
+        items:
+          $ref: "#/definitions/Service"
+  Service:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+        readOnly: true
+      name:
+        type: string
+        minLength: 1
+  Ingresses:
+    type: object
+    properties:
+      items:
+        type: array
+        items:
+          $ref: "#/definitions/Ingress"
+  Ingress:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+        readOnly: true
+      domainName:
+        type: string
+        minLength: 1
+      routes:
+        type: array
+        items:
+          $ref: "#/definitions/Route"
+  IngressInput:
+    type: object
+    required:
+      - domainName
+    properties:
+      domainName:
+        type: string
+        minLength: 1
+      tlsType:
+        type: string
+        enum: [NO_TLS, TLS_EDGE]
+      tlsSecretName:
+        type: string
+      routes:
+        type: array
+        items:
+          $ref: "#/definitions/Route"
+  Route:
+    type: object
+    properties:
+      path:
+        type: string
+      serviceID:
+        type: integer
+        format: int64
+  Installer:
+    type: object
+    properties:
+      command:
+        type: string
+  PolicySelectionStrategyInput:
+    type: object
+    properties:
+      defaultPolicyID:
+        type: integer
+        format: int64
+      majorPolicyID:
+        type: integer
+        format: int64
+      minorPolicyID:
+        type: integer
+        format: int64
+      patchPolicyID:
+        type: integer
+        format: int64
+responses:
+  Unauthorized:
+    description: The requester is not authorized.
+    schema:
+      $ref: "#/definitions/Error"
+  Forbidden:
+    description: The requester does not have access rights to the resource.
+    schema:
+      $ref: "#/definitions/Error"
+  NotFound:
+    description: The server can not find the requested resource.
+    schema:
+      $ref: "#/definitions/Error"
+  Conflict:
+    description: The request cannot be completed due to a conflict with the current state of the resource.
+    schema:
+      $ref: "#/definitions/Error"
+  InternalServerError:
+    description: The server has encountered a situation it does not know how to handle.
+    schema:
+      $ref: "#/definitions/Error"
+  GenericError:
+    description: Generic error.
+    schema:
+      $ref: "#/definitions/Error"

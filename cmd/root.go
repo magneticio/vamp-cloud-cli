@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/magneticio/vamp-cloud-cli/cmd/model"
+	"github.com/magneticio/vamp-cloud-cli/cmd/models"
 	"github.com/magneticio/vamp-cloud-cli/cmd/utils"
 	"github.com/magneticio/vamp-cloud-cli/cmd/utils/logging"
 	homedir "github.com/mitchellh/go-homedir"
@@ -23,7 +23,7 @@ const AppName string = "vamp-cloud-cli"
 const Version string = "v1.0.0"
 
 // ApiVersion - supported version of the api
-const ApiVersion string = "v1.0.0"
+const ApiVersion string = "v1"
 
 // AddAppName - Application name can change over time so it is made parameteric
 func AddAppName(str string) string {
@@ -31,12 +31,14 @@ func AddAppName(str string) string {
 }
 
 // Config - vamp cloud cli configuration
-var Config model.VampCloudCliConfiguration
+var Config models.VampCloudCliConfiguration
 
 // Common code parameters
 var cfgFile string
 var configPath string
 var configFileType string
+var description string
+var outputType string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -76,6 +78,8 @@ func init() {
 	// when this action is called directly.
 	rootCmd.PersistentFlags().BoolVarP(&logging.Verbose, "verbose", "v", false, "Verbose")
 
+	rootCmd.PersistentFlags().StringVarP(&outputType, "output", "o", "yaml", "Output format yaml or json")
+
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -109,6 +113,7 @@ func initConfig() {
 		viper.SetConfigName("config")
 	}
 
+	setupConfigurationDefaults()
 	setupConfigurationEnvrionmentVariables()
 
 	viper.AutomaticEnv() // read in environment variables that match
@@ -138,6 +143,11 @@ func initConfig() {
 }
 
 func setupConfigurationEnvrionmentVariables() {
-	viper.BindEnv("vamp-cloud-addr", "VAMP_CLOUD_ADDR")
+	viper.BindEnv("vamp-cloud-host", "VAMP_CLOUD_HOST")
+	viper.BindEnv("vamp-cloud-base-path", "VAMP_CLOUD_BASE_PATH")
 	viper.BindEnv("vamp-cloud-api-key", "VAMP_CLOUD_API_KEY")
+}
+
+func setupConfigurationDefaults() {
+	viper.SetDefault("vamp-cloud-base-path", "/api/public")
 }
