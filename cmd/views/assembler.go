@@ -2,7 +2,7 @@ package views
 
 import "github.com/magneticio/vamp-cloud-cli/cmd/models"
 
-func ApplicationModelToView(application models.Application) Application {
+func ApplicationModelToView(application models.Application, clusterName string) Application {
 
 	ingressDomains := make([]string, len(application.Ingresses))
 
@@ -12,7 +12,7 @@ func ApplicationModelToView(application models.Application) Application {
 
 	return Application{
 		Name:        application.Name,
-		ClusterName: application.Cluster.Name,
+		ClusterName: clusterName,
 		Namespace:   application.Namespace,
 		Ingresses:   ingressDomains,
 	}

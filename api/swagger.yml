@@ -295,6 +295,95 @@ paths:
           $ref: "#/responses/InternalServerError"
         default:
           $ref: "#/responses/GenericError"
+  /releases:
+    get:
+      summary: Returns list of release IDs
+      parameters:
+        - name: applicationID
+          in: query
+          description: application ID
+          type: integer
+          format: int64
+        - name: serviceID
+          in: query
+          description: service ID
+          type: integer
+          format: int64
+        - name: count
+          in: query
+          description: desirable number of items in response
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: List of release IDs
+          schema:
+            $ref: "#/definitions/Releases"
+        401:
+          $ref: "#/responses/Unauthorized"
+        500:
+          $ref: "#/responses/InternalServerError"
+        default:
+          $ref: "#/responses/GenericError"
+  /releases/{id}:
+    get:
+      summary: Get release status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: Release status object
+          schema:
+            $ref: "#/definitions/ReleaseStatus"
+        401:
+          $ref: "#/responses/Unauthorized"
+        404:
+          $ref: "#/responses/NotFound"
+        500:
+          $ref: "#/responses/InternalServerError"
+        default:
+          $ref: "#/responses/GenericError"
+  /policies:
+    get:
+      summary: Returns list of policies
+      responses:
+        200:
+          description: List of policy objects
+          schema:
+            $ref: "#/definitions/Policies"
+        401:
+          $ref: "#/responses/Unauthorized"
+        500:
+          $ref: "#/responses/InternalServerError"
+        default:
+          $ref: "#/responses/GenericError"
+  /service-versions/{id}:
+    get:
+      summary: Returns service version by ID.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          format: int64
+          minimum: 1
+      responses:
+        200:
+          description: A service version object.
+          schema:
+            $ref: "#/definitions/ServiceVersion"
+        401:
+          $ref: "#/responses/Unauthorized"
+        404:
+          $ref: "#/responses/NotFound"
+        500:
+          $ref: "#/responses/InternalServerError"
+        default:
+          $ref: "#/responses/GenericError"
 definitions:
   Applications:
     type: object
@@ -476,6 +565,70 @@ definitions:
       patchPolicyID:
         type: integer
         format: int64
+  Releases:
+    type: object
+    properties:
+      items:
+        type: array
+        items:
+          $ref: "#/definitions/Release"
+  Release:
+    type: object
+    properties:
+      ID:
+        type: integer
+        format: int64
+      SourceVersionID:
+        type: integer
+        format: int64
+      TargetVersion:
+        type: integer
+        format: int64
+      PolicyID:
+        type: integer
+        format: int64
+  ReleaseStatus:
+    type: object
+    properties:
+      state:
+        type: string
+        enum: [PENDING, RUNNING, FINISHED, FAILED]
+      currentHealth: 
+        type: number
+        format: double
+      currentStep:
+        type: integer
+        format: int64
+  Policies:
+    type: object
+    properties:
+      items:
+        type: array
+        items:
+          $ref: "#/definitions/Policy"
+  Policy:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+        readOnly: true
+      name:
+        type: string
+        minLength: 1
+      type:
+        type: string
+        enum: [VALIDATION, TRAFFIC_SHAPING_BASIC, TRAFFIC_SHAPING_EXTENDED]
+  ServiceVersion:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+        readOnly: true
+      name:
+        type: string
+        minLength: 1
 responses:
   Unauthorized:
     description: The requester is not authorized.

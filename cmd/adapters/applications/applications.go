@@ -123,16 +123,16 @@ func (c *VampCloudAnansiApplicationsClient) GetInstallationCommand(applicationID
 
 func applicationDTOtoModel(application dto.Application) models.Application {
 
-	return models.NewApplication(application.ID, application.Name, true)
+	return models.NewApplication(application.ID, application.ClusterID, application.Name, true)
 }
 
 func applicationModelToInput(application models.Application) dto.ApplicationInput {
 
 	return dto.ApplicationInput{
-		ClusterID:   &application.Cluster.ID,
+		ClusterID:   &application.ClusterID,
 		Name:        &application.Name,
 		Description: application.Description,
-		IngressType: &application.IngressType,
+		IngressType: (*string)(&application.IngressType),
 		Namespace:   &application.Namespace,
 	}
 }

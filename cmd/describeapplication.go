@@ -5,6 +5,7 @@ import (
 
 	"github.com/magneticio/vamp-cloud-cli/cmd/adapters"
 	applicationAdapters "github.com/magneticio/vamp-cloud-cli/cmd/adapters/applications"
+	clusterAdapters "github.com/magneticio/vamp-cloud-cli/cmd/adapters/clusters"
 	ingressAdapters "github.com/magneticio/vamp-cloud-cli/cmd/adapters/ingresses"
 	"github.com/magneticio/vamp-cloud-cli/cmd/usecase"
 	"github.com/magneticio/vamp-cloud-cli/cmd/utils"
@@ -33,6 +34,8 @@ var describeApplicationCmd = &cobra.Command{
 
 		applicationClient := applicationAdapters.NewVampCloudApplicationsClient(httpClient)
 
+		clusterClient := clusterAdapters.NewVampCloudClusterClient(httpClient)
+
 		ingressClient := ingressAdapters.NewVampCloudIngressClient(httpClient)
 
 		getApplication := usecase.NewGetApplicationUsecase(applicationClient, ingressClient)
@@ -42,7 +45,12 @@ var describeApplicationCmd = &cobra.Command{
 			return err
 		}
 
-		applicationView := views.ApplicationModelToView(*application)
+		cluster, err := clusterClient.GetClusterByID(application.ClusterID)
+		if err != nil {
+			return err
+		}
+
+		applicationView := views.ApplicationModelToView(*application, cluster.Name)
 
 		utils.PrintFormatted(outputType, applicationView)
 

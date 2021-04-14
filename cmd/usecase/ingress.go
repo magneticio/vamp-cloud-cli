@@ -1,26 +1,33 @@
 package usecase
 
-// type CreateIngressUsecase func(applicationName, domainName string, tlsSecret *string) (uint64, error)
+import (
+	applicationAdapters "github.com/magneticio/vamp-cloud-cli/cmd/adapters/applications"
+	ingressAdapters "github.com/magneticio/vamp-cloud-cli/cmd/adapters/ingresses"
+	"github.com/magneticio/vamp-cloud-cli/cmd/models"
+)
 
-// func NewCreateIngressUsecase(client adapters.VampCloudApiClient) CreateIngressUsecase {
-// 	return func(applicationName, domainName string, tlsSecret *string) (uint64, error) {
+type CreateIngressUsecase func(applicationName, domainName, tlsSecret string, tlsType models.TlsType) (int64, error)
 
-// 		application, err := client.GetApplication(applicationName)
-// 		if err != nil {
-// 			return 0, err
-// 		}
+func NewCreateIngressUsecase(ingressClient ingressAdapters.VampCloudIngressesClient, applicationClient applicationAdapters.VampCloudApplicationsClient) CreateIngressUsecase {
+	return func(applicationName, domainName, tlsSecret string, tlsType models.TlsType) (int64, error) {
 
-// 		ingress := models.Ingress{
-// 			ApplicationID: application.ID,
-// 			DomainName:    domainName,
-// 			TlsSecret:     tlsSecret,
-// 		}
+		application, err := applicationClient.GetApplication(applicationName)
+		if err != nil {
+			return 0, err
+		}
 
-// 		id, err := client.PostIngress(ingress)
-// 		if err != nil {
-// 			return 0, err
-// 		}
+		ingress := models.Ingress{
+			ApplicationID: application.ID,
+			DomainName:    domainName,
+			TlsSecret:     tlsSecret,
+			TlsType:       tlsType,
+		}
 
-// 		return id, nil
-// 	}
-// }
+		id, err := ingressClient.PostIngress(ingress)
+		if err != nil {
+			return 0, err
+		}
+
+		return id, nil
+	}
+}

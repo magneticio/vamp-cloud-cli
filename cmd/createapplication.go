@@ -33,7 +33,7 @@ var createApplicationCmd = &cobra.Command{
 
 		ingressType = strings.ToUpper(ingressType)
 
-		if ingressType != models.CONTOUR_INGRESS_TYPE && ingressType != models.NGINX_INGRESS_TYPE {
+		if ingressType != string(models.CONTOUR_INGRESS_TYPE) && ingressType != string(models.NGINX_INGRESS_TYPE) {
 			return fmt.Errorf("invalid ingres type. Choose either CONTOUR or NGINX")
 		}
 
@@ -46,7 +46,7 @@ var createApplicationCmd = &cobra.Command{
 
 		createApplication := usecase.NewCreateApplicationUsecase(applicationClient, clusterClient)
 
-		id, err := createApplication(name, clusterName, description, namespace, ingressType)
+		id, err := createApplication(name, clusterName, description, namespace, models.IngressType(ingressType))
 		if err != nil {
 			return err
 		}
