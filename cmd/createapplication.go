@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/magneticio/vamp-cloud-cli/cmd/adapters"
 	applicationAdapters "github.com/magneticio/vamp-cloud-cli/cmd/adapters/applications"
@@ -29,6 +30,8 @@ var createApplicationCmd = &cobra.Command{
 			return fmt.Errorf("not enough arguments - application name needed")
 		}
 		name := args[0]
+
+		ingressType = strings.ToUpper(ingressType)
 
 		if ingressType != models.CONTOUR_INGRESS_TYPE && ingressType != models.NGINX_INGRESS_TYPE {
 			return fmt.Errorf("invalid ingres type. Choose either CONTOUR or NGINX")
@@ -63,7 +66,7 @@ func init() {
 	createApplicationCmd.MarkFlagRequired("cluster")
 	createApplicationCmd.Flags().StringVar(&namespace, "namespace", "", "Vamp cloud application namespace")
 	createApplicationCmd.MarkFlagRequired("namespace")
-	createApplicationCmd.Flags().StringVar(&ingressType, "ingress-type", "CONTOUR", "Vamp cloud application ingress type")
+	createApplicationCmd.Flags().StringVar(&ingressType, "ingress-type", "CONTOUR", "Vamp cloud application ingress type. Either CONTOUR or NGINX")
 	createApplicationCmd.Flags().StringVar(&description, "description", "", "Vamp cloud application description")
 
 }
