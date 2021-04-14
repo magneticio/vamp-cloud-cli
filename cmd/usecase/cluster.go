@@ -3,14 +3,16 @@ package usecase
 import (
 	"fmt"
 
-	"github.com/magneticio/vamp-cloud-cli/cmd/adapters"
-	"github.com/magneticio/vamp-cloud-cli/cmd/model"
+	adapters "github.com/magneticio/vamp-cloud-cli/cmd/adapters/clusters"
+	"github.com/magneticio/vamp-cloud-cli/cmd/models"
 )
 
-type GetClusterUsecase func(name string) (*model.Cluster, error)
+type GetClusterUsecase func(name string) (*models.Cluster, error)
 
-func NewGetClusterUsecase(client adapters.VampCloudApiClient) GetClusterUsecase {
-	return func(name string) (*model.Cluster, error) {
+type CreateClusterUsecase func(name, provider, description string) (int64, error)
+
+func NewGetClusterUsecase(client adapters.VampCloudClustersClient) GetClusterUsecase {
+	return func(name string) (*models.Cluster, error) {
 
 		clusters, err := client.ListClusters()
 		if err != nil {
@@ -24,5 +26,21 @@ func NewGetClusterUsecase(client adapters.VampCloudApiClient) GetClusterUsecase 
 		}
 
 		return nil, fmt.Errorf("cluster '%s' not found", name)
+	}
+}
+
+func NewCreateClusterUsecase(client adapters.VampCloudClustersClient) CreateClusterUsecase {
+	return func(name, provider, description string) (int64, error) {
+
+		cluster := models.Cluster{
+			Name: name,
+		}
+
+		id, err := client.PostCluster(cluster)
+		if err != nil {
+			return 0, err
+		}
+
+		return id, nil
 	}
 }
