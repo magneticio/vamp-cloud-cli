@@ -35,6 +35,18 @@ func (o *PutApplicationsApplicationIDServicesServiceIDReader) ReadResponse(respo
 			return nil, err
 		}
 		return nil, result
+	case 403:
+		result := NewPutApplicationsApplicationIDServicesServiceIDForbidden()
+		if err := result.readResponse(response, consumer, o.formats); err != nil {
+			return nil, err
+		}
+		return nil, result
+	case 404:
+		result := NewPutApplicationsApplicationIDServicesServiceIDNotFound()
+		if err := result.readResponse(response, consumer, o.formats); err != nil {
+			return nil, err
+		}
+		return nil, result
 	case 409:
 		result := NewPutApplicationsApplicationIDServicesServiceIDConflict()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
@@ -102,6 +114,72 @@ func (o *PutApplicationsApplicationIDServicesServiceIDUnauthorized) GetPayload()
 }
 
 func (o *PutApplicationsApplicationIDServicesServiceIDUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	o.Payload = new(models.Error)
+
+	// response payload
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+		return err
+	}
+
+	return nil
+}
+
+// NewPutApplicationsApplicationIDServicesServiceIDForbidden creates a PutApplicationsApplicationIDServicesServiceIDForbidden with default headers values
+func NewPutApplicationsApplicationIDServicesServiceIDForbidden() *PutApplicationsApplicationIDServicesServiceIDForbidden {
+	return &PutApplicationsApplicationIDServicesServiceIDForbidden{}
+}
+
+/*PutApplicationsApplicationIDServicesServiceIDForbidden handles this case with default header values.
+
+The requester does not have access rights to the resource.
+*/
+type PutApplicationsApplicationIDServicesServiceIDForbidden struct {
+	Payload *models.Error
+}
+
+func (o *PutApplicationsApplicationIDServicesServiceIDForbidden) Error() string {
+	return fmt.Sprintf("[PUT /applications/{applicationID}/services/{serviceID}][%d] putApplicationsApplicationIdServicesServiceIdForbidden  %+v", 403, o.Payload)
+}
+
+func (o *PutApplicationsApplicationIDServicesServiceIDForbidden) GetPayload() *models.Error {
+	return o.Payload
+}
+
+func (o *PutApplicationsApplicationIDServicesServiceIDForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	o.Payload = new(models.Error)
+
+	// response payload
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+		return err
+	}
+
+	return nil
+}
+
+// NewPutApplicationsApplicationIDServicesServiceIDNotFound creates a PutApplicationsApplicationIDServicesServiceIDNotFound with default headers values
+func NewPutApplicationsApplicationIDServicesServiceIDNotFound() *PutApplicationsApplicationIDServicesServiceIDNotFound {
+	return &PutApplicationsApplicationIDServicesServiceIDNotFound{}
+}
+
+/*PutApplicationsApplicationIDServicesServiceIDNotFound handles this case with default header values.
+
+The server can not find the requested resource.
+*/
+type PutApplicationsApplicationIDServicesServiceIDNotFound struct {
+	Payload *models.Error
+}
+
+func (o *PutApplicationsApplicationIDServicesServiceIDNotFound) Error() string {
+	return fmt.Sprintf("[PUT /applications/{applicationID}/services/{serviceID}][%d] putApplicationsApplicationIdServicesServiceIdNotFound  %+v", 404, o.Payload)
+}
+
+func (o *PutApplicationsApplicationIDServicesServiceIDNotFound) GetPayload() *models.Error {
+	return o.Payload
+}
+
+func (o *PutApplicationsApplicationIDServicesServiceIDNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	o.Payload = new(models.Error)
 

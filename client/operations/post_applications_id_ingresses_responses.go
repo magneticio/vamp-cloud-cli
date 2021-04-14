@@ -36,6 +36,12 @@ func (o *PostApplicationsIDIngressesReader) ReadResponse(response runtime.Client
 			return nil, err
 		}
 		return nil, result
+	case 403:
+		result := NewPostApplicationsIDIngressesForbidden()
+		if err := result.readResponse(response, consumer, o.formats); err != nil {
+			return nil, err
+		}
+		return nil, result
 	case 409:
 		result := NewPostApplicationsIDIngressesConflict()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
@@ -115,6 +121,39 @@ func (o *PostApplicationsIDIngressesUnauthorized) GetPayload() *models.Error {
 }
 
 func (o *PostApplicationsIDIngressesUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	o.Payload = new(models.Error)
+
+	// response payload
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+		return err
+	}
+
+	return nil
+}
+
+// NewPostApplicationsIDIngressesForbidden creates a PostApplicationsIDIngressesForbidden with default headers values
+func NewPostApplicationsIDIngressesForbidden() *PostApplicationsIDIngressesForbidden {
+	return &PostApplicationsIDIngressesForbidden{}
+}
+
+/*PostApplicationsIDIngressesForbidden handles this case with default header values.
+
+The requester does not have access rights to the resource.
+*/
+type PostApplicationsIDIngressesForbidden struct {
+	Payload *models.Error
+}
+
+func (o *PostApplicationsIDIngressesForbidden) Error() string {
+	return fmt.Sprintf("[POST /applications/{id}/ingresses][%d] postApplicationsIdIngressesForbidden  %+v", 403, o.Payload)
+}
+
+func (o *PostApplicationsIDIngressesForbidden) GetPayload() *models.Error {
+	return o.Payload
+}
+
+func (o *PostApplicationsIDIngressesForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	o.Payload = new(models.Error)
 

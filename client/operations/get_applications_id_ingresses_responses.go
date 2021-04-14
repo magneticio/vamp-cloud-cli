@@ -35,6 +35,12 @@ func (o *GetApplicationsIDIngressesReader) ReadResponse(response runtime.ClientR
 			return nil, err
 		}
 		return nil, result
+	case 404:
+		result := NewGetApplicationsIDIngressesNotFound()
+		if err := result.readResponse(response, consumer, o.formats); err != nil {
+			return nil, err
+		}
+		return nil, result
 	case 500:
 		result := NewGetApplicationsIDIngressesInternalServerError()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
@@ -108,6 +114,39 @@ func (o *GetApplicationsIDIngressesUnauthorized) GetPayload() *models.Error {
 }
 
 func (o *GetApplicationsIDIngressesUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	o.Payload = new(models.Error)
+
+	// response payload
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+		return err
+	}
+
+	return nil
+}
+
+// NewGetApplicationsIDIngressesNotFound creates a GetApplicationsIDIngressesNotFound with default headers values
+func NewGetApplicationsIDIngressesNotFound() *GetApplicationsIDIngressesNotFound {
+	return &GetApplicationsIDIngressesNotFound{}
+}
+
+/*GetApplicationsIDIngressesNotFound handles this case with default header values.
+
+The server can not find the requested resource.
+*/
+type GetApplicationsIDIngressesNotFound struct {
+	Payload *models.Error
+}
+
+func (o *GetApplicationsIDIngressesNotFound) Error() string {
+	return fmt.Sprintf("[GET /applications/{id}/ingresses][%d] getApplicationsIdIngressesNotFound  %+v", 404, o.Payload)
+}
+
+func (o *GetApplicationsIDIngressesNotFound) GetPayload() *models.Error {
+	return o.Payload
+}
+
+func (o *GetApplicationsIDIngressesNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	o.Payload = new(models.Error)
 

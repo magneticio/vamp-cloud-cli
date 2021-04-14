@@ -48,5 +48,5 @@ var describeClusterCmd = &cobra.Command{
 }
 
 func init() {
-	describeCmd.AddCommand(describeApplicationCmd)
+	describeCmd.AddCommand(describeClusterCmd)
 }

@@ -15,6 +15,7 @@ type VampCloudApplicationsClient interface {
 	GetApplication(name string) (*models.Application, error)
 	PostApplication(application models.Application) (int64, error)
 	ListApplications() ([]models.Application, error)
+	GetInstallationCommand(applicationID int64) (string, error)
 }
 
 type VampCloudAnansiApplicationsClient struct {
@@ -101,6 +102,23 @@ func (c *VampCloudAnansiApplicationsClient) PostApplication(application models.A
 
 	return id, nil
 
+}
+
+func (c *VampCloudAnansiApplicationsClient) GetInstallationCommand(applicationID int64) (string, error) {
+
+	logging.Info("Retrieving installation command", logging.NewPair("application-id", applicationID))
+
+	params := operations.NewGetApplicationsIDInstallationParams().WithID(applicationID)
+
+	operationResult, err := c.client.Operations.GetApplicationsIDInstallation(params, nil)
+	if err != nil {
+		logging.Error("Failed to retrieve applications list", logging.NewPair("error", err))
+		return "", err
+	}
+
+	logging.Info("Retrieved installation command", logging.NewPair("application-id", applicationID))
+
+	return operationResult.GetPayload().Command, ErrorApplicationNotFound
 }
 
 func applicationDTOtoModel(application dto.Application) models.Application {

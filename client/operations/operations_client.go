@@ -37,6 +37,8 @@ type ClientService interface {
 
 	GetServices(params *GetServicesParams, authInfo runtime.ClientAuthInfoWriter) (*GetServicesOK, error)
 
+	PatchApplicationsApplicationIDIngressesIngressID(params *PatchApplicationsApplicationIDIngressesIngressIDParams, authInfo runtime.ClientAuthInfoWriter) (*PatchApplicationsApplicationIDIngressesIngressIDOK, error)
+
 	PostApplications(params *PostApplicationsParams, authInfo runtime.ClientAuthInfoWriter) (*PostApplicationsOK, error)
 
 	PostApplicationsIDIngresses(params *PostApplicationsIDIngressesParams, authInfo runtime.ClientAuthInfoWriter) (*PostApplicationsIDIngressesOK, error)
@@ -249,6 +251,40 @@ func (a *Client) GetServices(params *GetServicesParams, authInfo runtime.ClientA
 	}
 	// unexpected success response
 	unexpectedSuccess := result.(*GetServicesDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+  PatchApplicationsApplicationIDIngressesIngressID updates ingress for an application
+*/
+func (a *Client) PatchApplicationsApplicationIDIngressesIngressID(params *PatchApplicationsApplicationIDIngressesIngressIDParams, authInfo runtime.ClientAuthInfoWriter) (*PatchApplicationsApplicationIDIngressesIngressIDOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewPatchApplicationsApplicationIDIngressesIngressIDParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "PatchApplicationsApplicationIDIngressesIngressID",
+		Method:             "PATCH",
+		PathPattern:        "/applications/{applicationID}/ingresses/{ingressID}",
+		ProducesMediaTypes: []string{"application/json", "application/vnd.vamp.v1+json"},
+		ConsumesMediaTypes: []string{"application/vnd.vamp.v1+json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &PatchApplicationsApplicationIDIngressesIngressIDReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*PatchApplicationsApplicationIDIngressesIngressIDOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*PatchApplicationsApplicationIDIngressesIngressIDDefault)
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

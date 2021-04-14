@@ -100,6 +100,8 @@ paths:
             $ref: "#/definitions/Ingresses"
         401:
           $ref: "#/responses/Unauthorized"
+        404:
+          $ref: "#/responses/NotFound"
         500:
           $ref: "#/responses/InternalServerError"
         default:
@@ -132,8 +134,46 @@ paths:
                 description: The ingress ID
         401:
           $ref: "#/responses/Unauthorized"
+        403:
+          $ref: "#/responses/Forbidden"
         409:
           $ref: "#/responses/Conflict"
+        500:
+          $ref: "#/responses/InternalServerError"
+        default:
+          $ref: "#/responses/GenericError"
+  /applications/{applicationID}/ingresses/{ingressID}:
+    patch:
+      summary: Update ingress for an application
+      parameters:
+        - name: applicationID
+          description: application ID
+          in: path
+          required: true
+          type: integer
+          format: int64
+          minimum: 1
+        - name: ingressID
+          description: ingress ID
+          in: path
+          required: true
+          type: integer
+          format: int64
+          minimum: 1
+        - name: ingress
+          in: body
+          description: The application to create
+          schema:
+            $ref: "#/definitions/IngressInput"
+      responses:
+        200:
+          description: OK
+        401:
+          $ref: "#/responses/Unauthorized"
+        403:
+          $ref: "#/responses/Forbidden"
+        404:
+          $ref: "#/responses/NotFound"
         500:
           $ref: "#/responses/InternalServerError"
         default:
@@ -155,6 +195,8 @@ paths:
             $ref: "#/definitions/Installer"
         401:
           $ref: "#/responses/Unauthorized"
+        404:
+          $ref: "#/responses/NotFound"
         500:
           $ref: "#/responses/InternalServerError"
         default:
@@ -189,6 +231,10 @@ paths:
           description: OK
         401:
           $ref: "#/responses/Unauthorized"
+        403:
+          $ref: "#/responses/Forbidden"
+        404:
+          $ref: "#/responses/NotFound"
         409:
           $ref: "#/responses/Conflict"
         500:

@@ -9,6 +9,8 @@ import (
 
 type GetApplicationUsecase func(name string) (*models.Application, error)
 
+type GetInstallationCommandUsecase func(name string) (string, error)
+
 type CreateApplicationUsecase func(name, clusterName, description, namespace, ingressType string) (int64, error)
 
 func NewGetApplicationUsecase(applicationClient applicationAdapters.VampCloudApplicationsClient, ingressClient ingressAdapters.VampCloudIngressesClient) GetApplicationUsecase {
@@ -52,5 +54,22 @@ func NewCreateApplicationUsecase(applicationsClient applicationAdapters.VampClou
 		}
 
 		return id, nil
+	}
+}
+
+func NewGetInstallationCommandUsecase(applicationClient applicationAdapters.VampCloudApplicationsClient) GetInstallationCommandUsecase {
+	return func(name string) (string, error) {
+
+		application, err := applicationClient.GetApplication(name)
+		if err != nil {
+			return "", err
+		}
+
+		installationCommand, err := applicationClient.GetInstallationCommand(application.ID)
+		if err != nil {
+			return "", err
+		}
+
+		return installationCommand, nil
 	}
 }

@@ -35,6 +35,12 @@ func (o *GetApplicationsIDInstallationReader) ReadResponse(response runtime.Clie
 			return nil, err
 		}
 		return nil, result
+	case 404:
+		result := NewGetApplicationsIDInstallationNotFound()
+		if err := result.readResponse(response, consumer, o.formats); err != nil {
+			return nil, err
+		}
+		return nil, result
 	case 500:
 		result := NewGetApplicationsIDInstallationInternalServerError()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
@@ -108,6 +114,39 @@ func (o *GetApplicationsIDInstallationUnauthorized) GetPayload() *models.Error {
 }
 
 func (o *GetApplicationsIDInstallationUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	o.Payload = new(models.Error)
+
+	// response payload
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+		return err
+	}
+
+	return nil
+}
+
+// NewGetApplicationsIDInstallationNotFound creates a GetApplicationsIDInstallationNotFound with default headers values
+func NewGetApplicationsIDInstallationNotFound() *GetApplicationsIDInstallationNotFound {
+	return &GetApplicationsIDInstallationNotFound{}
+}
+
+/*GetApplicationsIDInstallationNotFound handles this case with default header values.
+
+The server can not find the requested resource.
+*/
+type GetApplicationsIDInstallationNotFound struct {
+	Payload *models.Error
+}
+
+func (o *GetApplicationsIDInstallationNotFound) Error() string {
+	return fmt.Sprintf("[GET /applications/{id}/installation][%d] getApplicationsIdInstallationNotFound  %+v", 404, o.Payload)
+}
+
+func (o *GetApplicationsIDInstallationNotFound) GetPayload() *models.Error {
+	return o.Payload
+}
+
+func (o *GetApplicationsIDInstallationNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	o.Payload = new(models.Error)
 
