@@ -41,3 +41,12 @@ swagger-generate:
 .PHONY: swagger-validate
 swagger-validate:
 	$(SWAGGERCMD) validate ./api/swagger.yml
+
+.PHONY: mockery
+mockery:
+	mockery -dir cmd/adapters/applications -name VampCloudApplicationsClient -case snake -output ./mocks/adaptersmocks -outpkg adaptersmocks
+	mockery -dir cmd/adapters/clusters -name VampCloudClustersClient -case snake -output ./mocks/adaptersmocks -outpkg adaptersmocks
+	mockery -dir cmd/adapters/services -name VampCloudServicesClient -case snake -output ./mocks/adaptersmocks -outpkg adaptersmocks
+	mockery -dir cmd/adapters/ingresses -name VampCloudIngressesClient -case snake -output ./mocks/adaptersmocks -outpkg adaptersmocks
+	mockery -dir cmd/adapters/policies -name VampCloudPoliciesClient -case snake -output ./mocks/adaptersmocks -outpkg adaptersmocks	
+	mockery -dir cmd/adapters/releases -name VampCloudReleasesClient -case snake -output ./mocks/adaptersmocks -outpkg adaptersmocks

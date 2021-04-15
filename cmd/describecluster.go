@@ -41,7 +41,12 @@ var describeClusterCmd = &cobra.Command{
 
 		view := views.ClusterModelToView(*cluster)
 
-		utils.PrintFormatted(outputType, view)
+		output, err := utils.FormatOutput(outputType, &view)
+		if err != nil {
+			return err
+		}
+
+		fmt.Println(output)
 
 		return nil
 	},

@@ -74,7 +74,7 @@ func (a *VampCloudAnansiIngressClient) ListIngresses(applicationID int64) ([]mod
 
 	results := operationResult.GetPayload().Items
 
-	models := make([]models.Ingress, len(results))
+	models := []models.Ingress{}
 
 	for _, result := range results {
 		models = append(models, ingressDTOToModel(*result, applicationID))

@@ -35,6 +35,12 @@ func (o *GetApplicationsIDIngressesReader) ReadResponse(response runtime.ClientR
 			return nil, err
 		}
 		return nil, result
+	case 403:
+		result := NewGetApplicationsIDIngressesForbidden()
+		if err := result.readResponse(response, consumer, o.formats); err != nil {
+			return nil, err
+		}
+		return nil, result
 	case 404:
 		result := NewGetApplicationsIDIngressesNotFound()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
@@ -114,6 +120,39 @@ func (o *GetApplicationsIDIngressesUnauthorized) GetPayload() *models.Error {
 }
 
 func (o *GetApplicationsIDIngressesUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	o.Payload = new(models.Error)
+
+	// response payload
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+		return err
+	}
+
+	return nil
+}
+
+// NewGetApplicationsIDIngressesForbidden creates a GetApplicationsIDIngressesForbidden with default headers values
+func NewGetApplicationsIDIngressesForbidden() *GetApplicationsIDIngressesForbidden {
+	return &GetApplicationsIDIngressesForbidden{}
+}
+
+/*GetApplicationsIDIngressesForbidden handles this case with default header values.
+
+The requester does not have access rights to the resource.
+*/
+type GetApplicationsIDIngressesForbidden struct {
+	Payload *models.Error
+}
+
+func (o *GetApplicationsIDIngressesForbidden) Error() string {
+	return fmt.Sprintf("[GET /applications/{id}/ingresses][%d] getApplicationsIdIngressesForbidden  %+v", 403, o.Payload)
+}
+
+func (o *GetApplicationsIDIngressesForbidden) GetPayload() *models.Error {
+	return o.Payload
+}
+
+func (o *GetApplicationsIDIngressesForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	o.Payload = new(models.Error)
 

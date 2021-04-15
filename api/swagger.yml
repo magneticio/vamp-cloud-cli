@@ -100,6 +100,8 @@ paths:
             $ref: "#/definitions/Ingresses"
         401:
           $ref: "#/responses/Unauthorized"
+        403:
+          $ref: "#/responses/Forbidden"
         404:
           $ref: "#/responses/NotFound"
         500:
@@ -195,6 +197,8 @@ paths:
             $ref: "#/definitions/Installer"
         401:
           $ref: "#/responses/Unauthorized"
+        403:
+          $ref: "#/responses/Forbidden"
         404:
           $ref: "#/responses/NotFound"
         500:
@@ -341,6 +345,8 @@ paths:
             $ref: "#/definitions/ReleaseStatus"
         401:
           $ref: "#/responses/Unauthorized"
+        403:
+          $ref: "#/responses/Forbidden"
         404:
           $ref: "#/responses/NotFound"
         500:
@@ -378,6 +384,8 @@ paths:
             $ref: "#/definitions/ServiceVersion"
         401:
           $ref: "#/responses/Unauthorized"
+        403:
+          $ref: "#/responses/Forbidden"
         404:
           $ref: "#/responses/NotFound"
         500:
@@ -404,6 +412,9 @@ definitions:
       name:
         type: string
         minLength: 1
+      namespace:
+        type: string
+        minLength: 1
       metadata:
         type: array
         items:
@@ -415,8 +426,6 @@ definitions:
         format: int64
   ApplicationInput:
     type: object
-    required:
-      - clusterID
     properties:
       name:
         type: string
@@ -467,6 +476,9 @@ definitions:
         type: string
       description:
         type: string
+      provider:
+        type: string
+        enum: [AKS, DOKS, EKS, GKE, SELF_MANAGED, OTHER]
       isOwner:
         type: boolean
   ClusterInput:

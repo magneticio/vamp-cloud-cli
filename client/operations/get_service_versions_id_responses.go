@@ -35,6 +35,12 @@ func (o *GetServiceVersionsIDReader) ReadResponse(response runtime.ClientRespons
 			return nil, err
 		}
 		return nil, result
+	case 403:
+		result := NewGetServiceVersionsIDForbidden()
+		if err := result.readResponse(response, consumer, o.formats); err != nil {
+			return nil, err
+		}
+		return nil, result
 	case 404:
 		result := NewGetServiceVersionsIDNotFound()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
@@ -114,6 +120,39 @@ func (o *GetServiceVersionsIDUnauthorized) GetPayload() *models.Error {
 }
 
 func (o *GetServiceVersionsIDUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	o.Payload = new(models.Error)
+
+	// response payload
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+		return err
+	}
+
+	return nil
+}
+
+// NewGetServiceVersionsIDForbidden creates a GetServiceVersionsIDForbidden with default headers values
+func NewGetServiceVersionsIDForbidden() *GetServiceVersionsIDForbidden {
+	return &GetServiceVersionsIDForbidden{}
+}
+
+/*GetServiceVersionsIDForbidden handles this case with default header values.
+
+The requester does not have access rights to the resource.
+*/
+type GetServiceVersionsIDForbidden struct {
+	Payload *models.Error
+}
+
+func (o *GetServiceVersionsIDForbidden) Error() string {
+	return fmt.Sprintf("[GET /service-versions/{id}][%d] getServiceVersionsIdForbidden  %+v", 403, o.Payload)
+}
+
+func (o *GetServiceVersionsIDForbidden) GetPayload() *models.Error {
+	return o.Payload
+}
+
+func (o *GetServiceVersionsIDForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	o.Payload = new(models.Error)
 

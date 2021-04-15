@@ -148,7 +148,7 @@ func applicationDTOtoModel(application dto.Application) models.Application {
 func applicationModelToInput(application models.Application) dto.ApplicationInput {
 
 	return dto.ApplicationInput{
-		ClusterID:   &application.ClusterID,
+		ClusterID:   application.ClusterID,
 		Name:        application.Name,
 		Description: application.Description,
 		IngressType: (string)(application.IngressType),

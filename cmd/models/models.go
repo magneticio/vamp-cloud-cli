@@ -37,10 +37,11 @@ type Cluster struct {
 	IsOwner     bool
 }
 
-func NewCluster(id int64, name, description string, isOwner bool) Cluster {
+func NewCluster(id int64, name, description, provider string, isOwner bool) Cluster {
 	return Cluster{
 		ID:          id,
 		Name:        name,
+		Provider:    provider,
 		Description: description,
 		IsOwner:     isOwner,
 	}
