@@ -13,7 +13,7 @@ import (
 )
 
 var applicationName string
-var tslSecret string
+var tlsSecret string
 
 var createIngressCommand = &cobra.Command{
 	Use:   "ingress",
@@ -40,11 +40,11 @@ var createIngressCommand = &cobra.Command{
 
 		tlsType := models.NO_TLS_TYPE
 
-		if tslSecret != "" {
+		if tlsSecret != "" {
 			tlsType = models.EDGE_TLS_TYPE
 		}
 
-		id, err := createIngress(applicationName, domainName, tslSecret, tlsType)
+		id, err := createIngress(applicationName, domainName, tlsSecret, tlsType)
 		if err != nil {
 			return err
 		}
@@ -63,5 +63,5 @@ func init() {
 	createIngressCommand.Flags().StringVar(&applicationName, "application", "", "Vamp cloud ingress application name")
 	createIngressCommand.MarkFlagRequired("application")
 
-	createIngressCommand.Flags().StringVar(&tslSecret, "tls-secret", "", "Vamp cloud ingress tls secret")
+	createIngressCommand.Flags().StringVar(&tlsSecret, "tls-secret", "", "Vamp cloud ingress tls secret")
 }
