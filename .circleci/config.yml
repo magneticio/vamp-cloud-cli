@@ -1,0 +1,59 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/golang:1.16.3
+        environment:
+          SKIP_SETCAP: skip
+    steps:
+      - checkout
+      - run: mkdir -p ./artifacts
+      - restore_cache:
+          keys:
+            - v1-pkg-cache
+      - run: git config --global url.git@github.com:.insteadOf https://github.com/
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          name: Build code
+          command: make build-local
+      - save_cache:
+          key: v1-pkg-cache
+          paths:
+            - "/go/pkg"    
+      - run: cp ./bin/* ./artifacts
+      - run: cp ./bin/vamp-darwin-amd64 ./artifacts/vamp-darwin-x86_64
+      - run: cp ./bin/vamp-linux-amd64 ./artifacts/vamp-linux-x86_64
+      - run: go run main.go version clean > ./artifacts/version.txt
+      - persist_to_workspace:
+          root: ./artifacts
+          paths:
+            - .
+  publish-github-release:
+    docker:
+      - image: cibuilds/github:0.12
+    steps:
+      - attach_workspace:
+          at: ./artifacts
+      - run:
+          name: "Publish Release on GitHub"
+          command: |
+            VERSION=$(cat ./artifacts/version.txt)
+            rm ./artifacts/version.txt
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./artifacts/
+workflows:
+  version: 2
+  main:
+    jobs:
+      - build:
+          filters:
+            tags:
+              only: /^(v)\d+\.\d+\.\d+$/
+      - publish-github-release:
+          requires:
+            - build
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^(v)\d+\.\d+\.\d+$/
