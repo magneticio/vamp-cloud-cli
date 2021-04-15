@@ -12,7 +12,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var applicationName string
 var tlsSecret string
 
 var createIngressCommand = &cobra.Command{

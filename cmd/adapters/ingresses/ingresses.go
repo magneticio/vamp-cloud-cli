@@ -2,6 +2,7 @@ package ingresses
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/magneticio/vamp-cloud-cli/client"
 	"github.com/magneticio/vamp-cloud-cli/client/operations"
@@ -11,15 +12,17 @@ import (
 )
 
 type VampCloudIngressesClient interface {
+	GetIngressByApplicationIDAndDomainName(applicationId int64, domainName string) (*models.Ingress, error)
 	ListIngresses(applicationId int64) ([]models.Ingress, error)
 	PostIngress(ingress models.Ingress) (int64, error)
+	PatchIngress(ingress models.Ingress) error
 }
 
 type VampCloudAnansiIngressClient struct {
 	client *client.Anansi
 }
 
-var ErrorApplicationNotFound = errors.New("application not found")
+var ErrorIngressNotFound = errors.New("ingress not found")
 
 func NewVampCloudIngressClient(httpClient *client.Anansi) *VampCloudAnansiIngressClient {
 
@@ -28,16 +31,45 @@ func NewVampCloudIngressClient(httpClient *client.Anansi) *VampCloudAnansiIngres
 	}
 }
 
-func (a *VampCloudAnansiIngressClient) ListIngresses(applicationId int64) ([]models.Ingress, error) {
+func (c *VampCloudAnansiIngressClient) GetIngressByApplicationIDAndDomainName(applicationId int64, domainName string) (*models.Ingress, error) {
 
-	logging.Info("Retrieving ingresses list", logging.NewPair("application-id", applicationId))
+	if applicationId == 0 {
+		return nil, fmt.Errorf("invalid application id")
+	}
 
-	params := operations.NewGetApplicationsIDIngressesParams().WithID(applicationId)
+	if domainName == "" {
+		return nil, fmt.Errorf("invalid domain name")
+	}
+
+	logging.Info("Retrieving ingress", logging.NewPair("application-id", applicationId), logging.NewPair("domain-name", domainName))
+
+	ingresses, err := c.ListIngresses(applicationId)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, ingress := range ingresses {
+		if ingress.ApplicationID == applicationId && ingress.DomainName == domainName {
+
+			logging.Info("Retrieved ingress", logging.NewPair("ingress-id", ingress.ID), logging.NewPair("application-id", applicationId), logging.NewPair("domain-name", domainName))
+
+			return &ingress, nil
+		}
+	}
+
+	return nil, ErrorIngressNotFound
+
+}
+
+func (a *VampCloudAnansiIngressClient) ListIngresses(applicationID int64) ([]models.Ingress, error) {
+
+	logging.Info("Retrieving ingresses list", logging.NewPair("application-id", applicationID))
+
+	params := operations.NewGetApplicationsIDIngressesParams().WithID(applicationID)
 
 	operationResult, err := a.client.Operations.GetApplicationsIDIngresses(params, nil)
 	if err != nil {
-		logging.Error("Failed to retrieve ingresses list", logging.NewPair("error", err))
-		return nil, err
+		return nil, fmt.Errorf("failed to retrieve ingresses list: %v", err)
 	}
 
 	results := operationResult.GetPayload().Items
@@ -45,10 +77,10 @@ func (a *VampCloudAnansiIngressClient) ListIngresses(applicationId int64) ([]mod
 	models := make([]models.Ingress, len(results))
 
 	for _, result := range results {
-		models = append(models, ingressDTOToModel(*result))
+		models = append(models, ingressDTOToModel(*result, applicationID))
 	}
 
-	logging.Info("Retrieved ingresses list", logging.NewPair("application-id", applicationId))
+	logging.Info("Retrieved ingresses list", logging.NewPair("application-id", applicationID))
 
 	return models, nil
 
@@ -64,8 +96,7 @@ func (c *VampCloudAnansiIngressClient) PostIngress(ingress models.Ingress) (int6
 
 	operationResult, err := c.client.Operations.PostApplicationsIDIngresses(params, nil)
 	if err != nil {
-		logging.Error("Failed to create ingress", logging.NewPair("error", err))
-		return 0, err
+		return 0, fmt.Errorf("failed to create ingress: %v", err)
 	}
 
 	id := operationResult.GetPayload().ID
@@ -76,10 +107,37 @@ func (c *VampCloudAnansiIngressClient) PostIngress(ingress models.Ingress) (int6
 
 }
 
-func ingressDTOToModel(ingress dto.Ingress) models.Ingress {
+func (c *VampCloudAnansiIngressClient) PatchIngress(ingress models.Ingress) error {
+
+	logging.Info("Patching ingress", logging.NewPair("domain-name", ingress.DomainName), logging.NewPair("ingress-id", ingress.ID), logging.NewPair("application-id", ingress.ApplicationID))
+
+	ingressInput := ingressModelToInput(ingress)
+
+	params := operations.NewPatchApplicationsApplicationIDIngressesIngressIDParams().WithApplicationID(ingress.ApplicationID).WithIngressID(ingress.ID).WithIngress(&ingressInput)
+
+	_, err := c.client.Operations.PatchApplicationsApplicationIDIngressesIngressID(params, nil)
+	if err != nil {
+		return fmt.Errorf("failed to patch ingress: %v", err)
+	}
+
+	logging.Info("Patched ingress", logging.NewPair("domain-name", ingress.DomainName), logging.NewPair("ingress-id", ingress.ID), logging.NewPair("application-id", ingress.ApplicationID))
+
+	return nil
+
+}
+
+//TODO it would be good to have applicationID from the dto itself
+func ingressDTOToModel(ingress dto.Ingress, applicationID int64) models.Ingress {
 
 	//TODO maybe add the missing fields in the future
-	return models.NewIngress(ingress.ID, ingress.DomainName, "", "")
+
+	routes := []models.Route{}
+
+	for _, route := range ingress.Routes {
+		routes = append(routes, models.NewRoute(route.ServiceID, route.Path))
+	}
+
+	return models.NewIngress(ingress.ID, applicationID, ingress.DomainName, "", "", routes)
 }
 
 func ingressModelToInput(ingress models.Ingress) dto.IngressInput {
@@ -87,6 +145,6 @@ func ingressModelToInput(ingress models.Ingress) dto.IngressInput {
 	return dto.IngressInput{
 		TLSSecretName: ingress.TlsSecret,
 		TLSType:       string(ingress.TlsType),
-		DomainName:    &ingress.DomainName,
+		DomainName:    ingress.DomainName,
 	}
 }

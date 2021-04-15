@@ -53,14 +53,29 @@ type Ingress struct {
 	DomainName    string
 	TlsType       TlsType
 	TlsSecret     string
+	Routes        []Route
 }
 
-func NewIngress(id int64, domainName, tlsSecret string, tlsType TlsType) Ingress {
+type Route struct {
+	ServiceID int64
+	Path      string
+}
+
+func NewRoute(serviceID int64, path string) Route {
+	return Route{
+		ServiceID: serviceID,
+		Path:      path,
+	}
+}
+
+func NewIngress(id, appicationID int64, domainName, tlsSecret string, tlsType TlsType, routes []Route) Ingress {
 	return Ingress{
-		ID:         id,
-		DomainName: domainName,
-		TlsType:    tlsType,
-		TlsSecret:  tlsSecret,
+		ID:            id,
+		ApplicationID: appicationID,
+		DomainName:    domainName,
+		TlsType:       tlsType,
+		TlsSecret:     tlsSecret,
+		Routes:        routes,
 	}
 }
 
@@ -77,3 +92,39 @@ const (
 	NGINX_INGRESS_TYPE   IngressType = "NGINX"
 	CONTOUR_INGRESS_TYPE IngressType = "CONTOUR"
 )
+
+// Service represents a vamp cloud service
+type Service struct {
+	ID   int64
+	Name string
+}
+
+func NewService(id int64, name string) Service {
+	return Service{
+		ID:   id,
+		Name: name,
+	}
+}
+
+type PolicyType string
+
+const (
+	VALIDATION               PolicyType = "VALIDATION"
+	TRAFFIC_SHAPING_BASIC    PolicyType = "TRAFFIC_SHAPING_BASIC"
+	TRAFFIC_SHAPING_EXTENDED PolicyType = "TRAFFIC_SHAPING_EXTENDED"
+)
+
+// Policy represents a vamp cloud policy
+type Policy struct {
+	ID         int64
+	PolicyType PolicyType
+	Name       string
+}
+
+func NewPolicy(id int64, name string, policyType PolicyType) Policy {
+	return Policy{
+		ID:         id,
+		Name:       name,
+		PolicyType: policyType,
+	}
+}

@@ -21,8 +21,8 @@ type Error struct {
 	Code int64 `json:"code,omitempty"`
 
 	// message
-	// Required: true
-	Message *string `json:"message"`
+	// Min Length: 1
+	Message string `json:"message,omitempty"`
 }
 
 // Validate validates this error
@@ -41,7 +41,11 @@ func (m *Error) Validate(formats strfmt.Registry) error {
 
 func (m *Error) validateMessage(formats strfmt.Registry) error {
 
-	if err := validate.Required("message", "body", m.Message); err != nil {
+	if swag.IsZero(m.Message) { // not required
+		return nil
+	}
+
+	if err := validate.MinLength("message", "body", string(m.Message), 1); err != nil {
 		return err
 	}
 
