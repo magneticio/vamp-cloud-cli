@@ -50,6 +50,10 @@ func (c *VampCloudAnansiReleasesClient) GetLastRelease(applicationID, serviceID 
 		return nil, fmt.Errorf("failed to retrieve releases list: %v", err)
 	}
 
+	if len(operationResult.GetPayload().Items) == 0 {
+		return nil, ErrorReleaseNotFound
+	}
+
 	result := releaseDTOToModel(*operationResult.GetPayload().Items[0])
 
 	logging.Info("Retrieved ongoing release", logging.NewPair("release-id", result.ID), logging.NewPair("application-id", applicationID), logging.NewPair("service-id", serviceID))
