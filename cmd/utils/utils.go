@@ -7,6 +7,7 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/inancgumus/screen"
 	"github.com/lensesio/tableprinter"
 )
 
@@ -53,4 +54,11 @@ func PrintFormatted(outputFormat string, data interface{}) (string, error) {
 
 	return result, nil
 
+}
+
+func ClearScreen() {
+
+	screen.Clear()
+
+	screen.MoveTopLeft()
 }

@@ -13,6 +13,7 @@ import (
 
 type VampCloudPoliciesClient interface {
 	GetPolicy(name string) (*models.Policy, error)
+	GetPolicyByID(id int64) (*models.Policy, error)
 	ListPolicies() ([]models.Policy, error)
 }
 
@@ -46,6 +47,31 @@ func (c *VampCloudAnansiPoliciesClient) GetPolicy(name string) (*models.Policy, 
 		if policy.Name == name {
 
 			logging.Info("Retrieved policy", logging.NewPair("policy-name", name))
+
+			return &policy, nil
+		}
+	}
+
+	return nil, ErrorPolicyNotFound
+}
+
+func (c *VampCloudAnansiPoliciesClient) GetPolicyByID(id int64) (*models.Policy, error) {
+
+	if id == 0 {
+		return nil, fmt.Errorf("invalid policy id")
+	}
+
+	logging.Info("Retrieving policy", logging.NewPair("policy-id", id))
+
+	policies, err := c.ListPolicies()
+	if err != nil {
+		return nil, err
+	}
+
+	for _, policy := range policies {
+		if policy.ID == id {
+
+			logging.Info("Retrieved policy", logging.NewPair("policy-id", id))
 
 			return &policy, nil
 		}
