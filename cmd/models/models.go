@@ -128,3 +128,52 @@ func NewPolicy(id int64, name string, policyType PolicyType) Policy {
 		PolicyType: policyType,
 	}
 }
+
+// Release represents a vamp cloud canary or validation release
+type Release struct {
+	ID              string
+	PolicyID        int64
+	SourceServiceID int64
+	TargetServiceID int64
+}
+
+func NewRelease(id string, policyID, sourceServiceID, targetServiceID int64) Release {
+	return Release{
+		ID:              id,
+		PolicyID:        policyID,
+		SourceServiceID: sourceServiceID,
+		TargetServiceID: targetServiceID,
+	}
+}
+
+// Release data represents a vamp cloud canary or validation release including extra data
+type ReleaseData struct {
+	Release           Release
+	SourceServiceName string
+	TargetServiceName string
+	Policy            Policy
+}
+
+func NewReleaseData(release Release, policy Policy, sourceVersion string, targetVersion string) ReleaseData {
+	return ReleaseData{
+		Release:           release,
+		SourceServiceName: sourceVersion,
+		TargetServiceName: targetVersion,
+		Policy:            policy,
+	}
+}
+
+// Release status represents a the current status of a vamp cloud release
+type ReleaseStatus struct {
+	Health      float64
+	CurrentStep int64
+	Status      string
+}
+
+func NewReleaseStatus(health float64, currentStep int64, status string) ReleaseStatus {
+	return ReleaseStatus{
+		Health:      health,
+		CurrentStep: currentStep,
+		Status:      status,
+	}
+}

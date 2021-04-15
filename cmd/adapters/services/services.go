@@ -13,6 +13,7 @@ import (
 
 type VampCloudServicesClient interface {
 	GetService(name string) (*models.Service, error)
+	GetServiceVersionByID(id int64) (string, error)
 	ListServices() ([]models.Service, error)
 }
 
@@ -52,6 +53,25 @@ func (c *VampCloudAnansiServicesClient) GetService(name string) (*models.Service
 	}
 
 	return nil, ErrorServiceNotFound
+}
+
+func (a *VampCloudAnansiServicesClient) GetServiceVersionByID(id int64) (string, error) {
+
+	logging.Info("Retrieving service version", logging.NewPair("service-version-id", id))
+
+	params := operations.NewGetServiceVersionsIDParams()
+
+	operationResult, err := a.client.Operations.GetServiceVersionsID(params, nil)
+	if err != nil {
+		return "", fmt.Errorf("failed to retrieve services version: %v", err)
+	}
+
+	result := operationResult.GetPayload().Name
+
+	logging.Info("Retrieved service version", logging.NewPair("service-version-id", id))
+
+	return result, nil
+
 }
 
 func (a *VampCloudAnansiServicesClient) ListServices() ([]models.Service, error) {

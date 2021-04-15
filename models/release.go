@@ -6,8 +6,10 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // Release release
@@ -16,7 +18,8 @@ import (
 type Release struct {
 
 	// ID
-	ID int64 `json:"ID,omitempty"`
+	// Min Length: 1
+	ID string `json:"ID,omitempty"`
 
 	// policy ID
 	PolicyID int64 `json:"PolicyID,omitempty"`
@@ -30,6 +33,28 @@ type Release struct {
 
 // Validate validates this release
 func (m *Release) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateID(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *Release) validateID(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.ID) { // not required
+		return nil
+	}
+
+	if err := validate.MinLength("ID", "body", string(m.ID), 1); err != nil {
+		return err
+	}
+
 	return nil
 }
 

@@ -14,7 +14,6 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
 )
 
 // NewGetReleasesIDParams creates a new GetReleasesIDParams object
@@ -62,7 +61,7 @@ for the get releases ID operation typically these are written to a http.Request
 type GetReleasesIDParams struct {
 
 	/*ID*/
-	ID int64
+	ID string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -103,13 +102,13 @@ func (o *GetReleasesIDParams) SetHTTPClient(client *http.Client) {
 }
 
 // WithID adds the id to the get releases ID params
-func (o *GetReleasesIDParams) WithID(id int64) *GetReleasesIDParams {
+func (o *GetReleasesIDParams) WithID(id string) *GetReleasesIDParams {
 	o.SetID(id)
 	return o
 }
 
 // SetID adds the id to the get releases ID params
-func (o *GetReleasesIDParams) SetID(id int64) {
+func (o *GetReleasesIDParams) SetID(id string) {
 	o.ID = id
 }
 
@@ -122,7 +121,7 @@ func (o *GetReleasesIDParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 	var res []error
 
 	// path param id
-	if err := r.SetPathParam("id", swag.FormatInt64(o.ID)); err != nil {
+	if err := r.SetPathParam("id", o.ID); err != nil {
 		return err
 	}
 
