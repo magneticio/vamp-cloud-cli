@@ -10,20 +10,21 @@ type VampCloudCliConfiguration struct {
 // Application represents a vamp cloud application
 type Application struct {
 	ID          int64
-	Cluster     Cluster
+	ClusterID   int64
 	Name        string
 	Description string
-	IngressType string
+	IngressType IngressType
 	Namespace   string
 	IsOwner     bool
 	Ingresses   []Ingress
 }
 
-func NewApplication(id int64, name string, isOwner bool) Application {
+func NewApplication(id, clusterID int64, name string, isOwner bool) Application {
 	return Application{
-		ID:      id,
-		Name:    name,
-		IsOwner: isOwner,
+		ID:        id,
+		ClusterID: clusterID,
+		Name:      name,
+		IsOwner:   isOwner,
 	}
 }
 
@@ -50,17 +51,29 @@ type Ingress struct {
 	ID            int64
 	ApplicationID int64
 	DomainName    string
-	TlsSecret     *string
+	TlsType       TlsType
+	TlsSecret     string
 }
 
-func NewIngress(id int64, domainName string) Ingress {
+func NewIngress(id int64, domainName, tlsSecret string, tlsType TlsType) Ingress {
 	return Ingress{
 		ID:         id,
 		DomainName: domainName,
+		TlsType:    tlsType,
+		TlsSecret:  tlsSecret,
 	}
 }
 
+type TlsType string
+
 const (
-	NGINX_INGRESS_TYPE   string = "NGINX"
-	CONTOUR_INGRESS_TYPE string = "CONTOUR"
+	NO_TLS_TYPE   TlsType = "NO_TLS"
+	EDGE_TLS_TYPE TlsType = "TLS_EDGE"
+)
+
+type IngressType string
+
+const (
+	NGINX_INGRESS_TYPE   IngressType = "NGINX"
+	CONTOUR_INGRESS_TYPE IngressType = "CONTOUR"
 )

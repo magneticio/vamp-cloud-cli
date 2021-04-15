@@ -13,6 +13,7 @@ import (
 
 type VampCloudClustersClient interface {
 	GetCluster(name string) (*models.Cluster, error)
+	GetClusterByID(id int64) (*models.Cluster, error)
 	PostCluster(application models.Cluster) (int64, error)
 	ListClusters() ([]models.Cluster, error)
 }
@@ -28,6 +29,31 @@ func NewVampCloudClusterClient(httpClient *client.Anansi) *VampCloudAnansiCluste
 	return &VampCloudAnansiClustersClient{
 		client: httpClient,
 	}
+}
+
+func (c *VampCloudAnansiClustersClient) GetClusterByID(id int64) (*models.Cluster, error) {
+
+	if id == 0 {
+		return nil, fmt.Errorf("invalid cluster id")
+	}
+
+	logging.Info("Retrieving cluster", logging.NewPair("cluster-id", id))
+
+	clusters, err := c.ListClusters()
+	if err != nil {
+		return nil, err
+	}
+
+	for _, cluster := range clusters {
+		if cluster.ID == id {
+
+			logging.Info("Retrieved cluster", logging.NewPair("cluster-id", id))
+
+			return &cluster, nil
+		}
+	}
+
+	return nil, ErrorApplicationNotFound
 }
 
 func (c *VampCloudAnansiClustersClient) GetCluster(name string) (*models.Cluster, error) {

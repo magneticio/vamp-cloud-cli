@@ -1,55 +1,67 @@
 package cmd
 
-// var applicationName string
-// var tslSecret string
+import (
+	"fmt"
 
-// var createIngressCommand = &cobra.Command{
-// 	Use:   "ingress",
-// 	Short: "Create an ingress",
-// 	Long: AddAppName(`Create an ingress
-//     Usage:
-//     $AppName create ingress <domain_name> --application=<application_name> --tls-secret=<tls_secret>`),
-// 	SilenceUsage:  true,
-// 	SilenceErrors: true,
-// 	RunE: func(cmd *cobra.Command, args []string) error {
-// 		if len(args) < 1 {
-// 			return fmt.Errorf("Not enough arguments - ingress domain name needed")
-// 		}
-// 		domainName := args[0]
+	"github.com/magneticio/vamp-cloud-cli/cmd/adapters"
+	applicationAdapters "github.com/magneticio/vamp-cloud-cli/cmd/adapters/applications"
+	ingressAdapters "github.com/magneticio/vamp-cloud-cli/cmd/adapters/ingresses"
+	"github.com/magneticio/vamp-cloud-cli/cmd/models"
+	"github.com/magneticio/vamp-cloud-cli/cmd/usecase"
+	"github.com/magneticio/vamp-cloud-cli/cmd/utils/logging"
+	"github.com/spf13/cobra"
+)
 
-// 		logging.Info("Creating ingress", logging.NewPair("domain-name", domainName))
+var applicationName string
+var tlsSecret string
 
-// 		client, err := adapters.NewVampCloudHttpClient(ApiVersion, Config)
-// 		if err != nil {
-// 			return err
-// 		}
+var createIngressCommand = &cobra.Command{
+	Use:   "ingress",
+	Short: "Create an ingress",
+	Long: AddAppName(`Create an ingress
+    Usage:
+    $AppName create ingress <domain_name> --application=<application_name> --tls-secret=<tls_secret>`),
+	SilenceUsage:  true,
+	SilenceErrors: true,
+	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) < 1 {
+			return fmt.Errorf("Not enough arguments - ingress domain name needed")
+		}
+		domainName := args[0]
 
-// 		createIngress := usecase.NewCreateIngressUsecase(client)
+		logging.Info("Creating ingress", logging.NewPair("domain-name", domainName), logging.NewPair("application-name", applicationName))
 
-// 		var secret *string
+		httpClient := adapters.NewApiClient(Config.VampCloudHost, Config.VampCloudBasePath, ApiVersion, Config.APIKey)
 
-// 		if tslSecret != "" {
-// 			secret = &tslSecret
-// 		}
+		applicationClient := applicationAdapters.NewVampCloudApplicationsClient(httpClient)
+		ingressClient := ingressAdapters.NewVampCloudIngressClient(httpClient)
 
-// 		id, err := createIngress(applicationName, domainName, secret)
-// 		if err != nil {
-// 			return err
-// 		}
+		createIngress := usecase.NewCreateIngressUsecase(ingressClient, applicationClient)
 
-// 		logging.Info("Created ingress", logging.NewPair("domain-name", domainName), logging.NewPair("id", id))
+		tlsType := models.NO_TLS_TYPE
 
-// 		fmt.Printf("Ingress for domain name '%s' has been created\n", domainName)
+		if tlsSecret != "" {
+			tlsType = models.EDGE_TLS_TYPE
+		}
 
-// 		return nil
-// 	},
-// }
+		id, err := createIngress(applicationName, domainName, tlsSecret, tlsType)
+		if err != nil {
+			return err
+		}
 
-// func init() {
-// 	createCmd.AddCommand(createIngressCommand)
+		logging.Info("Created ingress", logging.NewPair("domain-name", domainName), logging.NewPair("application-name", applicationName), logging.NewPair("ingress-id", id))
 
-// 	createIngressCommand.Flags().StringVar(&applicationName, "application", "", "Vamp cloud ingress application name")
-// 	createIngressCommand.MarkFlagRequired("application")
+		fmt.Printf("Ingress for domain name '%s' has been created\n", domainName)
 
-// 	createIngressCommand.Flags().StringVar(&tslSecret, "tls-secret", "", "Vamp cloud ingress tls secret")
-// }
+		return nil
+	},
+}
+
+func init() {
+	createCmd.AddCommand(createIngressCommand)
+
+	createIngressCommand.Flags().StringVar(&applicationName, "application", "", "Vamp cloud ingress application name")
+	createIngressCommand.MarkFlagRequired("application")
+
+	createIngressCommand.Flags().StringVar(&tlsSecret, "tls-secret", "", "Vamp cloud ingress tls secret")
+}

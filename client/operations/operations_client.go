@@ -35,6 +35,14 @@ type ClientService interface {
 
 	GetClusters(params *GetClustersParams, authInfo runtime.ClientAuthInfoWriter) (*GetClustersOK, error)
 
+	GetPolicies(params *GetPoliciesParams, authInfo runtime.ClientAuthInfoWriter) (*GetPoliciesOK, error)
+
+	GetReleases(params *GetReleasesParams, authInfo runtime.ClientAuthInfoWriter) (*GetReleasesOK, error)
+
+	GetReleasesID(params *GetReleasesIDParams, authInfo runtime.ClientAuthInfoWriter) (*GetReleasesIDOK, error)
+
+	GetServiceVersionsID(params *GetServiceVersionsIDParams, authInfo runtime.ClientAuthInfoWriter) (*GetServiceVersionsIDOK, error)
+
 	GetServices(params *GetServicesParams, authInfo runtime.ClientAuthInfoWriter) (*GetServicesOK, error)
 
 	PatchApplicationsApplicationIDIngressesIngressID(params *PatchApplicationsApplicationIDIngressesIngressIDParams, authInfo runtime.ClientAuthInfoWriter) (*PatchApplicationsApplicationIDIngressesIngressIDOK, error)
@@ -217,6 +225,142 @@ func (a *Client) GetClusters(params *GetClustersParams, authInfo runtime.ClientA
 	}
 	// unexpected success response
 	unexpectedSuccess := result.(*GetClustersDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+  GetPolicies returns list of policies
+*/
+func (a *Client) GetPolicies(params *GetPoliciesParams, authInfo runtime.ClientAuthInfoWriter) (*GetPoliciesOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetPoliciesParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "GetPolicies",
+		Method:             "GET",
+		PathPattern:        "/policies",
+		ProducesMediaTypes: []string{"application/json", "application/vnd.vamp.v1+json"},
+		ConsumesMediaTypes: []string{"application/vnd.vamp.v1+json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &GetPoliciesReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetPoliciesOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*GetPoliciesDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+  GetReleases returns list of release i ds
+*/
+func (a *Client) GetReleases(params *GetReleasesParams, authInfo runtime.ClientAuthInfoWriter) (*GetReleasesOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetReleasesParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "GetReleases",
+		Method:             "GET",
+		PathPattern:        "/releases",
+		ProducesMediaTypes: []string{"application/json", "application/vnd.vamp.v1+json"},
+		ConsumesMediaTypes: []string{"application/vnd.vamp.v1+json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &GetReleasesReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetReleasesOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*GetReleasesDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+  GetReleasesID gets release status
+*/
+func (a *Client) GetReleasesID(params *GetReleasesIDParams, authInfo runtime.ClientAuthInfoWriter) (*GetReleasesIDOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetReleasesIDParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "GetReleasesID",
+		Method:             "GET",
+		PathPattern:        "/releases/{id}",
+		ProducesMediaTypes: []string{"application/json", "application/vnd.vamp.v1+json"},
+		ConsumesMediaTypes: []string{"application/vnd.vamp.v1+json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &GetReleasesIDReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetReleasesIDOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*GetReleasesIDDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+  GetServiceVersionsID returns service version by ID
+*/
+func (a *Client) GetServiceVersionsID(params *GetServiceVersionsIDParams, authInfo runtime.ClientAuthInfoWriter) (*GetServiceVersionsIDOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetServiceVersionsIDParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "GetServiceVersionsID",
+		Method:             "GET",
+		PathPattern:        "/service-versions/{id}",
+		ProducesMediaTypes: []string{"application/json", "application/vnd.vamp.v1+json"},
+		ConsumesMediaTypes: []string{"application/vnd.vamp.v1+json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &GetServiceVersionsIDReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetServiceVersionsIDOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*GetServiceVersionsIDDefault)
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

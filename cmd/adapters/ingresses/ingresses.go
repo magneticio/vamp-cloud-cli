@@ -12,6 +12,7 @@ import (
 
 type VampCloudIngressesClient interface {
 	ListIngresses(applicationId int64) ([]models.Ingress, error)
+	PostIngress(ingress models.Ingress) (int64, error)
 }
 
 type VampCloudAnansiIngressClient struct {
@@ -53,7 +54,39 @@ func (a *VampCloudAnansiIngressClient) ListIngresses(applicationId int64) ([]mod
 
 }
 
+func (c *VampCloudAnansiIngressClient) PostIngress(ingress models.Ingress) (int64, error) {
+
+	logging.Info("Creating ingress", logging.NewPair("application-id", ingress.ApplicationID), logging.NewPair("domain-name", ingress.DomainName))
+
+	ingressInput := ingressModelToInput(ingress)
+
+	params := operations.NewPostApplicationsIDIngressesParams().WithID(ingress.ApplicationID).WithIngress(&ingressInput)
+
+	operationResult, err := c.client.Operations.PostApplicationsIDIngresses(params, nil)
+	if err != nil {
+		logging.Error("Failed to create ingress", logging.NewPair("error", err))
+		return 0, err
+	}
+
+	id := operationResult.GetPayload().ID
+
+	logging.Info("Created ingress", logging.NewPair("application-id", ingress.ApplicationID), logging.NewPair("domain-name", ingress.DomainName))
+
+	return id, nil
+
+}
+
 func ingressDTOToModel(ingress dto.Ingress) models.Ingress {
 
-	return models.NewIngress(ingress.ID, ingress.DomainName)
+	//TODO maybe add the missing fields in the future
+	return models.NewIngress(ingress.ID, ingress.DomainName, "", "")
+}
+
+func ingressModelToInput(ingress models.Ingress) dto.IngressInput {
+
+	return dto.IngressInput{
+		TLSSecretName: ingress.TlsSecret,
+		TLSType:       string(ingress.TlsType),
+		DomainName:    &ingress.DomainName,
+	}
 }
