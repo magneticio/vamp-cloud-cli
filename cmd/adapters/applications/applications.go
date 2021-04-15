@@ -16,6 +16,7 @@ type VampCloudApplicationsClient interface {
 	PostApplication(application models.Application) (int64, error)
 	ListApplications() ([]models.Application, error)
 	GetInstallationCommand(applicationID int64) (string, error)
+	AttachServiceToApplication(applicationID, serviceID, policyID int64) error
 }
 
 type VampCloudAnansiApplicationsClient struct {
@@ -64,8 +65,7 @@ func (a *VampCloudAnansiApplicationsClient) ListApplications() ([]models.Applica
 
 	operationResult, err := a.client.Operations.GetApplications(params, nil)
 	if err != nil {
-		logging.Error("Failed to retrieve applications list", logging.NewPair("error", err))
-		return nil, err
+		return nil, fmt.Errorf("failed to retrieve applications list: %v", err)
 	}
 
 	results := operationResult.GetPayload().Items
@@ -92,8 +92,7 @@ func (c *VampCloudAnansiApplicationsClient) PostApplication(application models.A
 
 	operationResult, err := c.client.Operations.PostApplications(params, nil)
 	if err != nil {
-		logging.Error("Failed to retrieve application", logging.NewPair("error", err))
-		return 0, err
+		return 0, fmt.Errorf("failed to retrieve application: %v", err)
 	}
 
 	id := operationResult.GetPayload().ID
@@ -112,13 +111,33 @@ func (c *VampCloudAnansiApplicationsClient) GetInstallationCommand(applicationID
 
 	operationResult, err := c.client.Operations.GetApplicationsIDInstallation(params, nil)
 	if err != nil {
-		logging.Error("Failed to retrieve applications list", logging.NewPair("error", err))
-		return "", err
+		return "", fmt.Errorf("failed to retrieve applications list: %v", err)
 	}
 
 	logging.Info("Retrieved installation command", logging.NewPair("application-id", applicationID))
 
 	return operationResult.GetPayload().Command, ErrorApplicationNotFound
+}
+
+func (c *VampCloudAnansiApplicationsClient) AttachServiceToApplication(applicationID, serviceID, policyID int64) error {
+
+	logging.Info("Attach application to service", logging.NewPair("application-id", applicationID), logging.NewPair("service-id", serviceID), logging.NewPair("policy-id", policyID))
+
+	policy := dto.PolicySelectionStrategyInput{
+		DefaultPolicyID: policyID,
+	}
+
+	params := operations.NewPutApplicationsApplicationIDServicesServiceIDParams().WithApplicationID(applicationID).WithServiceID(serviceID).WithPolicySelectionStrategyInput(&policy)
+
+	_, err := c.client.Operations.PutApplicationsApplicationIDServicesServiceID(params, nil)
+	if err != nil {
+		return fmt.Errorf("failed to attach service to application: %v", err)
+	}
+
+	logging.Info("Attached application to service", logging.NewPair("application-id", applicationID), logging.NewPair("service-id", serviceID), logging.NewPair("policy-id", policyID))
+
+	return nil
+
 }
 
 func applicationDTOtoModel(application dto.Application) models.Application {
@@ -130,9 +149,9 @@ func applicationModelToInput(application models.Application) dto.ApplicationInpu
 
 	return dto.ApplicationInput{
 		ClusterID:   &application.ClusterID,
-		Name:        &application.Name,
+		Name:        application.Name,
 		Description: application.Description,
-		IngressType: (*string)(&application.IngressType),
-		Namespace:   &application.Namespace,
+		IngressType: (string)(application.IngressType),
+		Namespace:   application.Namespace,
 	}
 }

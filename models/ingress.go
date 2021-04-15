@@ -11,7 +11,6 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
-	"github.com/go-openapi/validate"
 )
 
 // Ingress ingress
@@ -20,7 +19,6 @@ import (
 type Ingress struct {
 
 	// domain name
-	// Min Length: 1
 	DomainName string `json:"domainName,omitempty"`
 
 	// id
@@ -35,10 +33,6 @@ type Ingress struct {
 func (m *Ingress) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateDomainName(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validateRoutes(formats); err != nil {
 		res = append(res, err)
 	}
@@ -46,19 +40,6 @@ func (m *Ingress) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *Ingress) validateDomainName(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.DomainName) { // not required
-		return nil
-	}
-
-	if err := validate.MinLength("domainName", "body", string(m.DomainName), 1); err != nil {
-		return err
-	}
-
 	return nil
 }
 

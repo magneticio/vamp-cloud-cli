@@ -23,8 +23,9 @@ type Application struct {
 	ClusterID int64 `json:"clusterID,omitempty"`
 
 	// id
+	// Required: true
 	// Read Only: true
-	ID int64 `json:"id,omitempty"`
+	ID int64 `json:"id"`
 
 	// is owner
 	IsOwner bool `json:"isOwner,omitempty"`
@@ -41,6 +42,10 @@ type Application struct {
 func (m *Application) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateID(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateMetadata(formats); err != nil {
 		res = append(res, err)
 	}
@@ -52,6 +57,15 @@ func (m *Application) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *Application) validateID(formats strfmt.Registry) error {
+
+	if err := validate.Required("id", "body", int64(m.ID)); err != nil {
+		return err
+	}
+
 	return nil
 }
 

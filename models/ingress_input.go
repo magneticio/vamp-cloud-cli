@@ -21,9 +21,8 @@ import (
 type IngressInput struct {
 
 	// domain name
-	// Required: true
 	// Min Length: 1
-	DomainName *string `json:"domainName"`
+	DomainName string `json:"domainName,omitempty"`
 
 	// routes
 	Routes []*Route `json:"routes"`
@@ -60,11 +59,11 @@ func (m *IngressInput) Validate(formats strfmt.Registry) error {
 
 func (m *IngressInput) validateDomainName(formats strfmt.Registry) error {
 
-	if err := validate.Required("domainName", "body", m.DomainName); err != nil {
-		return err
+	if swag.IsZero(m.DomainName) { // not required
+		return nil
 	}
 
-	if err := validate.MinLength("domainName", "body", string(*m.DomainName), 1); err != nil {
+	if err := validate.MinLength("domainName", "body", string(m.DomainName), 1); err != nil {
 		return err
 	}
 

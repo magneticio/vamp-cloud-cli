@@ -27,17 +27,16 @@ type ApplicationInput struct {
 	Description string `json:"description,omitempty"`
 
 	// ingress type
-	// Required: true
 	// Enum: [NGINX CONTOUR]
-	IngressType *string `json:"ingressType"`
+	IngressType string `json:"ingressType,omitempty"`
 
 	// name
-	// Required: true
-	Name *string `json:"name"`
+	// Min Length: 1
+	Name string `json:"name,omitempty"`
 
 	// namespace
-	// Required: true
-	Namespace *string `json:"namespace"`
+	// Min Length: 1
+	Namespace string `json:"namespace,omitempty"`
 }
 
 // Validate validates this application input
@@ -106,12 +105,12 @@ func (m *ApplicationInput) validateIngressTypeEnum(path, location string, value 
 
 func (m *ApplicationInput) validateIngressType(formats strfmt.Registry) error {
 
-	if err := validate.Required("ingressType", "body", m.IngressType); err != nil {
-		return err
+	if swag.IsZero(m.IngressType) { // not required
+		return nil
 	}
 
 	// value enum
-	if err := m.validateIngressTypeEnum("ingressType", "body", *m.IngressType); err != nil {
+	if err := m.validateIngressTypeEnum("ingressType", "body", m.IngressType); err != nil {
 		return err
 	}
 
@@ -120,7 +119,11 @@ func (m *ApplicationInput) validateIngressType(formats strfmt.Registry) error {
 
 func (m *ApplicationInput) validateName(formats strfmt.Registry) error {
 
-	if err := validate.Required("name", "body", m.Name); err != nil {
+	if swag.IsZero(m.Name) { // not required
+		return nil
+	}
+
+	if err := validate.MinLength("name", "body", string(m.Name), 1); err != nil {
 		return err
 	}
 
@@ -129,7 +132,11 @@ func (m *ApplicationInput) validateName(formats strfmt.Registry) error {
 
 func (m *ApplicationInput) validateNamespace(formats strfmt.Registry) error {
 
-	if err := validate.Required("namespace", "body", m.Namespace); err != nil {
+	if swag.IsZero(m.Namespace) { // not required
+		return nil
+	}
+
+	if err := validate.MinLength("namespace", "body", string(m.Namespace), 1); err != nil {
 		return err
 	}
 

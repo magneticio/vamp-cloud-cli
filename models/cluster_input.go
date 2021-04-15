@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -21,12 +23,12 @@ type ClusterInput struct {
 	Description string `json:"description,omitempty"`
 
 	// name
-	// Required: true
-	Name *string `json:"name"`
+	// Min Length: 1
+	Name string `json:"name,omitempty"`
 
 	// provider
-	// Required: true
-	Provider *string `json:"provider"`
+	// Enum: [AKS DOKS EKS GKE SELF_MANAGED OTHER]
+	Provider string `json:"provider,omitempty"`
 }
 
 // Validate validates this cluster input
@@ -49,16 +51,66 @@ func (m *ClusterInput) Validate(formats strfmt.Registry) error {
 
 func (m *ClusterInput) validateName(formats strfmt.Registry) error {
 
-	if err := validate.Required("name", "body", m.Name); err != nil {
+	if swag.IsZero(m.Name) { // not required
+		return nil
+	}
+
+	if err := validate.MinLength("name", "body", string(m.Name), 1); err != nil {
 		return err
 	}
 
 	return nil
 }
 
+var clusterInputTypeProviderPropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["AKS","DOKS","EKS","GKE","SELF_MANAGED","OTHER"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		clusterInputTypeProviderPropEnum = append(clusterInputTypeProviderPropEnum, v)
+	}
+}
+
+const (
+
+	// ClusterInputProviderAKS captures enum value "AKS"
+	ClusterInputProviderAKS string = "AKS"
+
+	// ClusterInputProviderDOKS captures enum value "DOKS"
+	ClusterInputProviderDOKS string = "DOKS"
+
+	// ClusterInputProviderEKS captures enum value "EKS"
+	ClusterInputProviderEKS string = "EKS"
+
+	// ClusterInputProviderGKE captures enum value "GKE"
+	ClusterInputProviderGKE string = "GKE"
+
+	// ClusterInputProviderSELFMANAGED captures enum value "SELF_MANAGED"
+	ClusterInputProviderSELFMANAGED string = "SELF_MANAGED"
+
+	// ClusterInputProviderOTHER captures enum value "OTHER"
+	ClusterInputProviderOTHER string = "OTHER"
+)
+
+// prop value enum
+func (m *ClusterInput) validateProviderEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, clusterInputTypeProviderPropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (m *ClusterInput) validateProvider(formats strfmt.Registry) error {
 
-	if err := validate.Required("provider", "body", m.Provider); err != nil {
+	if swag.IsZero(m.Provider) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateProviderEnum("provider", "body", m.Provider); err != nil {
 		return err
 	}
 

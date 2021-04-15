@@ -394,6 +394,8 @@ definitions:
           $ref: "#/definitions/Application"
   Application:
     type: object
+    required:
+      - id
     properties:
       id:
         type: integer
@@ -414,13 +416,11 @@ definitions:
   ApplicationInput:
     type: object
     required:
-      - name
       - clusterID
-      - ingressType
-      - namespace
     properties:
       name:
         type: string
+        minLength: 1
       description:
         type: string
       clusterID:
@@ -431,6 +431,7 @@ definitions:
         enum: [NGINX, CONTOUR]
       namespace:
         type: string
+        minLength: 1
   Metadata:
     type: object
     properties:
@@ -441,14 +442,13 @@ definitions:
         type: string
   Error:
     type: object
-    required:
-      - message
     properties:
       code:
         type: integer
         format: int64
       message:
         type: string
+        minLength: 1
   Clusters:
     type: object
     properties:
@@ -465,23 +465,21 @@ definitions:
         readOnly: true
       name:
         type: string
-        minLength: 1
       description:
         type: string
       isOwner:
         type: boolean
   ClusterInput:
     type: object
-    required:
-      - name
-      - provider
     properties:
       name:
         type: string
+        minLength: 1
       description:
         type: string
       provider:
         type: string
+        enum: [AKS, DOKS, EKS, GKE, SELF_MANAGED, OTHER]
   Services:
     type: object
     properties:
@@ -498,7 +496,6 @@ definitions:
         readOnly: true
       name:
         type: string
-        minLength: 1
   Ingresses:
     type: object
     properties:
@@ -515,15 +512,12 @@ definitions:
         readOnly: true
       domainName:
         type: string
-        minLength: 1
       routes:
         type: array
         items:
           $ref: "#/definitions/Route"
   IngressInput:
     type: object
-    required:
-      - domainName
     properties:
       domainName:
         type: string
@@ -615,7 +609,6 @@ definitions:
         readOnly: true
       name:
         type: string
-        minLength: 1
       type:
         type: string
         enum: [VALIDATION, TRAFFIC_SHAPING_BASIC, TRAFFIC_SHAPING_EXTENDED]
@@ -628,7 +621,6 @@ definitions:
         readOnly: true
       name:
         type: string
-        minLength: 1
 responses:
   Unauthorized:
     description: The requester is not authorized.

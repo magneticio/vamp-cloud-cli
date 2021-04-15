@@ -22,7 +22,7 @@ type VampCloudAnansiClustersClient struct {
 	client *client.Anansi
 }
 
-var ErrorApplicationNotFound = errors.New("application not found")
+var ErrorClusterNotFound = errors.New("cluster not found")
 
 func NewVampCloudClusterClient(httpClient *client.Anansi) *VampCloudAnansiClustersClient {
 
@@ -53,7 +53,7 @@ func (c *VampCloudAnansiClustersClient) GetClusterByID(id int64) (*models.Cluste
 		}
 	}
 
-	return nil, ErrorApplicationNotFound
+	return nil, ErrorClusterNotFound
 }
 
 func (c *VampCloudAnansiClustersClient) GetCluster(name string) (*models.Cluster, error) {
@@ -78,7 +78,7 @@ func (c *VampCloudAnansiClustersClient) GetCluster(name string) (*models.Cluster
 		}
 	}
 
-	return nil, ErrorApplicationNotFound
+	return nil, ErrorClusterNotFound
 }
 
 func (a *VampCloudAnansiClustersClient) ListClusters() ([]models.Cluster, error) {
@@ -89,8 +89,7 @@ func (a *VampCloudAnansiClustersClient) ListClusters() ([]models.Cluster, error)
 
 	operationResult, err := a.client.Operations.GetClusters(params, nil)
 	if err != nil {
-		logging.Error("Failed to retrieve clusters list", logging.NewPair("error", err))
-		return nil, err
+		return nil, fmt.Errorf("failed to retrieve clusters list: %v", err)
 	}
 
 	results := operationResult.GetPayload().Items
@@ -137,8 +136,8 @@ func clusterDTOToModel(cluster dto.Cluster) models.Cluster {
 func clusterModelToInput(cluster models.Cluster) dto.ClusterInput {
 
 	return dto.ClusterInput{
-		Name:        &cluster.Name,
+		Name:        cluster.Name,
 		Description: cluster.Description,
-		Provider:    &cluster.Provider,
+		Provider:    cluster.Provider,
 	}
 }
