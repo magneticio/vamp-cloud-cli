@@ -92,7 +92,7 @@ func (c *VampCloudAnansiApplicationsClient) PostApplication(application models.A
 
 	operationResult, err := c.client.Operations.PostApplications(params, nil)
 	if err != nil {
-		return 0, fmt.Errorf("failed to retrieve application: %v", err)
+		return 0, fmt.Errorf("failed to post application: %v", err)
 	}
 
 	id := operationResult.GetPayload().ID
@@ -111,7 +111,7 @@ func (c *VampCloudAnansiApplicationsClient) GetInstallationCommand(applicationID
 
 	operationResult, err := c.client.Operations.GetApplicationsIDInstallation(params, nil)
 	if err != nil {
-		return "", fmt.Errorf("failed to retrieve applications list: %v", err)
+		return "", fmt.Errorf("failed to retrieve installation command: %v", err)
 	}
 
 	logging.Info("Retrieved installation command", logging.NewPair("application-id", applicationID))
