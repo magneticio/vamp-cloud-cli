@@ -136,14 +136,20 @@ type Release struct {
 	PolicyID        int64
 	SourceServiceID int64
 	TargetServiceID int64
+	Health          float64
+	CurrentStep     int64
+	Status          string
 }
 
-func NewRelease(id string, policyID, sourceServiceID, targetServiceID int64) Release {
+func NewRelease(id, status string, policyID, sourceServiceID, targetServiceID, currentStep int64, health float64) Release {
 	return Release{
 		ID:              id,
 		PolicyID:        policyID,
 		SourceServiceID: sourceServiceID,
 		TargetServiceID: targetServiceID,
+		Health:          health,
+		CurrentStep:     currentStep,
+		Status:          status,
 	}
 }
 
@@ -161,20 +167,5 @@ func NewReleaseData(release Release, policy Policy, sourceVersion string, target
 		SourceServiceName: sourceVersion,
 		TargetServiceName: targetVersion,
 		Policy:            policy,
-	}
-}
-
-// Release status represents a the current status of a vamp cloud release
-type ReleaseStatus struct {
-	Health      float64
-	CurrentStep int64
-	Status      string
-}
-
-func NewReleaseStatus(health float64, currentStep int64, status string) ReleaseStatus {
-	return ReleaseStatus{
-		Health:      health,
-		CurrentStep: currentStep,
-		Status:      status,
 	}
 }

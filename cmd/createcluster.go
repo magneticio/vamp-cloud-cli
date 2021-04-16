@@ -18,12 +18,12 @@ var createClusterCommand = &cobra.Command{
 	Short: "Create a cluster",
 	Long: AddAppName(`Create a cluster
     Usage:
-    $AppName create cluster <cluster_name> --cluster=<cluster_name>`),
+    $AppName create cluster <cluster_name> --provider=<provider> --description=<description> `),
 	SilenceUsage:  true,
 	SilenceErrors: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) < 1 {
-			return fmt.Errorf("Not enough arguments - cluster name needed")
+			return fmt.Errorf("not enough arguments - cluster name needed")
 		}
 		name := args[0]
 

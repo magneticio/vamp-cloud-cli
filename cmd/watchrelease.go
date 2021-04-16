@@ -4,11 +4,13 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/google/go-cmp/cmp"
 	"github.com/magneticio/vamp-cloud-cli/cmd/adapters"
 	applicationAdapters "github.com/magneticio/vamp-cloud-cli/cmd/adapters/applications"
 	policyAdapters "github.com/magneticio/vamp-cloud-cli/cmd/adapters/policies"
 	releaseAdapters "github.com/magneticio/vamp-cloud-cli/cmd/adapters/releases"
 	serviceAdapters "github.com/magneticio/vamp-cloud-cli/cmd/adapters/services"
+	"github.com/magneticio/vamp-cloud-cli/cmd/models"
 	"github.com/magneticio/vamp-cloud-cli/cmd/usecase"
 	"github.com/magneticio/vamp-cloud-cli/cmd/utils"
 	"github.com/magneticio/vamp-cloud-cli/cmd/utils/logging"
@@ -30,7 +32,7 @@ var watchReleaseCmd = &cobra.Command{
 		}
 		serviceName := args[0]
 
-		logging.Info("Watching release", logging.NewPair("serviceo-name", serviceName), logging.NewPair("application-name", applicationName))
+		logging.Info("Watching release", logging.NewPair("service-name", serviceName), logging.NewPair("application-name", applicationName))
 
 		httpClient := adapters.NewApiClient(Config.VampCloudHost, Config.VampCloudBasePath, ApiVersion, Config.APIKey)
 
@@ -50,38 +52,49 @@ var watchReleaseCmd = &cobra.Command{
 
 		statuses := []views.ReleaseStatus{}
 
+		releaseStatus, err := watchRelease(getReleaseStatus, *release, serviceName)
+		if err != nil {
+			return err
+		}
+
+		statuses = append(statuses, *releaseStatus)
+
+		utils.ClearScreen()
+
+		output, err := utils.FormatOutput("", statuses)
+		if err != nil {
+			return err
+		}
+
+		println(output)
+
+		if releaseStatus.Status != "RUNNING" {
+			return nil
+		}
+
 		for range time.Tick(time.Second * 30) {
 
-			releaseStatus, err := getReleaseStatus(release.Release.ID)
+			releaseStatus, err := watchRelease(getReleaseStatus, *release, serviceName)
 			if err != nil {
 				return err
 			}
 
-			statusView := views.ReleaseStatus{
-				ServiceName: serviceName,
-				ReleaseType: string(release.Policy.PolicyType),
-				Source:      release.SourceServiceName,
-				Target:      release.TargetServiceName,
-				Step:        releaseStatus.CurrentStep,
-				Status:      releaseStatus.Status,
-				Health:      releaseStatus.Health,
-			}
+			if !cmp.Equal(statuses[len(statuses)-1], *releaseStatus) {
 
-			if int64(len(statuses)) < releaseStatus.CurrentStep {
+				statuses = append(statuses, *releaseStatus)
 
-				statuses = append(statuses, statusView)
 			}
 
 			utils.ClearScreen()
 
-			output, err := utils.FormatOutput(outputType, statuses)
+			output, err := utils.FormatOutput("", statuses)
 			if err != nil {
 				return err
 			}
 
-			fmt.Println(output)
+			println(output)
 
-			if releaseStatus.Status != "running" {
+			if releaseStatus.Status != "RUNNING" {
 				return nil
 			}
 
@@ -91,8 +104,28 @@ var watchReleaseCmd = &cobra.Command{
 	},
 }
 
+func watchRelease(getReleaseStatus usecase.GetReleaseStatusUsecase, release models.ReleaseData, serviceName string) (*views.ReleaseStatus, error) {
+
+	releaseStatus, err := getReleaseStatus(release.Release.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	statusView := views.ReleaseStatus{
+		ServiceName: serviceName,
+		ReleaseType: string(release.Policy.PolicyType),
+		Source:      release.SourceServiceName,
+		Target:      release.TargetServiceName,
+		Step:        releaseStatus.CurrentStep,
+		Status:      releaseStatus.Status,
+		Health:      releaseStatus.Health,
+	}
+
+	return &statusView, nil
+}
+
 func init() {
-	describeCmd.AddCommand(describeClusterCmd)
-	createIngressCommand.Flags().StringVar(&applicationName, "applicationName", "", "Vamp cloud application name")
-	createIngressCommand.MarkFlagRequired("application")
+	watchCmd.AddCommand(watchReleaseCmd)
+	watchReleaseCmd.Flags().StringVar(&applicationName, "application", "", "Vamp cloud application name")
+	watchReleaseCmd.MarkFlagRequired("application")
 }

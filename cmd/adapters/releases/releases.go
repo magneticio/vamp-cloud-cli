@@ -14,7 +14,7 @@ import (
 
 type VampCloudReleasesClient interface {
 	GetLastRelease(applicationID, serviceID int64) (*models.Release, error)
-	GetReleaseStatusByID(releaseID string) (*models.ReleaseStatus, error)
+	GetReleaseByID(releaseID string) (*models.Release, error)
 }
 
 type VampCloudAnansiReleasesClient struct {
@@ -62,7 +62,7 @@ func (c *VampCloudAnansiReleasesClient) GetLastRelease(applicationID, serviceID 
 	return &result, nil
 }
 
-func (c *VampCloudAnansiReleasesClient) GetReleaseStatusByID(id string) (*models.ReleaseStatus, error) {
+func (c *VampCloudAnansiReleasesClient) GetReleaseByID(id string) (*models.Release, error) {
 
 	if id == "" {
 		return nil, fmt.Errorf("invalid release ID")
@@ -77,7 +77,7 @@ func (c *VampCloudAnansiReleasesClient) GetReleaseStatusByID(id string) (*models
 		return nil, fmt.Errorf("failed to retrieve release status: %v", err)
 	}
 
-	result := releaseStatusDTOToModel(*operationResult.Payload)
+	result := releaseDTOToModel(*operationResult.Payload)
 
 	logging.Info("Retrieved release status", logging.NewPair("release-id", id))
 
@@ -86,10 +86,5 @@ func (c *VampCloudAnansiReleasesClient) GetReleaseStatusByID(id string) (*models
 
 func releaseDTOToModel(release dto.Release) models.Release {
 
-	return models.NewRelease(release.ID, release.PolicyID, release.SourceVersionID, release.TargetVersion)
-}
-
-func releaseStatusDTOToModel(releaseStatus dto.ReleaseStatus) models.ReleaseStatus {
-
-	return models.NewReleaseStatus(releaseStatus.CurrentHealth, releaseStatus.CurrentStep, releaseStatus.State)
+	return models.NewRelease(release.ID, release.State, release.PolicyID, release.SourceVersionID, release.TargetVersionID, release.CurrentStep, release.CurrentHealth)
 }

@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -27,8 +29,18 @@ type Release struct {
 	// source version ID
 	SourceVersionID int64 `json:"SourceVersionID,omitempty"`
 
-	// target version
-	TargetVersion int64 `json:"TargetVersion,omitempty"`
+	// target version ID
+	TargetVersionID int64 `json:"TargetVersionID,omitempty"`
+
+	// current health
+	CurrentHealth float64 `json:"currentHealth,omitempty"`
+
+	// current step
+	CurrentStep int64 `json:"currentStep,omitempty"`
+
+	// state
+	// Enum: [PENDING RUNNING FINISHED FAILED]
+	State string `json:"state,omitempty"`
 }
 
 // Validate validates this release
@@ -36,6 +48,10 @@ func (m *Release) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateID(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateState(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -52,6 +68,55 @@ func (m *Release) validateID(formats strfmt.Registry) error {
 	}
 
 	if err := validate.MinLength("ID", "body", string(m.ID), 1); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var releaseTypeStatePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["PENDING","RUNNING","FINISHED","FAILED"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		releaseTypeStatePropEnum = append(releaseTypeStatePropEnum, v)
+	}
+}
+
+const (
+
+	// ReleaseStatePENDING captures enum value "PENDING"
+	ReleaseStatePENDING string = "PENDING"
+
+	// ReleaseStateRUNNING captures enum value "RUNNING"
+	ReleaseStateRUNNING string = "RUNNING"
+
+	// ReleaseStateFINISHED captures enum value "FINISHED"
+	ReleaseStateFINISHED string = "FINISHED"
+
+	// ReleaseStateFAILED captures enum value "FAILED"
+	ReleaseStateFAILED string = "FAILED"
+)
+
+// prop value enum
+func (m *Release) validateStateEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, releaseTypeStatePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *Release) validateState(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.State) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateStateEnum("state", "body", m.State); err != nil {
 		return err
 	}
 

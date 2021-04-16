@@ -60,7 +60,7 @@ func (a *VampCloudAnansiServicesClient) GetServiceVersionByID(id int64) (string,
 
 	logging.Info("Retrieving service version", logging.NewPair("service-version-id", id))
 
-	params := operations.NewGetServiceVersionsIDParams()
+	params := operations.NewGetServiceVersionsIDParams().WithID(id)
 
 	operationResult, err := a.client.Operations.GetServiceVersionsID(params, nil)
 	if err != nil {
@@ -90,8 +90,8 @@ func (a *VampCloudAnansiServicesClient) ListServices() ([]models.Service, error)
 
 	models := make([]models.Service, len(results))
 
-	for _, result := range results {
-		models = append(models, serviceDTOToModel(*result))
+	for index, result := range results {
+		models[index] = serviceDTOToModel(*result)
 	}
 
 	logging.Info("Retrieved service list")

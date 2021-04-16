@@ -56,6 +56,37 @@ func FormatOutput(outputFormat string, data interface{}) (string, error) {
 
 }
 
+func FormatToTableHeader(data interface{}) string {
+
+	builder := strings.Builder{}
+
+	printer := tableprinter.New(&builder)
+
+	v := reflect.ValueOf(data)
+	headers := tableprinter.StructParser.ParseHeaders(v)
+
+	printer.Render(headers, nil, nil, false)
+
+	return builder.String()
+
+}
+
+func FormatToTableRow(data interface{}) string {
+
+	builder := strings.Builder{}
+
+	printer := tableprinter.New(&builder)
+
+	v := reflect.ValueOf(data)
+
+	row, nums := tableprinter.StructParser.ParseRow(v)
+
+	printer.RenderRow(row, nums)
+
+	return builder.String()
+
+}
+
 func ClearScreen() {
 
 	screen.Clear()

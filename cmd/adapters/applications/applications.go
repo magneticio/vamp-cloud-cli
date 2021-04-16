@@ -73,8 +73,8 @@ func (a *VampCloudAnansiApplicationsClient) ListApplications() ([]models.Applica
 
 	models := make([]models.Application, len(results))
 
-	for _, result := range results {
-		models = append(models, applicationDTOtoModel(*result))
+	for index, result := range results {
+		models[index] = applicationDTOtoModel(*result)
 	}
 
 	logging.Info("Retrieved applications list")

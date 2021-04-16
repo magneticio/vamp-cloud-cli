@@ -72,7 +72,7 @@ type PatchApplicationsApplicationIDIngressesIngressIDParams struct {
 	  The application to create
 
 	*/
-	Ingress *models.IngressInput
+	Ingress *models.Ingress
 	/*IngressID
 	  ingress ID
 
@@ -129,13 +129,13 @@ func (o *PatchApplicationsApplicationIDIngressesIngressIDParams) SetApplicationI
 }
 
 // WithIngress adds the ingress to the patch applications application ID ingresses ingress ID params
-func (o *PatchApplicationsApplicationIDIngressesIngressIDParams) WithIngress(ingress *models.IngressInput) *PatchApplicationsApplicationIDIngressesIngressIDParams {
+func (o *PatchApplicationsApplicationIDIngressesIngressIDParams) WithIngress(ingress *models.Ingress) *PatchApplicationsApplicationIDIngressesIngressIDParams {
 	o.SetIngress(ingress)
 	return o
 }
 
 // SetIngress adds the ingress to the patch applications application ID ingresses ingress ID params
-func (o *PatchApplicationsApplicationIDIngressesIngressIDParams) SetIngress(ingress *models.IngressInput) {
+func (o *PatchApplicationsApplicationIDIngressesIngressIDParams) SetIngress(ingress *models.Ingress) {
 	o.Ingress = ingress
 }
 

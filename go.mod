@@ -5,6 +5,7 @@ go 1.16
 require (
 	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d // indirect
 	github.com/dustin/go-humanize v1.0.0 // indirect
+	github.com/eapache/go-resiliency v1.2.0
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/go-openapi/analysis v0.20.1 // indirect
 	github.com/go-openapi/errors v0.20.0
@@ -12,6 +13,7 @@ require (
 	github.com/go-openapi/strfmt v0.20.1
 	github.com/go-openapi/swag v0.19.15
 	github.com/go-openapi/validate v0.20.2
+	github.com/google/go-cmp v0.5.5
 	github.com/inancgumus/screen v0.0.0-20190314163918-06e984b86ed3
 	github.com/kataras/tablewriter v0.0.0-20180708051242-e063d29b7c23 // indirect
 	github.com/lensesio/tableprinter v0.0.0-20201125135848-89e81fc956e7
@@ -31,6 +33,7 @@ require (
 	github.com/stretchr/testify v1.7.0 // indirect
 	golang.org/x/net v0.0.0-20210410081132-afb366fc7cd1 // indirect
 	golang.org/x/sys v0.0.0-20210414055047-fe65e336abe0 // indirect
+	gopkg.in/eapache/go-resiliency.v1 v1.2.0
 	gopkg.in/ini.v1 v1.62.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 )

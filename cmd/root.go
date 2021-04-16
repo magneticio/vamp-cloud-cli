@@ -41,6 +41,10 @@ var description string
 var outputType string
 var applicationName string
 
+var apiKey string
+var host string
+var basePath string
+
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   AddAppName("$AppName"),
@@ -49,7 +53,8 @@ var rootCmd = &cobra.Command{
 It is required to have a default config.
 Envrionment variables can be used to override the values in the config.
 Environment variables:
-	VAMP_CLOUD_ADDR
+	VAMP_CLOUD_HOST
+	VAMP_CLOUD_BASE_PATH
 	VAMP_CLOUD_API_KEY`),
 }
 
@@ -80,6 +85,10 @@ func init() {
 	rootCmd.PersistentFlags().BoolVarP(&logging.Verbose, "verbose", "v", false, "Verbose")
 
 	rootCmd.PersistentFlags().StringVarP(&outputType, "output", "o", "yaml", "Output format yaml or json")
+
+	rootCmd.PersistentFlags().StringVarP(&apiKey, "key", "k", "", "Vamp Cloud api key")
+	rootCmd.PersistentFlags().StringVarP(&host, "host", "", "", "Vamp Cloud api host")
+	rootCmd.PersistentFlags().StringVarP(&basePath, "path", "", "", "Vamp Cloud api base path")
 
 }
 
@@ -120,7 +129,7 @@ func initConfig() {
 	viper.AutomaticEnv() // read in environment variables that match
 
 	// If a config file is found, read it in.
-	viper.ReadInConfig() // TODO: handle config file autocreation
+	viper.ReadInConfig()
 
 	// unmarshal config
 	c := viper.AllSettings()
@@ -135,9 +144,8 @@ func initConfig() {
 		panic(unmarshallError)
 	}
 
-	// TODO: Setup Defaults for Config
-	// For Checking during development:
-	// fmt.Printf("Config: %v\n", Config)
+	setupConfigurationOverrides(&Config)
+
 	jsonConfig, _ := json.Marshal(Config)
 
 	logging.Info(fmt.Sprintf("Vamp Cloud cli configuration %v", utils.PrettyJson(string(jsonConfig))))
@@ -147,6 +155,18 @@ func setupConfigurationEnvrionmentVariables() {
 	viper.BindEnv("vamp-cloud-host", "VAMP_CLOUD_HOST")
 	viper.BindEnv("vamp-cloud-base-path", "VAMP_CLOUD_BASE_PATH")
 	viper.BindEnv("vamp-cloud-api-key", "VAMP_CLOUD_API_KEY")
+}
+
+func setupConfigurationOverrides(config *models.VampCloudCliConfiguration) {
+	if host != "" {
+		config.VampCloudHost = host
+	}
+	if basePath != "" {
+		config.VampCloudBasePath = basePath
+	}
+	if apiKey != "" {
+		config.APIKey = apiKey
+	}
 }
 
 func setupConfigurationDefaults() {

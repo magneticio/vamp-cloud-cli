@@ -97,8 +97,8 @@ func (a *VampCloudAnansiClustersClient) ListClusters() ([]models.Cluster, error)
 
 	models := make([]models.Cluster, len(results))
 
-	for _, result := range results {
-		models = append(models, clusterDTOToModel(*result))
+	for index, result := range results {
+		models[index] = clusterDTOToModel(*result)
 	}
 
 	logging.Info("Retrieved clusters list")

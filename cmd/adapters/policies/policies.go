@@ -96,8 +96,8 @@ func (a *VampCloudAnansiPoliciesClient) ListPolicies() ([]models.Policy, error) 
 
 	models := make([]models.Policy, len(results))
 
-	for _, result := range results {
-		models = append(models, policyDTOToModel(*result))
+	for index, result := range results {
+		models[index] = policyDTOToModel(*result)
 	}
 
 	logging.Info("Retrieved policies list")

@@ -75,20 +75,20 @@ func NewGetApplicationsIDInstallationOK() *GetApplicationsIDInstallationOK {
 Installation command
 */
 type GetApplicationsIDInstallationOK struct {
-	Payload *models.Installer
+	Payload *models.Installation
 }
 
 func (o *GetApplicationsIDInstallationOK) Error() string {
 	return fmt.Sprintf("[GET /applications/{id}/installation][%d] getApplicationsIdInstallationOK  %+v", 200, o.Payload)
 }
 
-func (o *GetApplicationsIDInstallationOK) GetPayload() *models.Installer {
+func (o *GetApplicationsIDInstallationOK) GetPayload() *models.Installation {
 	return o.Payload
 }
 
 func (o *GetApplicationsIDInstallationOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	o.Payload = new(models.Installer)
+	o.Payload = new(models.Installation)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {

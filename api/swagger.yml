@@ -123,7 +123,7 @@ paths:
           in: body
           description: The application to create
           schema:
-            $ref: "#/definitions/IngressInput"
+            $ref: "#/definitions/Ingress"
       responses:
         200:
           description: ID of created ingress
@@ -166,7 +166,7 @@ paths:
           in: body
           description: The application to create
           schema:
-            $ref: "#/definitions/IngressInput"
+            $ref: "#/definitions/Ingress"
       responses:
         200:
           description: OK
@@ -325,6 +325,8 @@ paths:
             $ref: "#/definitions/Releases"
         401:
           $ref: "#/responses/Unauthorized"
+        403:
+          $ref: "#/responses/Forbidden"
         500:
           $ref: "#/responses/InternalServerError"
         default:
@@ -342,7 +344,7 @@ paths:
         200:
           description: Release status object
           schema:
-            $ref: "#/definitions/ReleaseStatus"
+            $ref: "#/definitions/Release"
         401:
           $ref: "#/responses/Unauthorized"
         403:
@@ -524,15 +526,6 @@ definitions:
         readOnly: true
       domainName:
         type: string
-      routes:
-        type: array
-        items:
-          $ref: "#/definitions/Route"
-  IngressInput:
-    type: object
-    properties:
-      domainName:
-        type: string
         minLength: 1
       tlsType:
         type: string
@@ -587,15 +580,12 @@ definitions:
       SourceVersionID:
         type: integer
         format: int64
-      TargetVersion:
+      TargetVersionID:
         type: integer
         format: int64
       PolicyID:
         type: integer
         format: int64
-  ReleaseStatus:
-    type: object
-    properties:
       state:
         type: string
         enum: [PENDING, RUNNING, FINISHED, FAILED]
