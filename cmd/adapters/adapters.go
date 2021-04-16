@@ -10,6 +10,22 @@ import (
 	"github.com/magneticio/vamp-cloud-cli/cmd/utils/logging"
 )
 
+type ResourceNotFoundError struct {
+	Err error
+}
+
+func NewResourceNotFoundError(err error) *ResourceNotFoundError {
+	return &ResourceNotFoundError{Err: err}
+}
+
+func (e *ResourceNotFoundError) Error() string {
+	return fmt.Sprint(e.Err)
+}
+
+func (e *ResourceNotFoundError) Unwrap() error {
+	return e.Err
+}
+
 func createRoundTripper(baseTransport http.RoundTripper, apiVersion, apiKey string) *customTransport {
 
 	return &customTransport{

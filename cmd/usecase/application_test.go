@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/magneticio/vamp-cloud-cli/cmd/adapters"
 	"github.com/magneticio/vamp-cloud-cli/cmd/models"
 	"github.com/magneticio/vamp-cloud-cli/cmd/usecase"
 	mocks "github.com/magneticio/vamp-cloud-cli/mocks/adaptersmocks"
@@ -289,19 +290,278 @@ func TestGetInstallationCommandUsecase(t *testing.T) {
 
 }
 
-// func NewGetInstallationCommandUsecase(applicationClient applicationAdapters.VampCloudApplicationsClient) GetInstallationCommandUsecase {
-// 	return func(name string) (string, error) {
+func TestAttachServiceToApplicationUsecase(t *testing.T) {
 
-// 		application, err := applicationClient.GetApplication(name)
-// 		if err != nil {
-// 			return "", err
-// 		}
+	applicationName := "application"
+	serviceName := "service"
+	policyName := "policy"
+	domainName := "domain"
+	routePath := "/"
 
-// 		installationCommand, err := applicationClient.GetInstallationCommand(application.ID)
-// 		if err != nil {
-// 			return "", err
-// 		}
+	Convey("Given an AttachServiceToApplicationUsecase", t, func() {
 
-// 		return installationCommand, nil
-// 	}
-// }
+		ingressClient := &mocks.VampCloudIngressesClient{}
+		applicationClient := &mocks.VampCloudApplicationsClient{}
+		serviceClient := &mocks.VampCloudServicesClient{}
+		policyClient := &mocks.VampCloudPoliciesClient{}
+
+		attachServiceToApplication := usecase.NewAttachServiceToApplicationUsecase(ingressClient, applicationClient, serviceClient, policyClient)
+
+		testApplication := models.Application{
+			Name:        applicationName,
+			ClusterID:   1,
+			Description: "description",
+			IngressType: models.CONTOUR_INGRESS_TYPE,
+			Namespace:   "namespace",
+		}
+
+		Convey("When getting the installation command", func() {
+
+			Convey("When getting the application by name fails", func() {
+
+				mockError := fmt.Errorf("mock error")
+
+				var application *models.Application
+
+				applicationClient.On("GetApplication", applicationName).Return(application, mockError)
+
+				Convey("it should return an error", func() {
+
+					err := attachServiceToApplication(applicationName, serviceName, policyName, domainName, routePath)
+
+					So(err, ShouldResemble, mockError)
+
+				})
+
+			})
+
+			Convey("When getting the applicaiton by name succeeds", func() {
+
+				applicationClient.On("GetApplication", applicationName).Return(&testApplication, nil)
+
+				Convey("When getting the service fails", func() {
+
+					mockError := fmt.Errorf("mock error")
+
+					var service *models.Service
+
+					serviceClient.On("GetService", serviceName).Return(service, mockError)
+
+					Convey("it should return an error", func() {
+
+						err := attachServiceToApplication(applicationName, serviceName, policyName, domainName, routePath)
+
+						So(err, ShouldResemble, mockError)
+
+					})
+
+				})
+
+				Convey("When getting the command succeeds", func() {
+
+					service := models.Service{
+						ID:   1,
+						Name: "service",
+					}
+
+					serviceClient.On("GetService", serviceName).Return(&service, nil)
+
+					Convey("When getting the policy by name fails", func() {
+
+						mockError := fmt.Errorf("mock error")
+
+						var policy *models.Policy
+
+						policyClient.On("GetPolicy", policyName).Return(policy, mockError)
+
+						Convey("it should return an error", func() {
+
+							err := attachServiceToApplication(applicationName, serviceName, policyName, domainName, routePath)
+
+							So(err, ShouldResemble, mockError)
+
+						})
+
+					})
+
+					Convey("When getting the policy by name succeeds", func() {
+
+						policy := models.Policy{
+							ID:         1,
+							PolicyType: models.VALIDATION,
+							Name:       policyName,
+						}
+
+						policyClient.On("GetPolicy", policyName).Return(&policy, nil)
+
+						Convey("When getting the ingress fails", func() {
+
+							mockError := fmt.Errorf("mock error")
+
+							var ingress *models.Ingress
+
+							ingressClient.On("GetIngressByApplicationIDAndDomainName", testApplication.ID, domainName).Return(ingress, mockError)
+
+							Convey("it should return an error", func() {
+
+								err := attachServiceToApplication(applicationName, serviceName, policyName, domainName, routePath)
+
+								So(err, ShouldResemble, mockError)
+
+							})
+
+						})
+
+						Convey("When getting the ingress fails with not found", func() {
+
+							mockError := fmt.Errorf("mock error")
+
+							notFoundErr := adapters.NewResourceNotFoundError(mockError)
+
+							var ingress *models.Ingress
+
+							ingressClient.On("GetIngressByApplicationIDAndDomainName", testApplication.ID, domainName).Return(ingress, notFoundErr)
+
+							Convey("When posting the ingress fails", func() {
+
+								mockError := fmt.Errorf("mock error")
+
+								testRoute := models.NewRoute(service.ID, routePath)
+
+								testIngress := models.NewIngress(0, testApplication.ID, domainName, "", models.NO_TLS_TYPE, []models.Route{testRoute})
+
+								ingressClient.On("PostIngress", testIngress).Return(int64(0), mockError)
+
+								Convey("it should return an error", func() {
+
+									err := attachServiceToApplication(applicationName, serviceName, policyName, domainName, routePath)
+
+									So(err, ShouldResemble, mockError)
+
+								})
+
+							})
+
+							Convey("When posting the ingress succeeds", func() {
+
+								testRoute := models.NewRoute(service.ID, routePath)
+
+								testIngress := models.NewIngress(0, testApplication.ID, domainName, "", models.NO_TLS_TYPE, []models.Route{testRoute})
+
+								ingressClient.On("PostIngress", testIngress).Return(int64(1), nil)
+
+								Convey("When attaching the service fails", func() {
+
+									mockError := fmt.Errorf("mock error")
+
+									applicationClient.On("AttachServiceToApplication", testApplication.ID, service.ID, policy.ID).Return(mockError)
+
+									Convey("it should return an error", func() {
+
+										err := attachServiceToApplication(applicationName, serviceName, policyName, domainName, routePath)
+
+										So(err, ShouldResemble, mockError)
+
+									})
+
+								})
+
+								Convey("When attaching the service succeeds", func() {
+
+									applicationClient.On("AttachServiceToApplication", testApplication.ID, service.ID, policy.ID).Return(nil)
+
+									Convey("it should succeed", func() {
+
+										err := attachServiceToApplication(applicationName, serviceName, policyName, domainName, routePath)
+
+										So(err, ShouldBeNil)
+
+									})
+
+								})
+
+							})
+
+						})
+
+						Convey("When getting the ingress succeeds", func() {
+
+							testRoute := models.NewRoute(2, "Some path")
+
+							testIngress := models.NewIngress(0, testApplication.ID, domainName, "", models.NO_TLS_TYPE, []models.Route{testRoute})
+
+							ingressClient.On("GetIngressByApplicationIDAndDomainName", testApplication.ID, domainName).Return(&testIngress, nil)
+
+							Convey("When patching the ingress fails", func() {
+
+								mockError := fmt.Errorf("mock error")
+
+								testRoute2 := models.NewRoute(service.ID, routePath)
+
+								updatedIngress := models.NewIngress(0, testApplication.ID, domainName, "", models.NO_TLS_TYPE, []models.Route{testRoute, testRoute2})
+
+								ingressClient.On("PatchIngress", updatedIngress).Return(mockError)
+
+								Convey("it should return an error", func() {
+
+									err := attachServiceToApplication(applicationName, serviceName, policyName, domainName, routePath)
+
+									So(err, ShouldResemble, mockError)
+
+								})
+
+							})
+
+							Convey("When patching the ingress succeeds", func() {
+
+								testRoute2 := models.NewRoute(service.ID, routePath)
+
+								updatedIngress := models.NewIngress(0, testApplication.ID, domainName, "", models.NO_TLS_TYPE, []models.Route{testRoute, testRoute2})
+
+								ingressClient.On("PatchIngress", updatedIngress).Return(nil)
+
+								Convey("When attaching the service fails", func() {
+
+									mockError := fmt.Errorf("mock error")
+
+									applicationClient.On("AttachServiceToApplication", testApplication.ID, service.ID, policy.ID).Return(mockError)
+
+									Convey("it should return an error", func() {
+
+										err := attachServiceToApplication(applicationName, serviceName, policyName, domainName, routePath)
+
+										So(err, ShouldResemble, mockError)
+
+									})
+
+								})
+
+								Convey("When attaching the service succeeds", func() {
+
+									applicationClient.On("AttachServiceToApplication", testApplication.ID, service.ID, policy.ID).Return(nil)
+
+									Convey("it should succeed", func() {
+
+										err := attachServiceToApplication(applicationName, serviceName, policyName, domainName, routePath)
+
+										So(err, ShouldBeNil)
+
+									})
+
+								})
+
+							})
+
+						})
+
+					})
+
+				})
+
+			})
+
+		})
+
+	})
+
+}

@@ -194,7 +194,7 @@ paths:
         200:
           description: Installation command
           schema:
-            $ref: "#/definitions/Installer"
+            $ref: "#/definitions/Installation"
         401:
           $ref: "#/responses/Unauthorized"
         403:
@@ -551,7 +551,7 @@ definitions:
       serviceID:
         type: integer
         format: int64
-  Installer:
+  Installation:
     type: object
     properties:
       command:

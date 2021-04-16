@@ -6,6 +6,7 @@ import (
 
 	"github.com/magneticio/vamp-cloud-cli/client"
 	"github.com/magneticio/vamp-cloud-cli/client/operations"
+	"github.com/magneticio/vamp-cloud-cli/cmd/adapters"
 	"github.com/magneticio/vamp-cloud-cli/cmd/models"
 	"github.com/magneticio/vamp-cloud-cli/cmd/utils/logging"
 	dto "github.com/magneticio/vamp-cloud-cli/models"
@@ -23,7 +24,7 @@ type VampCloudAnansiApplicationsClient struct {
 	client *client.Anansi
 }
 
-var ErrorApplicationNotFound = errors.New("application not found")
+var ErrorApplicationNotFound = adapters.NewResourceNotFoundError(errors.New("application not found"))
 
 func NewVampCloudApplicationsClient(httpClient *client.Anansi) *VampCloudAnansiApplicationsClient {
 
@@ -116,7 +117,7 @@ func (c *VampCloudAnansiApplicationsClient) GetInstallationCommand(applicationID
 
 	logging.Info("Retrieved installation command", logging.NewPair("application-id", applicationID))
 
-	return operationResult.GetPayload().Command, ErrorApplicationNotFound
+	return operationResult.GetPayload().Command, nil
 }
 
 func (c *VampCloudAnansiApplicationsClient) AttachServiceToApplication(applicationID, serviceID, policyID int64) error {

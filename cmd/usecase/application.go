@@ -3,6 +3,7 @@ package usecase
 import (
 	"errors"
 
+	"github.com/magneticio/vamp-cloud-cli/cmd/adapters"
 	applicationAdapters "github.com/magneticio/vamp-cloud-cli/cmd/adapters/applications"
 	clusterAdapters "github.com/magneticio/vamp-cloud-cli/cmd/adapters/clusters"
 	ingressAdapters "github.com/magneticio/vamp-cloud-cli/cmd/adapters/ingresses"
@@ -101,21 +102,21 @@ func NewAttachServiceToApplicationUsecase(ingressClient ingressAdapters.VampClou
 		route := models.NewRoute(service.ID, routePath)
 		var ingress *models.Ingress
 
-		ingress, err = ingressClient.GetIngressByApplicationIDAndDomainName(application.ID, domainName)
-		if err != nil {
+		ingress, getErr := ingressClient.GetIngressByApplicationIDAndDomainName(application.ID, domainName)
+		if getErr != nil {
 
-			if errors.As(err, &ingressAdapters.ErrorIngressNotFound) {
-
-				newIngress := models.NewIngress(0, application.ID, domainName, "", models.NO_TLS_TYPE, []models.Route{route})
-
-				_, err = ingressClient.PostIngress(newIngress)
-				if err != nil {
-					return err
-				}
-
+			var check *adapters.ResourceNotFoundError
+			if !errors.As(getErr, &check) {
+				return getErr
 			}
 
-			return err
+			newIngress := models.NewIngress(0, application.ID, domainName, "", models.NO_TLS_TYPE, []models.Route{route})
+
+			_, postErr := ingressClient.PostIngress(newIngress)
+			if postErr != nil {
+				return postErr
+			}
+
 		}
 
 		if ingress != nil {

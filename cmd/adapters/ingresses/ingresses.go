@@ -6,6 +6,7 @@ import (
 
 	"github.com/magneticio/vamp-cloud-cli/client"
 	"github.com/magneticio/vamp-cloud-cli/client/operations"
+	"github.com/magneticio/vamp-cloud-cli/cmd/adapters"
 	"github.com/magneticio/vamp-cloud-cli/cmd/models"
 	"github.com/magneticio/vamp-cloud-cli/cmd/utils/logging"
 	dto "github.com/magneticio/vamp-cloud-cli/models"
@@ -22,7 +23,7 @@ type VampCloudAnansiIngressClient struct {
 	client *client.Anansi
 }
 
-var ErrorIngressNotFound = errors.New("ingress not found")
+var ErrorIngressNotFound = adapters.NewResourceNotFoundError(errors.New("ingress not found"))
 
 func NewVampCloudIngressClient(httpClient *client.Anansi) *VampCloudAnansiIngressClient {
 
