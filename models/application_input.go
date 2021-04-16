@@ -20,8 +20,7 @@ import (
 type ApplicationInput struct {
 
 	// cluster ID
-	// Required: true
-	ClusterID *int64 `json:"clusterID"`
+	ClusterID int64 `json:"clusterID,omitempty"`
 
 	// description
 	Description string `json:"description,omitempty"`
@@ -43,10 +42,6 @@ type ApplicationInput struct {
 func (m *ApplicationInput) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateClusterID(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validateIngressType(formats); err != nil {
 		res = append(res, err)
 	}
@@ -62,15 +57,6 @@ func (m *ApplicationInput) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *ApplicationInput) validateClusterID(formats strfmt.Registry) error {
-
-	if err := validate.Required("clusterID", "body", m.ClusterID); err != nil {
-		return err
-	}
-
 	return nil
 }
 

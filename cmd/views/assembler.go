@@ -1,12 +1,15 @@
 package views
 
-import "github.com/magneticio/vamp-cloud-cli/cmd/models"
+import (
+	"github.com/magneticio/vamp-cloud-cli/cmd/models"
+)
 
 func ApplicationModelToView(application models.Application, clusterName string) Application {
 
-	ingressDomains := make([]string, len(application.Ingresses))
+	ingressDomains := []string{}
 
 	for _, ingress := range application.Ingresses {
+
 		ingressDomains = append(ingressDomains, ingress.DomainName)
 	}
 

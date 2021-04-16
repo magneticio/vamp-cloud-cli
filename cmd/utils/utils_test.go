@@ -7,7 +7,7 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-func TestPrintFormatted(t *testing.T) {
+func TestFormatOutput(t *testing.T) {
 
 	Convey("Given a struct", t, func() {
 
@@ -39,7 +39,7 @@ func TestPrintFormatted(t *testing.T) {
 
 		Convey("When printing it as json", func() {
 
-			result, err := utils.PrintFormatted("json", &testData)
+			result, err := utils.FormatOutput("json", &testData)
 
 			Convey("it should match the expected format", func() {
 
@@ -54,7 +54,7 @@ func TestPrintFormatted(t *testing.T) {
 
 		Convey("When printing it as a table", func() {
 
-			result, err := utils.PrintFormatted("", &testData)
+			result, err := utils.FormatOutput("", &testData)
 
 			Convey("it should match the expected format", func() {
 
@@ -69,7 +69,7 @@ func TestPrintFormatted(t *testing.T) {
 
 		Convey("When printing only the name", func() {
 
-			result, err := utils.PrintFormatted("name", &testData)
+			result, err := utils.FormatOutput("name", &testData)
 
 			Convey("it should match the expected format", func() {
 

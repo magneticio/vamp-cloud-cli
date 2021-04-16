@@ -36,6 +36,10 @@ type Application struct {
 	// name
 	// Min Length: 1
 	Name string `json:"name,omitempty"`
+
+	// namespace
+	// Min Length: 1
+	Namespace string `json:"namespace,omitempty"`
 }
 
 // Validate validates this application
@@ -51,6 +55,10 @@ func (m *Application) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateName(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateNamespace(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -101,6 +109,19 @@ func (m *Application) validateName(formats strfmt.Registry) error {
 	}
 
 	if err := validate.MinLength("name", "body", string(m.Name), 1); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *Application) validateNamespace(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Namespace) { // not required
+		return nil
+	}
+
+	if err := validate.MinLength("namespace", "body", string(m.Namespace), 1); err != nil {
 		return err
 	}
 

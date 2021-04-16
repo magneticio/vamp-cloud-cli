@@ -74,7 +74,12 @@ var watchReleaseCmd = &cobra.Command{
 
 			utils.ClearScreen()
 
-			utils.PrintFormatted(outputType, statuses)
+			output, err := utils.FormatOutput(outputType, statuses)
+			if err != nil {
+				return err
+			}
+
+			fmt.Println(output)
 
 			if releaseStatus.Status != "running" {
 				return nil

@@ -50,9 +50,14 @@ var describeApplicationCmd = &cobra.Command{
 			return err
 		}
 
-		applicationView := views.ApplicationModelToView(*application, cluster.Name)
+		view := views.ApplicationModelToView(*application, cluster.Name)
 
-		utils.PrintFormatted(outputType, applicationView)
+		output, err := utils.FormatOutput(outputType, &view)
+		if err != nil {
+			return err
+		}
+
+		fmt.Println(output)
 
 		return nil
 	},

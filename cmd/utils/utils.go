@@ -25,7 +25,7 @@ type NamedArtifact struct {
 	Name string
 }
 
-func PrintFormatted(outputFormat string, data interface{}) (string, error) {
+func FormatOutput(outputFormat string, data interface{}) (string, error) {
 
 	var result string
 

@@ -10,11 +10,29 @@ import (
 	"github.com/magneticio/vamp-cloud-cli/cmd/utils/logging"
 )
 
-func createRoundTripper(baseTransport http.RoundTripper, apiVersion, apikey string) *customTransport {
+type ResourceNotFoundError struct {
+	Err error
+}
+
+func NewResourceNotFoundError(err error) *ResourceNotFoundError {
+	return &ResourceNotFoundError{Err: err}
+}
+
+func (e *ResourceNotFoundError) Error() string {
+	return fmt.Sprint(e.Err)
+}
+
+func (e *ResourceNotFoundError) Unwrap() error {
+	return e.Err
+}
+
+func createRoundTripper(baseTransport http.RoundTripper, apiVersion, apiKey string) *customTransport {
 
 	return &customTransport{
-		//originalTransport: http.DefaultTransport,
+
 		originalTransport: baseTransport,
+		apiVersion:        apiVersion,
+		apiKey:            apiKey,
 	}
 }
 
@@ -37,13 +55,16 @@ func (c *customTransport) RoundTrip(r *http.Request) (*http.Response, error) {
 		return nil, err
 	}
 
+	logging.Info("Receiveived new response", logging.NewPair("response-status", resp.Status))
+
 	return resp, nil
 }
 
 func NewApiClient(host, basePath, apiVersion, apikey string) *client.Anansi {
 
-	transport := httptransport.New(host, basePath, []string{"http", "https"})
+	transport := httptransport.New(host, basePath, []string{"http"})
 	transport.Producers[fmt.Sprintf("application/vnd.vamp.%v+json", apiVersion)] = runtime.JSONProducer()
+	transport.Consumers[fmt.Sprintf("application/vnd.vamp.%v+json", apiVersion)] = runtime.JSONConsumer()
 
 	customRoundTripper := createRoundTripper(transport.Transport, apiVersion, apikey)
 

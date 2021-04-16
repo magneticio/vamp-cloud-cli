@@ -6,8 +6,12 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
+
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // Cluster cluster
@@ -27,10 +31,78 @@ type Cluster struct {
 
 	// name
 	Name string `json:"name,omitempty"`
+
+	// provider
+	// Enum: [AKS DOKS EKS GKE SELF_MANAGED OTHER]
+	Provider string `json:"provider,omitempty"`
 }
 
 // Validate validates this cluster
 func (m *Cluster) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateProvider(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+var clusterTypeProviderPropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["AKS","DOKS","EKS","GKE","SELF_MANAGED","OTHER"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		clusterTypeProviderPropEnum = append(clusterTypeProviderPropEnum, v)
+	}
+}
+
+const (
+
+	// ClusterProviderAKS captures enum value "AKS"
+	ClusterProviderAKS string = "AKS"
+
+	// ClusterProviderDOKS captures enum value "DOKS"
+	ClusterProviderDOKS string = "DOKS"
+
+	// ClusterProviderEKS captures enum value "EKS"
+	ClusterProviderEKS string = "EKS"
+
+	// ClusterProviderGKE captures enum value "GKE"
+	ClusterProviderGKE string = "GKE"
+
+	// ClusterProviderSELFMANAGED captures enum value "SELF_MANAGED"
+	ClusterProviderSELFMANAGED string = "SELF_MANAGED"
+
+	// ClusterProviderOTHER captures enum value "OTHER"
+	ClusterProviderOTHER string = "OTHER"
+)
+
+// prop value enum
+func (m *Cluster) validateProviderEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, clusterTypeProviderPropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *Cluster) validateProvider(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Provider) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateProviderEnum("provider", "body", m.Provider); err != nil {
+		return err
+	}
+
 	return nil
 }
 
