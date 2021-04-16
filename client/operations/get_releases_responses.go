@@ -35,6 +35,12 @@ func (o *GetReleasesReader) ReadResponse(response runtime.ClientResponse, consum
 			return nil, err
 		}
 		return nil, result
+	case 403:
+		result := NewGetReleasesForbidden()
+		if err := result.readResponse(response, consumer, o.formats); err != nil {
+			return nil, err
+		}
+		return nil, result
 	case 500:
 		result := NewGetReleasesInternalServerError()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
@@ -108,6 +114,39 @@ func (o *GetReleasesUnauthorized) GetPayload() *models.Error {
 }
 
 func (o *GetReleasesUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	o.Payload = new(models.Error)
+
+	// response payload
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+		return err
+	}
+
+	return nil
+}
+
+// NewGetReleasesForbidden creates a GetReleasesForbidden with default headers values
+func NewGetReleasesForbidden() *GetReleasesForbidden {
+	return &GetReleasesForbidden{}
+}
+
+/*GetReleasesForbidden handles this case with default header values.
+
+The requester does not have access rights to the resource.
+*/
+type GetReleasesForbidden struct {
+	Payload *models.Error
+}
+
+func (o *GetReleasesForbidden) Error() string {
+	return fmt.Sprintf("[GET /releases][%d] getReleasesForbidden  %+v", 403, o.Payload)
+}
+
+func (o *GetReleasesForbidden) GetPayload() *models.Error {
+	return o.Payload
+}
+
+func (o *GetReleasesForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	o.Payload = new(models.Error)
 

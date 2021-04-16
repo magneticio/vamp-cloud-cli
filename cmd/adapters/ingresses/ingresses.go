@@ -138,14 +138,27 @@ func ingressDTOToModel(ingress dto.Ingress, applicationID int64) models.Ingress 
 		routes = append(routes, models.NewRoute(route.ServiceID, route.Path))
 	}
 
-	return models.NewIngress(ingress.ID, applicationID, ingress.DomainName, "", "", routes)
+	return models.NewIngress(ingress.ID, applicationID, ingress.DomainName, ingress.TLSSecretName, models.TlsType(ingress.TLSType), routes)
 }
 
-func ingressModelToInput(ingress models.Ingress) dto.IngressInput {
+func ingressModelToInput(ingress models.Ingress) dto.Ingress {
 
-	return dto.IngressInput{
+	routes := []*dto.Route{}
+
+	for _, route := range ingress.Routes {
+
+		dto := dto.Route{
+			Path:      route.Path,
+			ServiceID: route.ServiceID,
+		}
+
+		routes = append(routes, &dto)
+	}
+
+	return dto.Ingress{
 		TLSSecretName: ingress.TlsSecret,
 		TLSType:       string(ingress.TlsType),
 		DomainName:    ingress.DomainName,
+		Routes:        routes,
 	}
 }

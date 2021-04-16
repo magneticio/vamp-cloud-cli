@@ -27,8 +27,8 @@ type Release struct {
 	// source version ID
 	SourceVersionID int64 `json:"SourceVersionID,omitempty"`
 
-	// target version
-	TargetVersion int64 `json:"TargetVersion,omitempty"`
+	// target version ID
+	TargetVersionID int64 `json:"TargetVersionID,omitempty"`
 }
 
 // Validate validates this release

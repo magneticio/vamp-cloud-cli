@@ -69,7 +69,7 @@ type PostApplicationsIDIngressesParams struct {
 	  The application to create
 
 	*/
-	Ingress *models.IngressInput
+	Ingress *models.Ingress
 
 	timeout    time.Duration
 	Context    context.Context
@@ -121,13 +121,13 @@ func (o *PostApplicationsIDIngressesParams) SetID(id int64) {
 }
 
 // WithIngress adds the ingress to the post applications ID ingresses params
-func (o *PostApplicationsIDIngressesParams) WithIngress(ingress *models.IngressInput) *PostApplicationsIDIngressesParams {
+func (o *PostApplicationsIDIngressesParams) WithIngress(ingress *models.Ingress) *PostApplicationsIDIngressesParams {
 	o.SetIngress(ingress)
 	return o
 }
 
 // SetIngress adds the ingress to the post applications ID ingresses params
-func (o *PostApplicationsIDIngressesParams) SetIngress(ingress *models.IngressInput) {
+func (o *PostApplicationsIDIngressesParams) SetIngress(ingress *models.Ingress) {
 	o.Ingress = ingress
 }
 

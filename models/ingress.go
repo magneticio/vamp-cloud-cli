@@ -6,11 +6,13 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"strconv"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // Ingress ingress
@@ -19,6 +21,7 @@ import (
 type Ingress struct {
 
 	// domain name
+	// Min Length: 1
 	DomainName string `json:"domainName,omitempty"`
 
 	// id
@@ -27,19 +30,47 @@ type Ingress struct {
 
 	// routes
 	Routes []*Route `json:"routes"`
+
+	// tls secret name
+	TLSSecretName string `json:"tlsSecretName,omitempty"`
+
+	// tls type
+	// Enum: [NO_TLS TLS_EDGE]
+	TLSType string `json:"tlsType,omitempty"`
 }
 
 // Validate validates this ingress
 func (m *Ingress) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateDomainName(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateRoutes(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateTLSType(formats); err != nil {
 		res = append(res, err)
 	}
 
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *Ingress) validateDomainName(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.DomainName) { // not required
+		return nil
+	}
+
+	if err := validate.MinLength("domainName", "body", string(m.DomainName), 1); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -63,6 +94,49 @@ func (m *Ingress) validateRoutes(formats strfmt.Registry) error {
 			}
 		}
 
+	}
+
+	return nil
+}
+
+var ingressTypeTLSTypePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["NO_TLS","TLS_EDGE"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		ingressTypeTLSTypePropEnum = append(ingressTypeTLSTypePropEnum, v)
+	}
+}
+
+const (
+
+	// IngressTLSTypeNOTLS captures enum value "NO_TLS"
+	IngressTLSTypeNOTLS string = "NO_TLS"
+
+	// IngressTLSTypeTLSEDGE captures enum value "TLS_EDGE"
+	IngressTLSTypeTLSEDGE string = "TLS_EDGE"
+)
+
+// prop value enum
+func (m *Ingress) validateTLSTypeEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, ingressTypeTLSTypePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *Ingress) validateTLSType(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.TLSType) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateTLSTypeEnum("tlsType", "body", m.TLSType); err != nil {
+		return err
 	}
 
 	return nil
