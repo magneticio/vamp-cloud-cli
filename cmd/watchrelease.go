@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/google/go-cmp/cmp"
 	"github.com/magneticio/vamp-cloud-cli/cmd/adapters"
 	applicationAdapters "github.com/magneticio/vamp-cloud-cli/cmd/adapters/applications"
 	policyAdapters "github.com/magneticio/vamp-cloud-cli/cmd/adapters/policies"
@@ -78,7 +79,11 @@ var watchReleaseCmd = &cobra.Command{
 				return err
 			}
 
-			statuses = append(statuses, *releaseStatus)
+			if !cmp.Equal(statuses[len(statuses)-1], *releaseStatus) {
+
+				statuses = append(statuses, *releaseStatus)
+
+			}
 
 			utils.ClearScreen()
 
