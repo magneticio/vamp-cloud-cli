@@ -4,12 +4,12 @@ import (
 	"time"
 
 	"github.com/eapache/go-resiliency/retrier"
-	"github.com/magneticio/vamp-cloud-cli/cmd/adapters"
 	applicationAdapters "github.com/magneticio/vamp-cloud-cli/cmd/adapters/applications"
 	policyAdapters "github.com/magneticio/vamp-cloud-cli/cmd/adapters/policies"
 	releaseAdapters "github.com/magneticio/vamp-cloud-cli/cmd/adapters/releases"
 	serviceAdapters "github.com/magneticio/vamp-cloud-cli/cmd/adapters/services"
 	"github.com/magneticio/vamp-cloud-cli/cmd/models"
+	"github.com/magneticio/vamp-cloud-cli/cmd/utils/logging"
 )
 
 type GetLastReleaseUsecase func(serviceName, applicationName string) (*models.ReleaseData, error)
@@ -29,14 +29,16 @@ func NewGetLastReleaseUsecase(applicationClient applicationAdapters.VampCloudApp
 			return nil, err
 		}
 
-		var notFound *adapters.ResourceNotFoundError
-		c := retrier.WhitelistClassifier{notFound}
+		classifier := retrier.WhitelistClassifier{releaseAdapters.ErrorReleaseNotFound}
 
-		r := retrier.New(retrier.ConstantBackoff(3, 1*time.Second), c)
+		repeater := retrier.New(retrier.ExponentialBackoff(5, 2*time.Second), classifier)
 
 		var release *models.Release
 
-		err = r.Run(func() error {
+		err = repeater.Run(func() error {
+
+			logging.Info("Attempting to retrieve release", logging.NewPair("application-id", application.ID), logging.NewPair("service-id", service.ID))
+
 			release, err = releaseClient.GetLastRelease(application.ID, service.ID)
 			if err != nil {
 				return err
