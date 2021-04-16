@@ -28,7 +28,7 @@ func TestGetReleaseStatusUsecase(t *testing.T) {
 
 				var releaseStatus *models.Release
 
-				releaseClient.On("GetReleaseStatusByID", releaseId).Return(releaseStatus, mockError)
+				releaseClient.On("GetReleaseByID", releaseId).Return(releaseStatus, mockError)
 
 				Convey("it should return an error", func() {
 
@@ -53,7 +53,7 @@ func TestGetReleaseStatusUsecase(t *testing.T) {
 					0.9,
 				)
 
-				releaseClient.On("GetReleaseStatusByID", releaseId).Return(&releaseStatus, nil)
+				releaseClient.On("GetReleaseByID", releaseId).Return(&releaseStatus, nil)
 
 				Convey("it should return the release status", func() {
 

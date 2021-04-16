@@ -14,7 +14,7 @@ import (
 
 type VampCloudReleasesClient interface {
 	GetLastRelease(applicationID, serviceID int64) (*models.Release, error)
-	GetReleaseStatusByID(releaseID string) (*models.Release, error)
+	GetReleaseByID(releaseID string) (*models.Release, error)
 }
 
 type VampCloudAnansiReleasesClient struct {
@@ -62,7 +62,7 @@ func (c *VampCloudAnansiReleasesClient) GetLastRelease(applicationID, serviceID 
 	return &result, nil
 }
 
-func (c *VampCloudAnansiReleasesClient) GetReleaseStatusByID(id string) (*models.Release, error) {
+func (c *VampCloudAnansiReleasesClient) GetReleaseByID(id string) (*models.Release, error) {
 
 	if id == "" {
 		return nil, fmt.Errorf("invalid release ID")

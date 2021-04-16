@@ -80,7 +80,7 @@ func NewGetLastReleaseUsecase(applicationClient applicationAdapters.VampCloudApp
 func NewGetReleaseStatusUsecase(releaseClient releaseAdapters.VampCloudReleasesClient) GetReleaseStatusUsecase {
 	return func(id string) (*models.Release, error) {
 
-		releaseStatus, err := releaseClient.GetReleaseStatusByID(id)
+		releaseStatus, err := releaseClient.GetReleaseByID(id)
 		if err != nil {
 			return nil, err
 		}
