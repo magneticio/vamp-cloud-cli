@@ -344,7 +344,7 @@ paths:
         200:
           description: Release status object
           schema:
-            $ref: "#/definitions/ReleaseStatus"
+            $ref: "#/definitions/Release"
         401:
           $ref: "#/responses/Unauthorized"
         403:
@@ -586,9 +586,6 @@ definitions:
       PolicyID:
         type: integer
         format: int64
-  ReleaseStatus:
-    type: object
-    properties:
       state:
         type: string
         enum: [PENDING, RUNNING, FINISHED, FAILED]

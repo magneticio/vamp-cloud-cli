@@ -48,8 +48,6 @@ var watchReleaseCmd = &cobra.Command{
 
 		getReleaseStatus := usecase.NewGetReleaseStatusUsecase(releaseClient)
 
-		statuses := []views.ReleaseStatus{}
-
 		for range time.Tick(time.Second * 30) {
 
 			releaseStatus, err := getReleaseStatus(release.Release.ID)
@@ -67,21 +65,14 @@ var watchReleaseCmd = &cobra.Command{
 				Health:      releaseStatus.Health,
 			}
 
-			if int64(len(statuses)) < releaseStatus.CurrentStep {
-
-				statuses = append(statuses, statusView)
-			}
-
-			utils.ClearScreen()
-
-			output, err := utils.FormatOutput(outputType, statuses)
+			output, err := utils.FormatOutput("", statusView)
 			if err != nil {
 				return err
 			}
 
 			fmt.Println(output)
 
-			if releaseStatus.Status != "running" {
+			if releaseStatus.Status != "RUNNING" {
 				return nil
 			}
 
@@ -92,7 +83,7 @@ var watchReleaseCmd = &cobra.Command{
 }
 
 func init() {
-	describeCmd.AddCommand(describeClusterCmd)
-	createIngressCommand.Flags().StringVar(&applicationName, "applicationName", "", "Vamp cloud application name")
-	createIngressCommand.MarkFlagRequired("application")
+	watchCmd.AddCommand(watchReleaseCmd)
+	watchReleaseCmd.Flags().StringVar(&applicationName, "application", "", "Vamp cloud application name")
+	watchReleaseCmd.MarkFlagRequired("application")
 }

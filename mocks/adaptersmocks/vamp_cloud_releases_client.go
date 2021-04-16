@@ -34,15 +34,15 @@ func (_m *VampCloudReleasesClient) GetLastRelease(applicationID int64, serviceID
 }
 
 // GetReleaseStatusByID provides a mock function with given fields: releaseID
-func (_m *VampCloudReleasesClient) GetReleaseStatusByID(releaseID string) (*models.ReleaseStatus, error) {
+func (_m *VampCloudReleasesClient) GetReleaseStatusByID(releaseID string) (*models.Release, error) {
 	ret := _m.Called(releaseID)
 
-	var r0 *models.ReleaseStatus
-	if rf, ok := ret.Get(0).(func(string) *models.ReleaseStatus); ok {
+	var r0 *models.Release
+	if rf, ok := ret.Get(0).(func(string) *models.Release); ok {
 		r0 = rf(releaseID)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*models.ReleaseStatus)
+			r0 = ret.Get(0).(*models.Release)
 		}
 	}
 

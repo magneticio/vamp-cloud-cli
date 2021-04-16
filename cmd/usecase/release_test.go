@@ -26,7 +26,7 @@ func TestGetReleaseStatusUsecase(t *testing.T) {
 
 				mockError := fmt.Errorf("mock error")
 
-				var releaseStatus *models.ReleaseStatus
+				var releaseStatus *models.Release
 
 				releaseClient.On("GetReleaseStatusByID", releaseId).Return(releaseStatus, mockError)
 
@@ -43,10 +43,14 @@ func TestGetReleaseStatusUsecase(t *testing.T) {
 
 			Convey("When getting the release status by id succeeds", func() {
 
-				releaseStatus := models.NewReleaseStatus(
-					0.9,
+				releaseStatus := models.NewRelease(
+					"id",
+					"running",
+					1,
+					1,
+					2,
 					5,
-					"success",
+					0.9,
 				)
 
 				releaseClient.On("GetReleaseStatusByID", releaseId).Return(&releaseStatus, nil)
@@ -55,10 +59,14 @@ func TestGetReleaseStatusUsecase(t *testing.T) {
 
 					status, err := getReleaseStatus(releaseId)
 
-					expected := models.NewReleaseStatus(
-						0.9,
+					expected := models.NewRelease(
+						"id",
+						"running",
+						1,
+						1,
+						2,
 						5,
-						"success",
+						0.9,
 					)
 
 					So(err, ShouldBeNil)
@@ -164,7 +172,15 @@ func TestGetLastReleaseUsecase(t *testing.T) {
 
 					Convey("When getting the last release succeeds", func() {
 
-						release := models.NewRelease("releaseid", 2, 3, 4)
+						release := models.NewRelease(
+							"id",
+							"running",
+							1,
+							2,
+							3,
+							4,
+							0.9,
+						)
 
 						releaseClient.On("GetLastRelease", application.ID, service.ID).Return(&release, nil)
 

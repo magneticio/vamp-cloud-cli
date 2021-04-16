@@ -6,11 +6,11 @@ import (
 
 func ApplicationModelToView(application models.Application, clusterName string) Application {
 
-	ingressDomains := []string{}
+	ingressDomains := make([]string, len(application.Ingresses))
 
-	for _, ingress := range application.Ingresses {
+	for index, ingress := range application.Ingresses {
 
-		ingressDomains = append(ingressDomains, ingress.DomainName)
+		ingressDomains[index] = ingress.DomainName
 	}
 
 	return Application{

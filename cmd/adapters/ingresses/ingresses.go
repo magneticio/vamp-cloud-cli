@@ -75,10 +75,10 @@ func (a *VampCloudAnansiIngressClient) ListIngresses(applicationID int64) ([]mod
 
 	results := operationResult.GetPayload().Items
 
-	models := []models.Ingress{}
+	models := make([]models.Ingress, len(results))
 
-	for _, result := range results {
-		models = append(models, ingressDTOToModel(*result, applicationID))
+	for index, result := range results {
+		models[index] = ingressDTOToModel(*result, applicationID)
 	}
 
 	logging.Info("Retrieved ingresses list", logging.NewPair("application-id", applicationID))
@@ -132,10 +132,10 @@ func ingressDTOToModel(ingress dto.Ingress, applicationID int64) models.Ingress 
 
 	//TODO maybe add the missing fields in the future
 
-	routes := []models.Route{}
+	routes := make([]models.Route, len(ingress.Routes))
 
-	for _, route := range ingress.Routes {
-		routes = append(routes, models.NewRoute(route.ServiceID, route.Path))
+	for index, route := range ingress.Routes {
+		routes[index] = models.NewRoute(route.ServiceID, route.Path)
 	}
 
 	return models.NewIngress(ingress.ID, applicationID, ingress.DomainName, ingress.TLSSecretName, models.TlsType(ingress.TLSType), routes)
@@ -143,19 +143,20 @@ func ingressDTOToModel(ingress dto.Ingress, applicationID int64) models.Ingress 
 
 func ingressModelToInput(ingress models.Ingress) dto.Ingress {
 
-	routes := []*dto.Route{}
+	routes := make([]*dto.Route, len(ingress.Routes))
 
-	for _, route := range ingress.Routes {
+	for index, route := range ingress.Routes {
 
 		dto := dto.Route{
 			Path:      route.Path,
 			ServiceID: route.ServiceID,
 		}
 
-		routes = append(routes, &dto)
+		routes[index] = &dto
 	}
 
 	return dto.Ingress{
+
 		TLSSecretName: ingress.TlsSecret,
 		TLSType:       string(ingress.TlsType),
 		DomainName:    ingress.DomainName,
