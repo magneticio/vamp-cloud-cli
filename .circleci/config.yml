@@ -1,5 +1,28 @@
 version: 2
 jobs:
+  test:
+    docker:
+      - image: circleci/golang:1.16.3
+    environment:
+      TEST_RESULTS: /tmp/test-results
+    steps:
+      - checkout
+      - run: mkdir -p $TEST_RESULTS
+      - restore_cache:
+          keys:
+            - v1-pkg-cache
+      - run:
+          name: Build code
+          command: make
+      - run:
+          name: Run unit tests
+          command: |
+            make test-cover
+            bash <(curl -s https://codecov.io/bash)
+      - save_cache:
+          key: v1-pkg-cache
+          paths:
+            - "/go/pkg"
   build:
     docker:
       - image: circleci/golang:1.16.3
@@ -10,7 +33,7 @@ jobs:
       - run: mkdir -p ./artifacts
       - restore_cache:
           keys:
-            - v1-pkg-cache
+            - v1-pkg-cache            
       - run: git config --global url.git@github.com:.insteadOf https://github.com/
       - setup_remote_docker:
           docker_layer_caching: true
@@ -45,7 +68,10 @@ workflows:
   version: 2
   main:
     jobs:
+      - test
       - build:
+          requires:
+            - test
           filters:
             tags:
               only: /^(v)\d+\.\d+\.\d+$/
@@ -57,3 +83,5 @@ workflows:
               ignore: /.*/
             tags:
               only: /^(v)\d+\.\d+\.\d+$/
+
+              
