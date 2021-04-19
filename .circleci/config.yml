@@ -1,6 +1,4 @@
 version: 2
-orbs:
-  github-release: h-matsuo/github-release@0.1.1
 jobs:
   test:
     docker:
@@ -61,18 +59,11 @@ jobs:
       - attach_workspace:
           at: ./artifacts
       - run:
-          name: "Retrieve version"
+          name: "Publish Release on GitHub"
           command: |
             VERSION=$(cat ./artifacts/version.txt)
-            rm ./artifacts/version.txt    
-      - github-release/create:
-          name: "Publish Release on GitHub"
-          tag: $VERSION
-          title: $VERSION
-          user: $CIRCLE_PROJECT_USERNAME
-          repository: $CIRCLE_PROJECT_USERNAME
-          github-token-variable: $GITHUB_TOKEN
-          file-path: ./artifacts
+            rm ./artifacts/version.txt
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./artifacts/
 workflows:
   version: 2
   main:
