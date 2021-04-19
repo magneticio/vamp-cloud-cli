@@ -33,7 +33,7 @@ jobs:
       - run: mkdir -p ./artifacts
       - restore_cache:
           keys:
-            - v1-pkg-cache            
+            - v1-pkg-cache
       - run: git config --global url.git@github.com:.insteadOf https://github.com/
       - setup_remote_docker:
           docker_layer_caching: true
@@ -43,7 +43,7 @@ jobs:
       - save_cache:
           key: v1-pkg-cache
           paths:
-            - "/go/pkg"    
+            - "/go/pkg"
       - run: cp ./bin/* ./artifacts
       - run: cp ./bin/vamp-darwin-amd64 ./artifacts/vamp-darwin-x86_64
       - run: cp ./bin/vamp-linux-amd64 ./artifacts/vamp-linux-x86_64
@@ -68,7 +68,7 @@ workflows:
   version: 2
   main:
     jobs:
-      - test
+      - test:
           filters:
             tags:
               only: /^(v)\d+\.\d+\.\d+$/
