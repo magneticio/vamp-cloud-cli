@@ -49,6 +49,7 @@ func TestGetApplicationUsecase(t *testing.T) {
 					1,
 					1,
 					"test-application",
+					"namespace",
 					true,
 				)
 
@@ -90,6 +91,7 @@ func TestGetApplicationUsecase(t *testing.T) {
 							1,
 							1,
 							"test-application",
+							"namespace",
 							true,
 						)
 
@@ -388,7 +390,7 @@ func TestAttachServiceToApplicationUsecase(t *testing.T) {
 
 						policy := models.Policy{
 							ID:         1,
-							PolicyType: models.VALIDATION,
+							PolicyType: models.POLICY_TYPE_VALIDATION,
 							Name:       policyName,
 						}
 

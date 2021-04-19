@@ -50,51 +50,29 @@ var watchReleaseCmd = &cobra.Command{
 
 		getReleaseStatus := usecase.NewGetReleaseStatusUsecase(releaseClient)
 
-		statuses := []views.ReleaseStatus{}
-
-		releaseStatus, err := watchRelease(getReleaseStatus, *release, serviceName)
+		currentView, err := getReleaseView(getReleaseStatus, *release, serviceName)
 		if err != nil {
 			return err
 		}
 
-		statuses = append(statuses, *releaseStatus)
+		printer := utils.NewTablePrinter()
 
 		utils.ClearScreen()
 
-		output, err := utils.FormatOutput("", statuses)
-		if err != nil {
-			return err
-		}
+		fmt.Print(printer.FormatToTable(*currentView))
 
-		println(output)
-
-		if releaseStatus.Status != "RUNNING" {
+		if currentView.IsFinished() {
 			return nil
 		}
 
 		for range time.Tick(time.Second * 30) {
 
-			releaseStatus, err := watchRelease(getReleaseStatus, *release, serviceName)
+			currentView, err = watchRelease(getReleaseStatus, *release, *currentView, serviceName, printer)
 			if err != nil {
 				return err
 			}
 
-			if !cmp.Equal(statuses[len(statuses)-1], *releaseStatus) {
-
-				statuses = append(statuses, *releaseStatus)
-
-			}
-
-			utils.ClearScreen()
-
-			output, err := utils.FormatOutput("", statuses)
-			if err != nil {
-				return err
-			}
-
-			println(output)
-
-			if releaseStatus.Status != "RUNNING" {
+			if currentView.IsFinished() {
 				return nil
 			}
 
@@ -104,24 +82,37 @@ var watchReleaseCmd = &cobra.Command{
 	},
 }
 
-func watchRelease(getReleaseStatus usecase.GetReleaseStatusUsecase, release models.ReleaseData, serviceName string) (*views.ReleaseStatus, error) {
+func getReleaseView(getReleaseStatus usecase.GetReleaseStatusUsecase, release models.ReleaseData, serviceName string) (*views.ReleaseStatus, error) {
 
 	releaseStatus, err := getReleaseStatus(release.Release.ID)
 	if err != nil {
 		return nil, err
 	}
 
-	statusView := views.ReleaseStatus{
+	return &views.ReleaseStatus{
 		ServiceName: serviceName,
-		ReleaseType: string(release.Policy.PolicyType),
+		ReleaseType: views.PolicyTypeToPolicyViewType(release.Policy.PolicyType),
 		Source:      release.SourceServiceName,
 		Target:      release.TargetServiceName,
 		Step:        releaseStatus.CurrentStep,
 		Status:      releaseStatus.Status,
 		Health:      releaseStatus.Health,
+	}, nil
+}
+
+func watchRelease(getReleaseStatus usecase.GetReleaseStatusUsecase, release models.ReleaseData, previous views.ReleaseStatus, serviceName string, printer *utils.TablePrinter) (*views.ReleaseStatus, error) {
+
+	view, err := getReleaseView(getReleaseStatus, release, serviceName)
+	if err != nil {
+		return nil, err
 	}
 
-	return &statusView, nil
+	currentView := *view
+	if !cmp.Equal(currentView, previous) {
+		fmt.Print(printer.FormatToTableRow(currentView))
+	}
+
+	return view, nil
 }
 
 func init() {

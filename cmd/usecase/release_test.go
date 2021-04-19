@@ -147,7 +147,7 @@ func TestGetLastReleaseUsecase(t *testing.T) {
 
 				Convey("When getting the application by name succeeds", func() {
 
-					application := models.NewApplication(1, 2, applicationName, true)
+					application := models.NewApplication(1, 2, applicationName, "namespace", true)
 
 					applicationClient.On("GetApplication", applicationName).Return(&application, nil)
 
@@ -205,7 +205,7 @@ func TestGetLastReleaseUsecase(t *testing.T) {
 
 						Convey("When getting the policy by id succeeds", func() {
 
-							policy := models.NewPolicy(1, "policy", models.TRAFFIC_SHAPING_BASIC)
+							policy := models.NewPolicy(1, "policy", models.POLICY_TYPE_TRAFFIC_SHAPING_BASIC)
 
 							policyClient.On("GetPolicyByID", release.PolicyID).Return(&policy, nil)
 
