@@ -65,4 +65,6 @@ var describeApplicationCmd = &cobra.Command{
 
 func init() {
 	describeCmd.AddCommand(describeApplicationCmd)
+	describeApplicationCmd.Flags().StringVarP(&outputType, "output", "o", "yaml", "Output format yaml or json")
+
 }

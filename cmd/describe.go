@@ -6,6 +6,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var outputType string
+
 // describeCmd implements the get command
 var describeCmd = &cobra.Command{
 	Use:   "describe",
@@ -22,4 +24,5 @@ var describeCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(describeCmd)
+
 }

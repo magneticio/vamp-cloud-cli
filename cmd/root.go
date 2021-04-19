@@ -38,7 +38,6 @@ var cfgFile string
 var configPath string
 var configFileType string
 var description string
-var outputType string
 var applicationName string
 
 var apiKey string
@@ -83,8 +82,6 @@ func init() {
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	rootCmd.PersistentFlags().BoolVarP(&logging.Verbose, "verbose", "v", false, "Verbose")
-
-	rootCmd.PersistentFlags().StringVarP(&outputType, "output", "o", "yaml", "Output format yaml or json")
 
 	rootCmd.PersistentFlags().StringVarP(&apiKey, "key", "k", "", "Vamp Cloud api key")
 	rootCmd.PersistentFlags().StringVarP(&host, "host", "", "", "Vamp Cloud api host")

@@ -54,4 +54,5 @@ var describeClusterCmd = &cobra.Command{
 
 func init() {
 	describeCmd.AddCommand(describeClusterCmd)
+	describeClusterCmd.Flags().StringVarP(&outputType, "output", "o", "yaml", "Output format yaml or json")
 }
