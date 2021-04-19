@@ -81,8 +81,8 @@ vamp version
 In order to use Vamp Cloud cli you need to provide the following environment variables
 
   - VAMP_CLOUD_HOST: the Vamp Cloud api host
-	- VAMP_CLOUD_BASE_PATH: the base path for the Vamp Cloud api host
-	- VAMP_CLOUD_API_KEY: the Vamp Cloud api key that you can obtaion from the UI
+  - VAMP_CLOUD_BASE_PATH: the base path for the Vamp Cloud api host
+  - VAMP_CLOUD_API_KEY: the Vamp Cloud api key that you can obtaion from the UI
 
 
 ## Usage
