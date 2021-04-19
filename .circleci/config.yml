@@ -80,8 +80,7 @@ workflows:
             - build
           filters:
             branches:
-              ignore: /.*/
+              only: 
+                - main
             tags:
               only: /^(v)\d+\.\d+\.\d+$/
-
-              
