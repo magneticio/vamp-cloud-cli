@@ -143,7 +143,7 @@ func (c *VampCloudAnansiApplicationsClient) AttachServiceToApplication(applicati
 
 func applicationDTOtoModel(application dto.Application) models.Application {
 
-	return models.NewApplication(application.ID, application.ClusterID, application.Name, true)
+	return models.NewApplication(application.ID, application.ClusterID, application.Name, application.Namespace, true)
 }
 
 func applicationModelToInput(application models.Application) dto.ApplicationInput {

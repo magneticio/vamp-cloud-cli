@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"reflect"
-	"strings"
 
 	"github.com/inancgumus/screen"
 	"github.com/lensesio/tableprinter"
@@ -43,47 +42,68 @@ func FormatOutput(outputFormat string, data interface{}) (string, error) {
 		result = val.FieldByName("Name").Interface().(string)
 
 	default:
-		builder := strings.Builder{}
 
-		printer := tableprinter.New(&builder)
+		printer := NewTablePrinter()
 
-		printer.Print(data)
+		result = printer.FormatToTable(data)
 
-		result = builder.String()
 	}
 
 	return result, nil
 
 }
 
-func FormatToTableHeader(data interface{}) string {
+type TablePrinter struct {
+	buffer  *bytes.Buffer
+	printer *tableprinter.Printer
+}
 
-	builder := strings.Builder{}
+func NewTablePrinter() *TablePrinter {
 
-	printer := tableprinter.New(&builder)
+	buffer := new(bytes.Buffer)
+
+	return &TablePrinter{
+		buffer:  buffer,
+		printer: tableprinter.New(buffer),
+	}
+}
+
+func (t *TablePrinter) FormatToTable(data interface{}) string {
+
+	t.buffer.Reset()
+
+	t.printer.Print(data)
+
+	return t.buffer.String()
+
+}
+
+func (t *TablePrinter) FormatToTableHeader(data interface{}) string {
 
 	v := reflect.ValueOf(data)
 	headers := tableprinter.StructParser.ParseHeaders(v)
 
-	printer.Render(headers, nil, nil, false)
+	t.printer.Render(headers, nil, nil, false)
 
-	return builder.String()
+	row, nums := tableprinter.StructParser.ParseRow(v)
+
+	t.printer.RenderRow(row, nums)
+
+	return t.buffer.String()
 
 }
 
-func FormatToTableRow(data interface{}) string {
+func (t *TablePrinter) FormatToTableRow(data interface{}) string {
 
-	builder := strings.Builder{}
-
-	printer := tableprinter.New(&builder)
+	t.buffer.Reset()
 
 	v := reflect.ValueOf(data)
 
 	row, nums := tableprinter.StructParser.ParseRow(v)
 
-	printer.RenderRow(row, nums)
+	t.printer.RenderRow(row, nums)
 
-	return builder.String()
+	return t.buffer.String()
 
 }
 

@@ -19,11 +19,12 @@ type Application struct {
 	Ingresses   []Ingress
 }
 
-func NewApplication(id, clusterID int64, name string, isOwner bool) Application {
+func NewApplication(id, clusterID int64, name, namespace string, isOwner bool) Application {
 	return Application{
 		ID:        id,
 		ClusterID: clusterID,
 		Name:      name,
+		Namespace: namespace,
 		IsOwner:   isOwner,
 	}
 }
@@ -110,9 +111,9 @@ func NewService(id int64, name string) Service {
 type PolicyType string
 
 const (
-	VALIDATION               PolicyType = "VALIDATION"
-	TRAFFIC_SHAPING_BASIC    PolicyType = "TRAFFIC_SHAPING_BASIC"
-	TRAFFIC_SHAPING_EXTENDED PolicyType = "TRAFFIC_SHAPING_EXTENDED"
+	POLICY_TYPE_VALIDATION               PolicyType = "VALIDATION"
+	POLICY_TYPE_TRAFFIC_SHAPING_BASIC    PolicyType = "TRAFFIC_SHAPING_BASIC"
+	POLICY_TYPE_TRAFFIC_SHAPING_EXTENDED PolicyType = "TRAFFIC_SHAPING_EXTENDED"
 )
 
 // Policy represents a vamp cloud policy
