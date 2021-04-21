@@ -48,7 +48,7 @@ func (c *VampCloudAnansiReleasesClient) GetLastRelease(applicationID, serviceID 
 
 	operationResult, err := c.client.Operations.GetReleases(params, nil)
 	if err != nil {
-		return nil, fmt.Errorf("failed to retrieve releases list: %v", err)
+		return nil, fmt.Errorf("failed to retrieve releases list: %w", err)
 	}
 
 	if len(operationResult.GetPayload().Items) == 0 {
@@ -74,7 +74,7 @@ func (c *VampCloudAnansiReleasesClient) GetReleaseByID(id string) (*models.Relea
 
 	operationResult, err := c.client.Operations.GetReleasesID(params, nil)
 	if err != nil {
-		return nil, fmt.Errorf("failed to retrieve release status: %v", err)
+		return nil, fmt.Errorf("failed to retrieve release status: %w", err)
 	}
 
 	result := releaseDTOToModel(*operationResult.Payload)

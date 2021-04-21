@@ -1,6 +1,8 @@
 package usecase
 
 import (
+	"fmt"
+
 	adapters "github.com/magneticio/vamp-cloud-cli/cmd/adapters/clusters"
 	"github.com/magneticio/vamp-cloud-cli/cmd/models"
 )
@@ -14,7 +16,7 @@ func NewGetClusterUsecase(client adapters.VampCloudClustersClient) GetClusterUse
 
 		cluster, err := client.GetCluster(name)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to retrieve cluster: %w", err)
 		}
 
 		return cluster, nil
@@ -32,7 +34,7 @@ func NewCreateClusterUsecase(client adapters.VampCloudClustersClient) CreateClus
 
 		id, err := client.PostCluster(cluster)
 		if err != nil {
-			return 0, err
+			return 0, fmt.Errorf("failed to post cluster: %w", err)
 		}
 
 		return id, nil

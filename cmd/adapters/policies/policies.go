@@ -89,7 +89,7 @@ func (a *VampCloudAnansiPoliciesClient) ListPolicies() ([]models.Policy, error) 
 
 	operationResult, err := a.client.Operations.GetPolicies(params, nil)
 	if err != nil {
-		return nil, fmt.Errorf("failed to retrieve policies list: %v", err)
+		return nil, fmt.Errorf("failed to retrieve policies list: %w", err)
 	}
 
 	results := operationResult.GetPayload().Items

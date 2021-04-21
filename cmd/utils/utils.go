@@ -32,7 +32,7 @@ func FormatOutput(outputFormat string, data interface{}) (string, error) {
 	case "json":
 		b, err := json.MarshalIndent(data, "", "    ")
 		if err != nil {
-			return "", err
+			return "", fmt.Errorf("failed to format json output: %w", err)
 		}
 
 		result = string(b)

@@ -66,7 +66,7 @@ func (a *VampCloudAnansiApplicationsClient) ListApplications() ([]models.Applica
 
 	operationResult, err := a.client.Operations.GetApplications(params, nil)
 	if err != nil {
-		return nil, fmt.Errorf("failed to retrieve applications list: %v", err)
+		return nil, fmt.Errorf("failed to retrieve applications list: %w", err)
 	}
 
 	results := operationResult.GetPayload().Items
@@ -93,7 +93,7 @@ func (c *VampCloudAnansiApplicationsClient) PostApplication(application models.A
 
 	operationResult, err := c.client.Operations.PostApplications(params, nil)
 	if err != nil {
-		return 0, fmt.Errorf("failed to post application: %v", err)
+		return 0, fmt.Errorf("failed to post application: %w", err)
 	}
 
 	id := operationResult.GetPayload().ID
@@ -112,7 +112,7 @@ func (c *VampCloudAnansiApplicationsClient) GetInstallationCommand(applicationID
 
 	operationResult, err := c.client.Operations.GetApplicationsIDInstallation(params, nil)
 	if err != nil {
-		return "", fmt.Errorf("failed to retrieve installation command: %v", err)
+		return "", fmt.Errorf("failed to retrieve installation command: %w", err)
 	}
 
 	logging.Info("Retrieved installation command", logging.NewPair("application-id", applicationID))
@@ -132,7 +132,7 @@ func (c *VampCloudAnansiApplicationsClient) AttachServiceToApplication(applicati
 
 	_, err := c.client.Operations.PutApplicationsApplicationIDServicesServiceID(params, nil)
 	if err != nil {
-		return fmt.Errorf("failed to attach service to application: %v", err)
+		return fmt.Errorf("failed to attach service to application: %w", err)
 	}
 
 	logging.Info("Attached application to service", logging.NewPair("application-id", applicationID), logging.NewPair("service-id", serviceID), logging.NewPair("policy-id", policyID))

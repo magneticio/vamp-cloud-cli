@@ -65,7 +65,7 @@ func NewApiClient(address, apiVersion, apikey string) (*client.Anansi, error) {
 
 	parsedUrl, err := url.Parse(address)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to create api client: %w", err)
 	}
 
 	transport := httptransport.New(parsedUrl.Host, parsedUrl.Path, []string{"http"})

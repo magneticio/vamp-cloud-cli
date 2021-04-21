@@ -70,7 +70,7 @@ func (a *VampCloudAnansiIngressClient) ListIngresses(applicationID int64) ([]mod
 
 	operationResult, err := a.client.Operations.GetApplicationsIDIngresses(params, nil)
 	if err != nil {
-		return nil, fmt.Errorf("failed to retrieve ingresses list: %v", err)
+		return nil, fmt.Errorf("failed to retrieve ingresses list: %w", err)
 	}
 
 	results := operationResult.GetPayload().Items
@@ -97,7 +97,7 @@ func (c *VampCloudAnansiIngressClient) PostIngress(ingress models.Ingress) (int6
 
 	operationResult, err := c.client.Operations.PostApplicationsIDIngresses(params, nil)
 	if err != nil {
-		return 0, fmt.Errorf("failed to create ingress: %v", err)
+		return 0, fmt.Errorf("failed to create ingress: %w", err)
 	}
 
 	id := operationResult.GetPayload().ID
@@ -118,7 +118,7 @@ func (c *VampCloudAnansiIngressClient) PatchIngress(ingress models.Ingress) erro
 
 	_, err := c.client.Operations.PatchApplicationsApplicationIDIngressesIngressID(params, nil)
 	if err != nil {
-		return fmt.Errorf("failed to patch ingress: %v", err)
+		return fmt.Errorf("failed to patch ingress: %w", err)
 	}
 
 	logging.Info("Patched ingress", logging.NewPair("domain-name", ingress.DomainName), logging.NewPair("ingress-id", ingress.ID), logging.NewPair("application-id", ingress.ApplicationID))

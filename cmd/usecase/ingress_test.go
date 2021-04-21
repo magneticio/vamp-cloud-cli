@@ -1,6 +1,7 @@
 package usecase_test
 
 import (
+	"errors"
 	"fmt"
 	"testing"
 
@@ -39,7 +40,7 @@ func TestIngress(t *testing.T) {
 					id, err := createIngress(applicationName, domainName, tlsSecret, tlsType)
 
 					So(id, ShouldEqual, int64(0))
-					So(err, ShouldResemble, mockError)
+					So(errors.Is(err, mockError), ShouldBeTrue)
 
 				})
 
@@ -76,7 +77,7 @@ func TestIngress(t *testing.T) {
 						id, err := createIngress(applicationName, domainName, tlsSecret, tlsType)
 
 						So(id, ShouldEqual, int64(0))
-						So(err, ShouldResemble, mockError)
+						So(errors.Is(err, mockError), ShouldBeTrue)
 
 					})
 

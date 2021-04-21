@@ -64,7 +64,7 @@ func (a *VampCloudAnansiServicesClient) GetServiceVersionByID(id int64) (string,
 
 	operationResult, err := a.client.Operations.GetServiceVersionsID(params, nil)
 	if err != nil {
-		return "", fmt.Errorf("failed to retrieve services version: %v", err)
+		return "", fmt.Errorf("failed to retrieve services version: %w", err)
 	}
 
 	result := operationResult.GetPayload().Name
@@ -83,7 +83,7 @@ func (a *VampCloudAnansiServicesClient) ListServices() ([]models.Service, error)
 
 	operationResult, err := a.client.Operations.GetServices(params, nil)
 	if err != nil {
-		return nil, fmt.Errorf("failed to retrieve services list: %v", err)
+		return nil, fmt.Errorf("failed to retrieve services list: %w", err)
 	}
 
 	results := operationResult.GetPayload().Items
