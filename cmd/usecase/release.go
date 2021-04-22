@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/eapache/go-resiliency/retrier"
@@ -41,7 +42,7 @@ func NewGetLastReleaseUsecase(applicationClient applicationAdapters.VampCloudApp
 
 			release, err = releaseClient.GetLastRelease(application.ID, service.ID)
 			if err != nil {
-				return err
+				return fmt.Errorf("failed to retrieve latest release: %w", err)
 			}
 			return nil
 		})
@@ -52,7 +53,7 @@ func NewGetLastReleaseUsecase(applicationClient applicationAdapters.VampCloudApp
 
 		policy, err := policyClient.GetPolicyByID(release.PolicyID)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to retrieve policy: %w", err)
 		}
 
 		var sourceVersion string
@@ -61,14 +62,14 @@ func NewGetLastReleaseUsecase(applicationClient applicationAdapters.VampCloudApp
 
 			sourceVersion, err = serviceClient.GetServiceVersionByID(release.SourceServiceID)
 			if err != nil {
-				return nil, err
+				return nil, fmt.Errorf("failed to retrieve source service version: %w", err)
 			}
 
 		}
 
 		targetVersion, err := serviceClient.GetServiceVersionByID(release.TargetServiceID)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to retrieve target service version: %w", err)
 		}
 
 		releaseData := models.NewReleaseData(*release, *policy, sourceVersion, targetVersion)
@@ -82,7 +83,7 @@ func NewGetReleaseStatusUsecase(releaseClient releaseAdapters.VampCloudReleasesC
 
 		releaseStatus, err := releaseClient.GetReleaseByID(id)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to retrieve release: %w", err)
 		}
 
 		return releaseStatus, nil

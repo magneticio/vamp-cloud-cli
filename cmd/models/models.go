@@ -2,9 +2,8 @@ package models
 
 // VampCloudCliConfiguration is the configuration built from config file, environment variables and flags
 type VampCloudCliConfiguration struct {
-	APIKey            string `yaml:"vamp-cloud-api-key,omitempty"`
-	VampCloudHost     string `yaml:"vamp-cloud-host,omitempty"`
-	VampCloudBasePath string `yaml:"vamp-cloud-base-path,omitempty"`
+	APIKey          string `yaml:"vamp-cloud-api-key,omitempty"`
+	VampCloudApiURL string `yaml:"vamp-cloud-api-url,omitempty"`
 }
 
 // Application represents a vamp cloud application

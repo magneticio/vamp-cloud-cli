@@ -41,8 +41,7 @@ var description string
 var applicationName string
 
 var apiKey string
-var host string
-var basePath string
+var apiUrl string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -84,8 +83,7 @@ func init() {
 	rootCmd.PersistentFlags().BoolVarP(&logging.Verbose, "verbose", "v", false, "Verbose")
 
 	rootCmd.PersistentFlags().StringVarP(&apiKey, "key", "k", "", "Vamp Cloud api key")
-	rootCmd.PersistentFlags().StringVarP(&host, "host", "", "", "Vamp Cloud api host")
-	rootCmd.PersistentFlags().StringVarP(&basePath, "path", "", "", "Vamp Cloud api base path")
+	rootCmd.PersistentFlags().StringVarP(&apiUrl, "address", "a", "", "Vamp Cloud api address")
 
 }
 
@@ -149,17 +147,13 @@ func initConfig() {
 }
 
 func setupConfigurationEnvrionmentVariables() {
-	viper.BindEnv("vamp-cloud-host", "VAMP_CLOUD_HOST")
-	viper.BindEnv("vamp-cloud-base-path", "VAMP_CLOUD_BASE_PATH")
+	viper.BindEnv("vamp-cloud-api-url", "VAMP_CLOUD_API_URL")
 	viper.BindEnv("vamp-cloud-api-key", "VAMP_CLOUD_API_KEY")
 }
 
 func setupConfigurationOverrides(config *models.VampCloudCliConfiguration) {
-	if host != "" {
-		config.VampCloudHost = host
-	}
-	if basePath != "" {
-		config.VampCloudBasePath = basePath
+	if apiUrl != "" {
+		config.VampCloudApiURL = apiUrl
 	}
 	if apiKey != "" {
 		config.APIKey = apiKey
@@ -167,5 +161,5 @@ func setupConfigurationOverrides(config *models.VampCloudCliConfiguration) {
 }
 
 func setupConfigurationDefaults() {
-	viper.SetDefault("vamp-cloud-base-path", "/api/public")
+	viper.SetDefault("vamp-cloud-addr", "https://vamp.cloud/api/public")
 }

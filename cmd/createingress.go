@@ -30,7 +30,10 @@ var createIngressCommand = &cobra.Command{
 
 		logging.Info("Creating ingress", logging.NewPair("domain-name", domainName), logging.NewPair("application-name", applicationName))
 
-		httpClient := adapters.NewApiClient(Config.VampCloudHost, Config.VampCloudBasePath, ApiVersion, Config.APIKey)
+		httpClient, err := adapters.NewApiClient(Config.VampCloudApiURL, ApiVersion, Config.APIKey)
+		if err != nil {
+			return err
+		}
 
 		applicationClient := applicationAdapters.NewVampCloudApplicationsClient(httpClient)
 		ingressClient := ingressAdapters.NewVampCloudIngressClient(httpClient)

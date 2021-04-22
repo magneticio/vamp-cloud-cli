@@ -1,6 +1,7 @@
 package usecase_test
 
 import (
+	"errors"
 	"fmt"
 	"testing"
 
@@ -35,7 +36,7 @@ func TestGetClusterUsecase(t *testing.T) {
 					cluster, err := getCluster(clusterName)
 
 					So(cluster, ShouldBeNil)
-					So(err, ShouldResemble, mockError)
+					So(errors.Is(err, mockError), ShouldBeTrue)
 
 				})
 
@@ -107,7 +108,7 @@ func TestCreateClusterUsecase(t *testing.T) {
 				id, err := createCluster(name, provider, description)
 
 				So(id, ShouldEqual, int64(0))
-				So(err, ShouldResemble, mockError)
+				So(errors.Is(err, mockError), ShouldBeTrue)
 
 			})
 

@@ -1,6 +1,7 @@
 package usecase_test
 
 import (
+	"errors"
 	"fmt"
 	"testing"
 
@@ -35,7 +36,7 @@ func TestGetReleaseStatusUsecase(t *testing.T) {
 					status, err := getReleaseStatus(releaseId)
 
 					So(status, ShouldBeNil)
-					So(err, ShouldResemble, mockError)
+					So(errors.Is(err, mockError), ShouldBeTrue)
 
 				})
 
@@ -114,7 +115,7 @@ func TestGetLastReleaseUsecase(t *testing.T) {
 					release, err := getLastRelease(serviceName, applicationName)
 
 					So(release, ShouldBeNil)
-					So(err, ShouldResemble, mockError)
+					So(errors.Is(err, mockError), ShouldBeTrue)
 
 				})
 
@@ -139,7 +140,7 @@ func TestGetLastReleaseUsecase(t *testing.T) {
 						release, err := getLastRelease(serviceName, applicationName)
 
 						So(release, ShouldBeNil)
-						So(err, ShouldResemble, mockError)
+						So(errors.Is(err, mockError), ShouldBeTrue)
 
 					})
 
@@ -164,7 +165,7 @@ func TestGetLastReleaseUsecase(t *testing.T) {
 							release, err := getLastRelease(serviceName, applicationName)
 
 							So(release, ShouldBeNil)
-							So(err, ShouldResemble, mockError)
+							So(errors.Is(err, mockError), ShouldBeTrue)
 
 						})
 
@@ -197,7 +198,7 @@ func TestGetLastReleaseUsecase(t *testing.T) {
 								release, err := getLastRelease(serviceName, applicationName)
 
 								So(release, ShouldBeNil)
-								So(err, ShouldResemble, mockError)
+								So(errors.Is(err, mockError), ShouldBeTrue)
 
 							})
 
@@ -220,7 +221,7 @@ func TestGetLastReleaseUsecase(t *testing.T) {
 									release, err := getLastRelease(serviceName, applicationName)
 
 									So(release, ShouldBeNil)
-									So(err, ShouldResemble, mockError)
+									So(errors.Is(err, mockError), ShouldBeTrue)
 
 								})
 
@@ -241,7 +242,7 @@ func TestGetLastReleaseUsecase(t *testing.T) {
 										release, err := getLastRelease(serviceName, applicationName)
 
 										So(release, ShouldBeNil)
-										So(err, ShouldResemble, mockError)
+										So(errors.Is(err, mockError), ShouldBeTrue)
 
 									})
 

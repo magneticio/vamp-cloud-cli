@@ -90,7 +90,7 @@ func (a *VampCloudAnansiClustersClient) ListClusters() ([]models.Cluster, error)
 
 	operationResult, err := a.client.Operations.GetClusters(params, nil)
 	if err != nil {
-		return nil, fmt.Errorf("failed to retrieve clusters list: %v", err)
+		return nil, fmt.Errorf("failed to retrieve clusters list: %w", err)
 	}
 
 	results := operationResult.GetPayload().Items

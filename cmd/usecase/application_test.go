@@ -1,6 +1,7 @@
 package usecase_test
 
 import (
+	"errors"
 	"fmt"
 	"testing"
 
@@ -37,7 +38,7 @@ func TestGetApplicationUsecase(t *testing.T) {
 					application, err := getApplication(applicationName)
 
 					So(application, ShouldBeNil)
-					So(err, ShouldResemble, mockError)
+					So(errors.Is(err, mockError), ShouldBeTrue)
 
 				})
 
@@ -68,7 +69,7 @@ func TestGetApplicationUsecase(t *testing.T) {
 						application, err := getApplication(applicationName)
 
 						So(application, ShouldBeNil)
-						So(err, ShouldResemble, mockError)
+						So(errors.Is(err, mockError), ShouldBeTrue)
 
 					})
 
@@ -143,7 +144,7 @@ func TestCreateApplicationUsecase(t *testing.T) {
 					id, err := createApplication(applicationName, clusterName, description, namespace, ingressType)
 
 					So(id, ShouldAlmostEqual, int64(0))
-					So(err, ShouldResemble, mockError)
+					So(errors.Is(err, mockError), ShouldBeTrue)
 
 				})
 
@@ -180,7 +181,7 @@ func TestCreateApplicationUsecase(t *testing.T) {
 						id, err := createApplication(applicationName, clusterName, description, namespace, ingressType)
 
 						So(id, ShouldAlmostEqual, int64(0))
-						So(err, ShouldResemble, mockError)
+						So(errors.Is(err, mockError), ShouldBeTrue)
 
 					})
 
@@ -242,7 +243,7 @@ func TestGetInstallationCommandUsecase(t *testing.T) {
 					command, err := getInstallationCommand(applicationName)
 
 					So(command, ShouldEqual, "")
-					So(err, ShouldResemble, mockError)
+					So(errors.Is(err, mockError), ShouldBeTrue)
 
 				})
 
@@ -263,7 +264,7 @@ func TestGetInstallationCommandUsecase(t *testing.T) {
 						command, err := getInstallationCommand(applicationName)
 
 						So(command, ShouldEqual, "")
-						So(err, ShouldResemble, mockError)
+						So(errors.Is(err, mockError), ShouldBeTrue)
 
 					})
 
@@ -331,7 +332,7 @@ func TestAttachServiceToApplicationUsecase(t *testing.T) {
 
 					err := attachServiceToApplication(applicationName, serviceName, policyName, domainName, routePath)
 
-					So(err, ShouldResemble, mockError)
+					So(errors.Is(err, mockError), ShouldBeTrue)
 
 				})
 
@@ -353,7 +354,7 @@ func TestAttachServiceToApplicationUsecase(t *testing.T) {
 
 						err := attachServiceToApplication(applicationName, serviceName, policyName, domainName, routePath)
 
-						So(err, ShouldResemble, mockError)
+						So(errors.Is(err, mockError), ShouldBeTrue)
 
 					})
 
@@ -380,7 +381,7 @@ func TestAttachServiceToApplicationUsecase(t *testing.T) {
 
 							err := attachServiceToApplication(applicationName, serviceName, policyName, domainName, routePath)
 
-							So(err, ShouldResemble, mockError)
+							So(errors.Is(err, mockError), ShouldBeTrue)
 
 						})
 
@@ -408,7 +409,7 @@ func TestAttachServiceToApplicationUsecase(t *testing.T) {
 
 								err := attachServiceToApplication(applicationName, serviceName, policyName, domainName, routePath)
 
-								So(err, ShouldResemble, mockError)
+								So(errors.Is(err, mockError), ShouldBeTrue)
 
 							})
 
@@ -438,7 +439,7 @@ func TestAttachServiceToApplicationUsecase(t *testing.T) {
 
 									err := attachServiceToApplication(applicationName, serviceName, policyName, domainName, routePath)
 
-									So(err, ShouldResemble, mockError)
+									So(errors.Is(err, mockError), ShouldBeTrue)
 
 								})
 
@@ -462,7 +463,7 @@ func TestAttachServiceToApplicationUsecase(t *testing.T) {
 
 										err := attachServiceToApplication(applicationName, serviceName, policyName, domainName, routePath)
 
-										So(err, ShouldResemble, mockError)
+										So(errors.Is(err, mockError), ShouldBeTrue)
 
 									})
 
@@ -508,7 +509,7 @@ func TestAttachServiceToApplicationUsecase(t *testing.T) {
 
 									err := attachServiceToApplication(applicationName, serviceName, policyName, domainName, routePath)
 
-									So(err, ShouldResemble, mockError)
+									So(errors.Is(err, mockError), ShouldBeTrue)
 
 								})
 
@@ -532,7 +533,7 @@ func TestAttachServiceToApplicationUsecase(t *testing.T) {
 
 										err := attachServiceToApplication(applicationName, serviceName, policyName, domainName, routePath)
 
-										So(err, ShouldResemble, mockError)
+										So(errors.Is(err, mockError), ShouldBeTrue)
 
 									})
 

@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/magneticio/vamp-cloud-cli/cmd/adapters"
 	applicationAdapters "github.com/magneticio/vamp-cloud-cli/cmd/adapters/applications"
@@ -25,12 +26,12 @@ func NewGetApplicationUsecase(applicationClient applicationAdapters.VampCloudApp
 
 		application, err := applicationClient.GetApplication(name)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to retrieve application: %w", err)
 		}
 
 		ingresses, err := ingressClient.ListIngresses(application.ID)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to list ingresses: %w", err)
 		}
 
 		application.Ingresses = ingresses
@@ -44,7 +45,7 @@ func NewCreateApplicationUsecase(applicationsClient applicationAdapters.VampClou
 
 		cluster, err := clusterClient.GetCluster(clusterName)
 		if err != nil {
-			return 0, err
+			return 0, fmt.Errorf("failed to retrieve cluster: %w", err)
 		}
 
 		application := models.Application{
@@ -57,7 +58,7 @@ func NewCreateApplicationUsecase(applicationsClient applicationAdapters.VampClou
 
 		id, err := applicationsClient.PostApplication(application)
 		if err != nil {
-			return 0, err
+			return 0, fmt.Errorf("failed to post application: %w", err)
 		}
 
 		return id, nil
@@ -69,12 +70,12 @@ func NewGetInstallationCommandUsecase(applicationClient applicationAdapters.Vamp
 
 		application, err := applicationClient.GetApplication(name)
 		if err != nil {
-			return "", err
+			return "", fmt.Errorf("failed to retrieve application: %w", err)
 		}
 
 		installationCommand, err := applicationClient.GetInstallationCommand(application.ID)
 		if err != nil {
-			return "", err
+			return "", fmt.Errorf("failed to retrieve installation command: %w", err)
 		}
 
 		return installationCommand, nil
@@ -86,17 +87,17 @@ func NewAttachServiceToApplicationUsecase(ingressClient ingressAdapters.VampClou
 
 		application, err := applicationClient.GetApplication(applicationName)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to retrieve source application: %w", err)
 		}
 
 		service, err := serviceClient.GetService(serviceName)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to retrieve service: %w", err)
 		}
 
 		policy, err := policyClient.GetPolicy(policyName)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to retrieve policy: %w", err)
 		}
 
 		route := models.NewRoute(service.ID, routePath)
@@ -107,14 +108,14 @@ func NewAttachServiceToApplicationUsecase(ingressClient ingressAdapters.VampClou
 
 			var check *adapters.ResourceNotFoundError
 			if !errors.As(getErr, &check) {
-				return getErr
+				return fmt.Errorf("failed to retrieve ingress: %w", getErr)
 			}
 
 			newIngress := models.NewIngress(0, application.ID, domainName, "", models.NO_TLS_TYPE, []models.Route{route})
 
 			_, postErr := ingressClient.PostIngress(newIngress)
 			if postErr != nil {
-				return postErr
+				return fmt.Errorf("failed to post ingress: %w", postErr)
 			}
 
 		}
@@ -125,14 +126,14 @@ func NewAttachServiceToApplicationUsecase(ingressClient ingressAdapters.VampClou
 
 			err = ingressClient.PatchIngress(*ingress)
 			if err != nil {
-				return err
+				return fmt.Errorf("failed to patch ingress: %w", err)
 			}
 
 		}
 
 		err = applicationClient.AttachServiceToApplication(application.ID, service.ID, policy.ID)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to attach service: %w", err)
 		}
 
 		return nil

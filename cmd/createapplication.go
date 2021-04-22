@@ -34,12 +34,15 @@ var createApplicationCmd = &cobra.Command{
 		ingressType = strings.ToUpper(ingressType)
 
 		if ingressType != string(models.CONTOUR_INGRESS_TYPE) && ingressType != string(models.NGINX_INGRESS_TYPE) {
-			return fmt.Errorf("invalid ingres type. Choose either CONTOUR or NGINX")
+			return fmt.Errorf("invalid ingress type. Choose either CONTOUR or NGINX")
 		}
 
 		logging.Info("Creating application", logging.NewPair("name", name))
 
-		httpClient := adapters.NewApiClient(Config.VampCloudHost, Config.VampCloudBasePath, ApiVersion, Config.APIKey)
+		httpClient, err := adapters.NewApiClient(Config.VampCloudApiURL, ApiVersion, Config.APIKey)
+		if err != nil {
+			return err
+		}
 
 		applicationClient := applicationAdapters.NewVampCloudApplicationsClient(httpClient)
 		clusterClient := clusterAdapters.NewVampCloudClusterClient(httpClient)

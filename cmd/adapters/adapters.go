@@ -3,6 +3,7 @@ package adapters
 import (
 	"fmt"
 	"net/http"
+	"net/url"
 
 	"github.com/go-openapi/runtime"
 	httptransport "github.com/go-openapi/runtime/client"
@@ -60,15 +61,20 @@ func (c *customTransport) RoundTrip(r *http.Request) (*http.Response, error) {
 	return resp, nil
 }
 
-func NewApiClient(host, basePath, apiVersion, apikey string) *client.Anansi {
+func NewApiClient(apiUrl, apiVersion, apikey string) (*client.Anansi, error) {
 
-	transport := httptransport.New(host, basePath, []string{"http"})
+	parsedUrl, err := url.Parse(apiUrl)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create api client: %w", err)
+	}
+
+	transport := httptransport.New(parsedUrl.Host, parsedUrl.Path, []string{"http"})
 	transport.Producers[fmt.Sprintf("application/vnd.vamp.%v+json", apiVersion)] = runtime.JSONProducer()
 	transport.Consumers[fmt.Sprintf("application/vnd.vamp.%v+json", apiVersion)] = runtime.JSONConsumer()
 
 	customRoundTripper := createRoundTripper(transport.Transport, apiVersion, apikey)
 
 	transport.Transport = customRoundTripper
-	return client.New(transport, nil)
+	return client.New(transport, nil), nil
 
 }
