@@ -20,7 +20,7 @@ import (
 const AppName string = "vamp-cloud-cli"
 
 // Version - version of the cli
-const Version string = "v1.0.4"
+const Version string = "v1.0.5"
 
 // ApiVersion - supported version of the api
 const ApiVersion string = "v1"
@@ -51,8 +51,7 @@ var rootCmd = &cobra.Command{
 It is required to have a default config.
 Envrionment variables can be used to override the values in the config.
 Environment variables:
-	VAMP_CLOUD_HOST
-	VAMP_CLOUD_BASE_PATH
+	VAMP_CLOUD_API_URL
 	VAMP_CLOUD_API_KEY`),
 }
 
