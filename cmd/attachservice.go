@@ -33,7 +33,7 @@ var attachServiceCmd = &cobra.Command{
 
 		logging.Info("Attaching service", logging.NewPair("service-name", serviceName))
 
-		httpClient, err := adapters.NewApiClient(Config.VampCloudAddr, ApiVersion, Config.APIKey)
+		httpClient, err := adapters.NewApiClient(Config.VampCloudApiURL, ApiVersion, Config.APIKey)
 		if err != nil {
 			return err
 		}

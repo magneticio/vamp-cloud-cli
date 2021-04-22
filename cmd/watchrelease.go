@@ -34,7 +34,7 @@ var watchReleaseCmd = &cobra.Command{
 
 		logging.Info("Watching release", logging.NewPair("service-name", serviceName), logging.NewPair("application-name", applicationName))
 
-		httpClient, err := adapters.NewApiClient(Config.VampCloudAddr, ApiVersion, Config.APIKey)
+		httpClient, err := adapters.NewApiClient(Config.VampCloudApiURL, ApiVersion, Config.APIKey)
 		if err != nil {
 			return err
 		}

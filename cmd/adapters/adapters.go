@@ -61,9 +61,9 @@ func (c *customTransport) RoundTrip(r *http.Request) (*http.Response, error) {
 	return resp, nil
 }
 
-func NewApiClient(address, apiVersion, apikey string) (*client.Anansi, error) {
+func NewApiClient(apiUrl, apiVersion, apikey string) (*client.Anansi, error) {
 
-	parsedUrl, err := url.Parse(address)
+	parsedUrl, err := url.Parse(apiUrl)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create api client: %w", err)
 	}

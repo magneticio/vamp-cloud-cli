@@ -29,7 +29,7 @@ var createClusterCommand = &cobra.Command{
 
 		logging.Info("Creating cluster", logging.NewPair("name", clusterName))
 
-		httpClient, err := adapters.NewApiClient(Config.VampCloudAddr, ApiVersion, Config.APIKey)
+		httpClient, err := adapters.NewApiClient(Config.VampCloudApiURL, ApiVersion, Config.APIKey)
 		if err != nil {
 			return err
 		}

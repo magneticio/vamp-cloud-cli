@@ -41,7 +41,7 @@ var description string
 var applicationName string
 
 var apiKey string
-var address string
+var apiUrl string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -83,7 +83,7 @@ func init() {
 	rootCmd.PersistentFlags().BoolVarP(&logging.Verbose, "verbose", "v", false, "Verbose")
 
 	rootCmd.PersistentFlags().StringVarP(&apiKey, "key", "k", "", "Vamp Cloud api key")
-	rootCmd.PersistentFlags().StringVarP(&address, "address", "a", "", "Vamp Cloud api address")
+	rootCmd.PersistentFlags().StringVarP(&apiUrl, "address", "a", "", "Vamp Cloud api address")
 
 }
 
@@ -147,13 +147,13 @@ func initConfig() {
 }
 
 func setupConfigurationEnvrionmentVariables() {
-	viper.BindEnv("vamp-cloud-addr", "VAMP_CLOUD_ADDR")
+	viper.BindEnv("vamp-cloud-api-url", "VAMP_CLOUD_API_URL")
 	viper.BindEnv("vamp-cloud-api-key", "VAMP_CLOUD_API_KEY")
 }
 
 func setupConfigurationOverrides(config *models.VampCloudCliConfiguration) {
-	if address != "" {
-		config.VampCloudAddr = address
+	if apiUrl != "" {
+		config.VampCloudApiURL = apiUrl
 	}
 	if apiKey != "" {
 		config.APIKey = apiKey

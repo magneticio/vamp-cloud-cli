@@ -28,7 +28,7 @@ var describeClusterCmd = &cobra.Command{
 
 		logging.Info("Describing cluster", logging.NewPair("cluster-name", name))
 
-		httpClient, err := adapters.NewApiClient(Config.VampCloudAddr, ApiVersion, Config.APIKey)
+		httpClient, err := adapters.NewApiClient(Config.VampCloudApiURL, ApiVersion, Config.APIKey)
 		if err != nil {
 			return err
 		}
