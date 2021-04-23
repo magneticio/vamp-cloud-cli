@@ -68,7 +68,7 @@ Keep in mind this command might fail, give the fact that the repository is priva
 
 For general users it is recommended to download the binary for your platform.
 The latest release can be found here:
-https://github.com/magneticio/vamp/releases/latest
+https://github.com/magneticio/vamp-cloud-cli/releases/latest
 
 You can verify your installation by running
 
