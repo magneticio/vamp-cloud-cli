@@ -45,12 +45,20 @@ var describeApplicationCmd = &cobra.Command{
 
 		application, err := getApplication(applicationName)
 		if err != nil {
-			return err
+			if outputType == "name" {
+				return nil
+			} else {
+				return err
+			}
 		}
 
 		cluster, err := clusterClient.GetClusterByID(application.ClusterID)
 		if err != nil {
-			return err
+			if outputType == "name" {
+				return nil
+			} else {
+				return err
+			}
 		}
 
 		view := views.ApplicationModelToView(*application, cluster.Name)
@@ -68,6 +76,5 @@ var describeApplicationCmd = &cobra.Command{
 
 func init() {
 	describeCmd.AddCommand(describeApplicationCmd)
-	describeApplicationCmd.Flags().StringVarP(&outputType, "output", "o", "yaml", "Output format yaml or json")
-
+	describeApplicationCmd.Flags().StringVarP(&outputType, "output", "o", "", "Output format name or json")
 }
