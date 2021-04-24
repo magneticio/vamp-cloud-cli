@@ -39,7 +39,11 @@ var describeClusterCmd = &cobra.Command{
 
 		cluster, err := getCluster(name)
 		if err != nil {
-			return err
+			if outputType == "name" {
+				return nil
+			} else {
+				return err
+			}
 		}
 
 		view := views.ClusterModelToView(*cluster)
@@ -57,5 +61,5 @@ var describeClusterCmd = &cobra.Command{
 
 func init() {
 	describeCmd.AddCommand(describeClusterCmd)
-	describeClusterCmd.Flags().StringVarP(&outputType, "output", "o", "yaml", "Output format yaml or json")
+	describeClusterCmd.Flags().StringVarP(&outputType, "output", "o", "", "Output format name or json")
 }

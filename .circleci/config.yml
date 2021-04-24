@@ -45,8 +45,6 @@ jobs:
           paths:
             - "/go/pkg"
       - run: cp ./bin/* ./artifacts
-      - run: cp ./bin/vamp-darwin-amd64 ./artifacts/vamp-darwin-x86_64
-      - run: cp ./bin/vamp-linux-amd64 ./artifacts/vamp-linux-x86_64
       - run: go run main.go version clean > ./artifacts/version.txt
       - persist_to_workspace:
           root: ./artifacts

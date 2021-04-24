@@ -34,19 +34,15 @@ func FormatOutput(outputFormat string, data interface{}) (string, error) {
 		if err != nil {
 			return "", fmt.Errorf("failed to format json output: %w", err)
 		}
-
 		result = string(b)
-	case "name":
 
+	case "name":
 		val := reflect.ValueOf(data).Elem()
 		result = val.FieldByName("Name").Interface().(string)
 
 	default:
-
 		printer := NewTablePrinter()
-
 		result = printer.FormatToTable(data)
-
 	}
 
 	return result, nil

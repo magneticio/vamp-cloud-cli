@@ -16,3 +16,6 @@
 
 # build output
 bin
+
+# vim
+.*.swp
