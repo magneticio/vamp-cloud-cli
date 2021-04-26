@@ -22,7 +22,7 @@ import (
 const AppName string = "vamp-cloud-cli"
 
 // Version - version of the cli
-const Version string = "v1.0.7"
+const Version string = "v1.0.8"
 
 // ApiVersion - supported version of the api
 const ApiVersion string = "v1"

@@ -30,17 +30,16 @@ type customTransport struct {
 func (c *customTransport) RoundTrip(r *http.Request) (*http.Response, error) {
 
 	r.Header.Add("Accept", fmt.Sprintf("application/vnd.vamp.%v+json", c.apiVersion))
-	r.Header.Add("Content-Type", "application/json")
 	r.Header.Add("X-Vamp-Token", c.apiKey)
 
-	logging.Info("Receiveived new request", logging.NewPair("method", r.Method), logging.NewPair("url", r.URL))
+	logging.Info("Received new request", logging.NewPair("method", r.Method), logging.NewPair("url", r.URL))
 
 	resp, err := c.originalTransport.RoundTrip(r)
 	if err != nil {
 		return nil, err
 	}
 
-	logging.Info("Receiveived new response", logging.NewPair("response-status", resp.Status))
+	logging.Info("Received new response", logging.NewPair("response-status", resp.Status))
 
 	return resp, nil
 }
@@ -52,7 +51,7 @@ func NewApiClient(apiUrl, apiVersion, apikey string) (*client.Anansi, error) {
 		return nil, fmt.Errorf("failed to create api client: %w", err)
 	}
 
-	transport := httptransport.New(parsedUrl.Host, parsedUrl.Path, []string{"http"})
+	transport := httptransport.New(parsedUrl.Host, parsedUrl.Path, []string{parsedUrl.Scheme})
 	transport.Producers[fmt.Sprintf("application/vnd.vamp.%v+json", apiVersion)] = runtime.JSONProducer()
 	transport.Consumers[fmt.Sprintf("application/vnd.vamp.%v+json", apiVersion)] = runtime.JSONConsumer()
 

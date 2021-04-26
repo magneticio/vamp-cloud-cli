@@ -510,6 +510,10 @@ definitions:
         readOnly: true
       name:
         type: string
+      projectID:
+        type: integer
+        format: int64
+        readOnly: true
   Ingresses:
     type: object
     properties:
@@ -574,16 +578,20 @@ definitions:
   Release:
     type: object
     properties:
-      ID:
+      id:
         type: string
         minLength: 1
-      SourceVersionID:
+      applicationID:
         type: integer
         format: int64
-      TargetVersionID:
+        readOnly: true
+      sourceVersionID:
         type: integer
         format: int64
-      PolicyID:
+      targetVersionID:
+        type: integer
+        format: int64
+      policyID:
         type: integer
         format: int64
       state:
@@ -623,6 +631,10 @@ definitions:
         readOnly: true
       name:
         type: string
+      serviceID:
+        type: integer
+        format: int64
+        readOnly: true
 responses:
   Unauthorized:
     description: The requester is not authorized.
