@@ -142,12 +142,6 @@ func initConfig() {
 
 	setupConfigurationOverrides(&Config)
 
-	validationErr := checkValues(Config)
-	if validationErr != nil {
-		fmt.Printf("configuration is incomplete: %v\n", validationErr)
-		os.Exit(1)
-	}
-
 	jsonConfig, _ := json.Marshal(Config)
 
 	logging.Info(fmt.Sprintf("Vamp Cloud cli configuration %v", utils.PrettyJson(string(jsonConfig))))
@@ -169,10 +163,10 @@ func setupConfigurationOverrides(config *models.VampCloudCliConfiguration) {
 
 func checkValues(config models.VampCloudCliConfiguration) error {
 	if config.VampCloudApiURL == "" {
-		return errors.New("VAMP_CLOUD_API_URL is required")
+		return errors.New("configuration is invalid: VAMP_CLOUD_API_URL is required")
 	}
 	if config.APIKey == "" {
-		return errors.New("VAMP_CLOUD_API_KEY is required")
+		return errors.New("configuration is invalid: VAMP_CLOUD_API_KEY is required")
 	}
 
 	return nil
