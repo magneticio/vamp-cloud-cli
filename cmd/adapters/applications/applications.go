@@ -6,7 +6,6 @@ import (
 
 	"github.com/magneticio/vamp-cloud-cli/client"
 	"github.com/magneticio/vamp-cloud-cli/client/operations"
-	"github.com/magneticio/vamp-cloud-cli/cmd/adapters"
 	"github.com/magneticio/vamp-cloud-cli/cmd/models"
 	"github.com/magneticio/vamp-cloud-cli/cmd/utils/logging"
 	dto "github.com/magneticio/vamp-cloud-cli/models"
@@ -24,7 +23,7 @@ type VampCloudAnansiApplicationsClient struct {
 	client *client.Anansi
 }
 
-var ErrorApplicationNotFound = adapters.NewResourceNotFoundError(errors.New("application not found"))
+var ErrorApplicationNotFound = errors.New("application not found")
 
 func NewVampCloudApplicationsClient(httpClient *client.Anansi) *VampCloudAnansiApplicationsClient {
 

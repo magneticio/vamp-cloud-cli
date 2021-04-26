@@ -26,6 +26,12 @@ var createApplicationCmd = &cobra.Command{
 	SilenceUsage:  true,
 	SilenceErrors: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
+
+		validationErr := checkValues(Config)
+		if validationErr != nil {
+			return validationErr
+		}
+
 		if len(args) < 1 {
 			return fmt.Errorf("not enough arguments - application name needed")
 		}

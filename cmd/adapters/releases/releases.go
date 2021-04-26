@@ -6,7 +6,6 @@ import (
 
 	"github.com/magneticio/vamp-cloud-cli/client"
 	"github.com/magneticio/vamp-cloud-cli/client/operations"
-	"github.com/magneticio/vamp-cloud-cli/cmd/adapters"
 	"github.com/magneticio/vamp-cloud-cli/cmd/models"
 	"github.com/magneticio/vamp-cloud-cli/cmd/utils/logging"
 	dto "github.com/magneticio/vamp-cloud-cli/models"
@@ -21,7 +20,7 @@ type VampCloudAnansiReleasesClient struct {
 	client *client.Anansi
 }
 
-var ErrorReleaseNotFound = adapters.NewResourceNotFoundError(errors.New("release not found"))
+var ErrorReleaseNotFound = errors.New("release not found")
 
 func NewVampCloudReleaseClient(httpClient *client.Anansi) *VampCloudAnansiReleasesClient {
 

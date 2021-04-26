@@ -6,7 +6,6 @@ import (
 
 	"github.com/magneticio/vamp-cloud-cli/client"
 	"github.com/magneticio/vamp-cloud-cli/client/operations"
-	"github.com/magneticio/vamp-cloud-cli/cmd/adapters"
 	"github.com/magneticio/vamp-cloud-cli/cmd/models"
 	"github.com/magneticio/vamp-cloud-cli/cmd/utils/logging"
 	dto "github.com/magneticio/vamp-cloud-cli/models"
@@ -22,7 +21,7 @@ type VampCloudAnansiPoliciesClient struct {
 	client *client.Anansi
 }
 
-var ErrorPolicyNotFound = adapters.NewResourceNotFoundError(errors.New("policy not found"))
+var ErrorPolicyNotFound = errors.New("policy not found")
 
 func NewVampCloudPolicyClient(httpClient *client.Anansi) *VampCloudAnansiPoliciesClient {
 
