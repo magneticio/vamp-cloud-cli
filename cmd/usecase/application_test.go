@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/magneticio/vamp-cloud-cli/cmd/adapters"
+	ingressAdapters "github.com/magneticio/vamp-cloud-cli/cmd/adapters/ingresses"
 	"github.com/magneticio/vamp-cloud-cli/cmd/models"
 	"github.com/magneticio/vamp-cloud-cli/cmd/usecase"
 	mocks "github.com/magneticio/vamp-cloud-cli/mocks/adaptersmocks"
@@ -417,9 +417,7 @@ func TestAttachServiceToApplicationUsecase(t *testing.T) {
 
 						Convey("When getting the ingress fails with not found", func() {
 
-							mockError := fmt.Errorf("mock error")
-
-							notFoundErr := adapters.NewResourceNotFoundError(mockError)
+							notFoundErr := ingressAdapters.ErrorIngressNotFound
 
 							var ingress *models.Ingress
 

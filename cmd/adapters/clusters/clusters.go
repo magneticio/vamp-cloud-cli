@@ -6,7 +6,6 @@ import (
 
 	"github.com/magneticio/vamp-cloud-cli/client"
 	"github.com/magneticio/vamp-cloud-cli/client/operations"
-	"github.com/magneticio/vamp-cloud-cli/cmd/adapters"
 	"github.com/magneticio/vamp-cloud-cli/cmd/models"
 	"github.com/magneticio/vamp-cloud-cli/cmd/utils/logging"
 	dto "github.com/magneticio/vamp-cloud-cli/models"
@@ -23,7 +22,7 @@ type VampCloudAnansiClustersClient struct {
 	client *client.Anansi
 }
 
-var ErrorClusterNotFound = adapters.NewResourceNotFoundError(errors.New("cluster not found"))
+var ErrorClusterNotFound = errors.New("cluster not found")
 
 func NewVampCloudClusterClient(httpClient *client.Anansi) *VampCloudAnansiClustersClient {
 

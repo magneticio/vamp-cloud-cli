@@ -39,11 +39,7 @@ var describeClusterCmd = &cobra.Command{
 
 		cluster, err := getCluster(name)
 		if err != nil {
-			if outputType == "name" {
-				return nil
-			} else {
-				return err
-			}
+			return handleErrorOnName(err)
 		}
 
 		view := views.ClusterModelToView(*cluster)

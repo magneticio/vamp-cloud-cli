@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/magneticio/vamp-cloud-cli/cmd/adapters"
 	applicationAdapters "github.com/magneticio/vamp-cloud-cli/cmd/adapters/applications"
 	clusterAdapters "github.com/magneticio/vamp-cloud-cli/cmd/adapters/clusters"
 	ingressAdapters "github.com/magneticio/vamp-cloud-cli/cmd/adapters/ingresses"
@@ -26,6 +25,11 @@ func NewGetApplicationUsecase(applicationClient applicationAdapters.VampCloudApp
 
 		application, err := applicationClient.GetApplication(name)
 		if err != nil {
+
+			if !errors.Is(err, applicationAdapters.ErrorApplicationNotFound) {
+				return nil, NewResourceNotFoundError(fmt.Errorf("failed to retrieve application: %w", err))
+			}
+
 			return nil, fmt.Errorf("failed to retrieve application: %w", err)
 		}
 
@@ -106,9 +110,8 @@ func NewAttachServiceToApplicationUsecase(ingressClient ingressAdapters.VampClou
 		ingress, getErr := ingressClient.GetIngressByApplicationIDAndDomainName(application.ID, domainName)
 		if getErr != nil {
 
-			var check *adapters.ResourceNotFoundError
-			if !errors.As(getErr, &check) {
-				return fmt.Errorf("failed to retrieve ingress: %w", getErr)
+			if !errors.Is(getErr, ingressAdapters.ErrorIngressNotFound) {
+				return NewResourceNotFoundError(fmt.Errorf("failed to retrieve ingress: %w", getErr))
 			}
 
 			newIngress := models.NewIngress(0, application.ID, domainName, "", models.NO_TLS_TYPE, []models.Route{route})

@@ -45,14 +45,13 @@ var describeApplicationCmd = &cobra.Command{
 
 		application, err := getApplication(applicationName)
 		if err != nil {
-			if outputType == "name" {
-				return nil
-			} else {
-				return err
-			}
+
+			return handleErrorOnName(err)
 		}
 
-		cluster, err := clusterClient.GetClusterByID(application.ClusterID)
+		getCluster := usecase.NewGetClusterByIDUsecase(clusterClient)
+
+		cluster, err := getCluster(application.ClusterID)
 		if err != nil {
 			if outputType == "name" {
 				return nil
@@ -65,7 +64,7 @@ var describeApplicationCmd = &cobra.Command{
 
 		output, err := utils.FormatOutput(outputType, &view)
 		if err != nil {
-			return err
+			return handleErrorOnName(err)
 		}
 
 		fmt.Println(output)

@@ -2,12 +2,14 @@ package cmd
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
 
 	"github.com/magneticio/vamp-cloud-cli/cmd/models"
+	"github.com/magneticio/vamp-cloud-cli/cmd/usecase"
 	"github.com/magneticio/vamp-cloud-cli/cmd/utils"
 	"github.com/magneticio/vamp-cloud-cli/cmd/utils/logging"
 	homedir "github.com/mitchellh/go-homedir"
@@ -140,6 +142,12 @@ func initConfig() {
 
 	setupConfigurationOverrides(&Config)
 
+	validationErr := checkValues(Config)
+	if validationErr != nil {
+		fmt.Printf("configuration is incomplete: %v\n", validationErr)
+		os.Exit(1)
+	}
+
 	jsonConfig, _ := json.Marshal(Config)
 
 	logging.Info(fmt.Sprintf("Vamp Cloud cli configuration %v", utils.PrettyJson(string(jsonConfig))))
@@ -159,6 +167,33 @@ func setupConfigurationOverrides(config *models.VampCloudCliConfiguration) {
 	}
 }
 
+func checkValues(config models.VampCloudCliConfiguration) error {
+	if config.VampCloudApiURL == "" {
+		return errors.New("VAMP_CLOUD_API_URL is required")
+	}
+	if config.APIKey == "" {
+		return errors.New("VAMP_CLOUD_API_KEY is required")
+	}
+
+	return nil
+}
+
 func setupConfigurationDefaults() {
 	viper.SetDefault("vamp-cloud-addr", "https://vamp.cloud/api/public")
+}
+
+func handleErrorOnName(err error) error {
+
+	if outputType == "name" {
+
+		var check *usecase.ResourceNotFoundError
+		if !errors.As(err, &check) {
+			return nil
+		}
+
+		return err
+	} else {
+		return err
+	}
+
 }
