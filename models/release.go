@@ -19,18 +19,9 @@ import (
 // swagger:model Release
 type Release struct {
 
-	// ID
-	// Min Length: 1
-	ID string `json:"ID,omitempty"`
-
-	// policy ID
-	PolicyID int64 `json:"PolicyID,omitempty"`
-
-	// source version ID
-	SourceVersionID int64 `json:"SourceVersionID,omitempty"`
-
-	// target version ID
-	TargetVersionID int64 `json:"TargetVersionID,omitempty"`
+	// application ID
+	// Read Only: true
+	ApplicationID int64 `json:"applicationID,omitempty"`
 
 	// current health
 	CurrentHealth float64 `json:"currentHealth,omitempty"`
@@ -38,9 +29,22 @@ type Release struct {
 	// current step
 	CurrentStep int64 `json:"currentStep,omitempty"`
 
+	// id
+	// Min Length: 1
+	ID string `json:"id,omitempty"`
+
+	// policy ID
+	PolicyID int64 `json:"policyID,omitempty"`
+
+	// source version ID
+	SourceVersionID int64 `json:"sourceVersionID,omitempty"`
+
 	// state
 	// Enum: [PENDING RUNNING FINISHED FAILED]
 	State string `json:"state,omitempty"`
+
+	// target version ID
+	TargetVersionID int64 `json:"targetVersionID,omitempty"`
 }
 
 // Validate validates this release
@@ -67,7 +71,7 @@ func (m *Release) validateID(formats strfmt.Registry) error {
 		return nil
 	}
 
-	if err := validate.MinLength("ID", "body", string(m.ID), 1); err != nil {
+	if err := validate.MinLength("id", "body", string(m.ID), 1); err != nil {
 		return err
 	}
 

@@ -21,6 +21,10 @@ type Service struct {
 
 	// name
 	Name string `json:"name,omitempty"`
+
+	// project ID
+	// Read Only: true
+	ProjectID int64 `json:"projectID,omitempty"`
 }
 
 // Validate validates this service

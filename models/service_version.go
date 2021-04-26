@@ -21,6 +21,10 @@ type ServiceVersion struct {
 
 	// name
 	Name string `json:"name,omitempty"`
+
+	// service ID
+	// Read Only: true
+	ServiceID int64 `json:"serviceID,omitempty"`
 }
 
 // Validate validates this service version
