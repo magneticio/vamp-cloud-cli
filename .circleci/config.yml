@@ -44,6 +44,7 @@ jobs:
             wget -N https://github.com/magneticio/semver-shell/releases/download/v0.2.0/semver_version.sh
             chmod u+x semver_version.sh
             ./semver_version.sh -l go -f ./version/version.go -t git -o none
+            mv version_env.sh artifacts
       - run:
           name: Build code
           command: make build-local
@@ -68,7 +69,8 @@ jobs:
       - run:
           name: "Publish Release on GitHub"
           command: |
-            source version_env.sh
+            source ./artifacts/version_env.sh
+            rm -f ./artifacts/version_env.sh
             ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./artifacts/
 
 workflows:
