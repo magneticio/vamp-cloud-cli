@@ -23,6 +23,7 @@ jobs:
           key: v1-pkg-cache
           paths:
             - "/go/pkg"
+
   build:
     docker:
       - image: circleci/golang:1.16.3
@@ -38,6 +39,12 @@ jobs:
       - setup_remote_docker:
           docker_layer_caching: true
       - run:
+          name: "Generate version files"
+          command: |
+            wget -N https://github.com/magneticio/semver-shell/releases/download/v0.2.0/semver_version.sh
+            chmod u+x semver_version.sh
+            ./semver_version.sh -l go -f ./version/version.go -t git -o none
+      - run:
           name: Build code
           command: make build-local
       - save_cache:
@@ -47,11 +54,11 @@ jobs:
       - run: cp ./bin/* ./artifacts
       - run: cp ./bin/vamp-darwin-amd64 ./artifacts/vamp-darwin-x86_64
       - run: cp ./bin/vamp-linux-amd64 ./artifacts/vamp-linux-x86_64
-      - run: go run main.go version clean > ./artifacts/version.txt
       - persist_to_workspace:
           root: ./artifacts
           paths:
             - .
+
   publish-github-release:
     docker:
       - image: cibuilds/github:0.12
@@ -61,9 +68,9 @@ jobs:
       - run:
           name: "Publish Release on GitHub"
           command: |
-            VERSION=$(cat ./artifacts/version.txt)
-            rm ./artifacts/version.txt
+            source version_env.sh
             ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./artifacts/
+
 workflows:
   version: 2
   main:

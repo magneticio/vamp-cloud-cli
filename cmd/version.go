@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 
+	. "github.com/magneticio/vamp-cloud-cli/version"
 	"github.com/spf13/cobra"
 )
 
