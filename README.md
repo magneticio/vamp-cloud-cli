@@ -58,13 +58,13 @@ chmod +x /usr/local/bin/vamp
 Alternatively you can easily install the cli for MacOS or Linux by running
 
 ```shell
-version=$(curl -s https://api.github.com/repos/magneticio/vamp-cloud-cli/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/') &&
-  base=https://github.com/magneticio/vamp-cloud-cli/releases/download/$version &&
-  curl -sL $base/vamp-$(uname -s)-$(uname -m) >/usr/local/bin/vamp &&
-  chmod +x /usr/local/bin/vamp
+./install.sh
 ```
 
-Keep in mind this command might fail, give the fact that the repository is private.
+This script correctly distinguishes between Intel based Macs and Apple Silicon based Macs running Rosetta 2
+
+You can choose a destination dir (default is /usr/local/bin) by setting the `DESTDIR` env var.
+You can also choose a specifc version by setting the `VERSION` env var.
 
 For general users it is recommended to download the binary for your platform.
 The latest release can be found here:
