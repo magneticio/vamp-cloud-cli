@@ -30,6 +30,12 @@ func (o *PostApplicationsIDIngressesReader) ReadResponse(response runtime.Client
 			return nil, err
 		}
 		return result, nil
+	case 400:
+		result := NewPostApplicationsIDIngressesBadRequest()
+		if err := result.readResponse(response, consumer, o.formats); err != nil {
+			return nil, err
+		}
+		return nil, result
 	case 401:
 		result := NewPostApplicationsIDIngressesUnauthorized()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
@@ -90,6 +96,39 @@ func (o *PostApplicationsIDIngressesOK) GetPayload() *PostApplicationsIDIngresse
 func (o *PostApplicationsIDIngressesOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	o.Payload = new(PostApplicationsIDIngressesOKBody)
+
+	// response payload
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+		return err
+	}
+
+	return nil
+}
+
+// NewPostApplicationsIDIngressesBadRequest creates a PostApplicationsIDIngressesBadRequest with default headers values
+func NewPostApplicationsIDIngressesBadRequest() *PostApplicationsIDIngressesBadRequest {
+	return &PostApplicationsIDIngressesBadRequest{}
+}
+
+/*PostApplicationsIDIngressesBadRequest handles this case with default header values.
+
+The request is invalid.
+*/
+type PostApplicationsIDIngressesBadRequest struct {
+	Payload *models.Error
+}
+
+func (o *PostApplicationsIDIngressesBadRequest) Error() string {
+	return fmt.Sprintf("[POST /applications/{id}/ingresses][%d] postApplicationsIdIngressesBadRequest  %+v", 400, o.Payload)
+}
+
+func (o *PostApplicationsIDIngressesBadRequest) GetPayload() *models.Error {
+	return o.Payload
+}
+
+func (o *PostApplicationsIDIngressesBadRequest) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	o.Payload = new(models.Error)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {

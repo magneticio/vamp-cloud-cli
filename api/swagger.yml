@@ -72,7 +72,7 @@ paths:
         200:
           description: An application object.
           schema:
-            $ref: "#/definitions/Application"
+            $ref: "#/definitions/Application"  
         401:
           $ref: "#/responses/Unauthorized"
         403:
@@ -97,7 +97,7 @@ paths:
         200:
           description: List of ingress objects
           schema:
-            $ref: "#/definitions/Ingresses"
+            $ref: "#/definitions/Ingresses"      
         401:
           $ref: "#/responses/Unauthorized"
         403:
@@ -134,6 +134,8 @@ paths:
                 type: integer
                 format: int64
                 description: The ingress ID
+        400:
+          $ref: "#/responses/BadRequest"          
         401:
           $ref: "#/responses/Unauthorized"
         403:
@@ -170,6 +172,8 @@ paths:
       responses:
         200:
           description: OK
+        400:
+          $ref: "#/responses/BadRequest"    
         401:
           $ref: "#/responses/Unauthorized"
         403:
@@ -640,6 +644,10 @@ responses:
     description: The requester is not authorized.
     schema:
       $ref: "#/definitions/Error"
+  BadRequest:
+    description: The request is invalid.
+    schema:
+      $ref: "#/definitions/Error"    
   Forbidden:
     description: The requester does not have access rights to the resource.
     schema:
