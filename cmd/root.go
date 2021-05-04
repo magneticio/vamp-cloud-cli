@@ -24,6 +24,9 @@ const AppName string = "vamp-cloud-cli"
 // ApiVersion - supported version of the api
 const ApiVersion string = "v1"
 
+// Default URL for Vamp Backend
+const DefaultApiUrl string = "https://vamp.cloud/api/public"
+
 // AddAppName - Application name can change over time so it is made parameteric
 func AddAppName(str string) string {
 	return strings.Replace(str, "$AppName", AppName, -1)
@@ -152,6 +155,9 @@ func setupConfigurationEnvrionmentVariables() {
 func setupConfigurationOverrides(config *models.VampCloudCliConfiguration) {
 	if apiUrl != "" {
 		config.VampCloudApiURL = apiUrl
+	} else if config.VampCloudApiURL == "" {
+		logging.Info(fmt.Sprintf("Using default VAMP_CLOUD_API_URL=%s", DefaultApiUrl))
+		config.VampCloudApiURL = DefaultApiUrl
 	}
 	if apiKey != "" {
 		config.APIKey = apiKey
@@ -159,9 +165,6 @@ func setupConfigurationOverrides(config *models.VampCloudCliConfiguration) {
 }
 
 func checkValues(config models.VampCloudCliConfiguration) error {
-	if config.VampCloudApiURL == "" {
-		return errors.New("configuration is invalid: VAMP_CLOUD_API_URL is required")
-	}
 	if config.APIKey == "" {
 		return errors.New("configuration is invalid: VAMP_CLOUD_API_KEY is required")
 	}
