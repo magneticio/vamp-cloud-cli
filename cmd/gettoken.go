@@ -46,7 +46,7 @@ var getTokenCmd = &cobra.Command{
 			return err
 		}
 
-		println(command)
+		fmt.Println(command)
 
 		return nil
 	},
