@@ -499,7 +499,7 @@ func TestAttachServiceToApplicationUsecase(t *testing.T) {
 
 								testRoute2 := models.NewRoute(service.ID, routePath)
 
-								updatedIngress := models.NewIngress(0, testApplication.ID, domainName, "", models.NO_TLS_TYPE, []models.Route{testRoute, testRoute2})
+								updatedIngress := models.NewIngress(0, testApplication.ID, domainName, "", models.NO_TLS_TYPE, []models.Route{testRoute2})
 
 								ingressClient.On("PatchIngress", updatedIngress).Return(mockError)
 
@@ -517,7 +517,7 @@ func TestAttachServiceToApplicationUsecase(t *testing.T) {
 
 								testRoute2 := models.NewRoute(service.ID, routePath)
 
-								updatedIngress := models.NewIngress(0, testApplication.ID, domainName, "", models.NO_TLS_TYPE, []models.Route{testRoute, testRoute2})
+								updatedIngress := models.NewIngress(0, testApplication.ID, domainName, "", models.NO_TLS_TYPE, []models.Route{testRoute2})
 
 								ingressClient.On("PatchIngress", updatedIngress).Return(nil)
 

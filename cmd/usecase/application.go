@@ -125,7 +125,7 @@ func NewAttachServiceToApplicationUsecase(ingressClient ingressAdapters.VampClou
 
 		if ingress != nil {
 
-			ingress.Routes = append(ingress.Routes, models.NewRoute(service.ID, routePath))
+			ingress.Routes = []models.Route{route}
 
 			err = ingressClient.PatchIngress(*ingress)
 			if err != nil {
