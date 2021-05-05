@@ -29,6 +29,12 @@ func (o *PatchApplicationsApplicationIDIngressesIngressIDReader) ReadResponse(re
 			return nil, err
 		}
 		return result, nil
+	case 400:
+		result := NewPatchApplicationsApplicationIDIngressesIngressIDBadRequest()
+		if err := result.readResponse(response, consumer, o.formats); err != nil {
+			return nil, err
+		}
+		return nil, result
 	case 401:
 		result := NewPatchApplicationsApplicationIDIngressesIngressIDUnauthorized()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
@@ -82,6 +88,39 @@ func (o *PatchApplicationsApplicationIDIngressesIngressIDOK) Error() string {
 }
 
 func (o *PatchApplicationsApplicationIDIngressesIngressIDOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	return nil
+}
+
+// NewPatchApplicationsApplicationIDIngressesIngressIDBadRequest creates a PatchApplicationsApplicationIDIngressesIngressIDBadRequest with default headers values
+func NewPatchApplicationsApplicationIDIngressesIngressIDBadRequest() *PatchApplicationsApplicationIDIngressesIngressIDBadRequest {
+	return &PatchApplicationsApplicationIDIngressesIngressIDBadRequest{}
+}
+
+/*PatchApplicationsApplicationIDIngressesIngressIDBadRequest handles this case with default header values.
+
+The request is invalid.
+*/
+type PatchApplicationsApplicationIDIngressesIngressIDBadRequest struct {
+	Payload *models.Error
+}
+
+func (o *PatchApplicationsApplicationIDIngressesIngressIDBadRequest) Error() string {
+	return fmt.Sprintf("[PATCH /applications/{applicationID}/ingresses/{ingressID}][%d] patchApplicationsApplicationIdIngressesIngressIdBadRequest  %+v", 400, o.Payload)
+}
+
+func (o *PatchApplicationsApplicationIDIngressesIngressIDBadRequest) GetPayload() *models.Error {
+	return o.Payload
+}
+
+func (o *PatchApplicationsApplicationIDIngressesIngressIDBadRequest) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	o.Payload = new(models.Error)
+
+	// response payload
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+		return err
+	}
 
 	return nil
 }
