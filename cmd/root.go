@@ -155,9 +155,6 @@ func setupConfigurationEnvrionmentVariables() {
 func setupConfigurationOverrides(config *models.VampCloudCliConfiguration) {
 	if apiUrl != "" {
 		config.VampCloudApiURL = apiUrl
-	} else if config.VampCloudApiURL == "" {
-		logging.Info(fmt.Sprintf("Using default VAMP_CLOUD_API_URL=%s", DefaultApiUrl))
-		config.VampCloudApiURL = DefaultApiUrl
 	}
 	if apiKey != "" {
 		config.APIKey = apiKey
@@ -173,7 +170,7 @@ func checkValues(config models.VampCloudCliConfiguration) error {
 }
 
 func setupConfigurationDefaults() {
-	viper.SetDefault("vamp-cloud-addr", "https://vamp.cloud/api/public")
+	viper.SetDefault("vamp-cloud-api-url", DefaultApiUrl)
 }
 
 func handleErrorOnName(err error) error {
