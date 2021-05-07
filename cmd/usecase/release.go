@@ -30,9 +30,7 @@ func NewGetLastReleaseUsecase(applicationClient applicationAdapters.VampCloudApp
 			return nil, err
 		}
 
-		classifier := retrier.WhitelistClassifier{releaseAdapters.ErrorReleaseNotFound}
-
-		repeater := retrier.New(retrier.ExponentialBackoff(5, 2*time.Second), classifier)
+		repeater := retrier.New(retrier.ExponentialBackoff(5, 2*time.Second), nil)
 
 		var release *models.Release
 
