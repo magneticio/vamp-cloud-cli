@@ -30,7 +30,8 @@ type PolicyViewType string
 const (
 	POLICY_TYPE_VALIDATION PolicyViewType = "validation"
 	POLICY_TYPE_RELEASE    PolicyViewType = "release"
-	STATUS_RUNNING         string         = "RUNNING"
+	STATUS_FINISHED        string         = "FINISHED"
+	STATUS_FAILED          string         = "FAILED"
 )
 
 func PolicyTypeToPolicyViewType(policyType models.PolicyType) PolicyViewType {
@@ -42,5 +43,5 @@ func PolicyTypeToPolicyViewType(policyType models.PolicyType) PolicyViewType {
 }
 
 func (s *ReleaseStatus) IsFinished() bool {
-	return s.Status != STATUS_RUNNING
+	return s.Status == STATUS_FINISHED || s.Status == STATUS_FAILED
 }
