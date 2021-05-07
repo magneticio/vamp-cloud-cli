@@ -56,7 +56,7 @@ var attachServiceCmd = &cobra.Command{
 			return err
 		}
 
-		fmt.Printf("Service \"%s\" will be exposed at %s%s", serviceName, domainName, routePath)
+		fmt.Printf("Service \"%s\" will be exposed at %s%s\n", serviceName, domainName, routePath)
 
 		return nil
 	},
