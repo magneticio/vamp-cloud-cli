@@ -70,6 +70,10 @@ var watchReleaseCmd = &cobra.Command{
 
 		fmt.Print(printer.FormatToTable(*currentView))
 
+		if currentView.IsFailed() {
+			return fmt.Errorf("release of version %s failed", release.TargetServiceName)
+		}
+
 		if currentView.IsFinished() {
 			return nil
 		}
@@ -79,6 +83,10 @@ var watchReleaseCmd = &cobra.Command{
 			currentView, err = watchRelease(getReleaseStatus, *release, *currentView, serviceName, printer)
 			if err != nil {
 				return err
+			}
+
+			if currentView.IsFailed() {
+				return fmt.Errorf("release of version %s failed", release.TargetServiceName)
 			}
 
 			if currentView.IsFinished() {

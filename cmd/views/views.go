@@ -43,5 +43,9 @@ func PolicyTypeToPolicyViewType(policyType models.PolicyType) PolicyViewType {
 }
 
 func (s *ReleaseStatus) IsFinished() bool {
-	return s.Status == STATUS_FINISHED || s.Status == STATUS_FAILED
+	return s.Status == STATUS_FINISHED
+}
+
+func (s *ReleaseStatus) IsFailed() bool {
+	return s.Status == STATUS_FAILED
 }
