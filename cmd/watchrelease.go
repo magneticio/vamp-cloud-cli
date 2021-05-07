@@ -50,7 +50,7 @@ var watchReleaseCmd = &cobra.Command{
 		releaseClient := releaseAdapters.NewVampCloudReleaseClient(httpClient)
 		policyClient := policyAdapters.NewVampCloudPolicyClient(httpClient)
 
-		getLastRelease := usecase.NewGetLastReleaseUsecase(applicationClient, serviceClient, releaseClient, policyClient)
+		getLastRelease := usecase.NewGetLastReleaseUsecase(applicationClient, serviceClient, releaseClient, policyClient, 5, 2)
 
 		release, err := getLastRelease(serviceName, applicationName)
 		if err != nil {

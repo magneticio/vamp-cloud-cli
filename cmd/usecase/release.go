@@ -17,7 +17,7 @@ type GetLastReleaseUsecase func(serviceName, applicationName string) (*models.Re
 
 type GetReleaseStatusUsecase func(id string) (*models.Release, error)
 
-func NewGetLastReleaseUsecase(applicationClient applicationAdapters.VampCloudApplicationsClient, serviceClient serviceAdapters.VampCloudServicesClient, releaseClient releaseAdapters.VampCloudReleasesClient, policyClient policyAdapters.VampCloudPoliciesClient) GetLastReleaseUsecase {
+func NewGetLastReleaseUsecase(applicationClient applicationAdapters.VampCloudApplicationsClient, serviceClient serviceAdapters.VampCloudServicesClient, releaseClient releaseAdapters.VampCloudReleasesClient, policyClient policyAdapters.VampCloudPoliciesClient, retries, timeoutSeconds uint64) GetLastReleaseUsecase {
 	return func(serviceName, applicationName string) (*models.ReleaseData, error) {
 
 		service, err := serviceClient.GetService(serviceName)
@@ -30,7 +30,7 @@ func NewGetLastReleaseUsecase(applicationClient applicationAdapters.VampCloudApp
 			return nil, err
 		}
 
-		repeater := retrier.New(retrier.ExponentialBackoff(5, 2*time.Second), nil)
+		repeater := retrier.New(retrier.ExponentialBackoff(int(retries), 2*time.Second), nil)
 
 		var release *models.Release
 

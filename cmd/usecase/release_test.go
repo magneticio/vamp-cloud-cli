@@ -98,7 +98,7 @@ func TestGetLastReleaseUsecase(t *testing.T) {
 
 		policyClient := &mocks.VampCloudPoliciesClient{}
 
-		getLastRelease := usecase.NewGetLastReleaseUsecase(applicationClient, serviceClient, releaseClient, policyClient)
+		getLastRelease := usecase.NewGetLastReleaseUsecase(applicationClient, serviceClient, releaseClient, policyClient, 1, 2)
 
 		Convey("When getting the last release", func() {
 
