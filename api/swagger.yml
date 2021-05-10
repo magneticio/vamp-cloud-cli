@@ -604,6 +604,9 @@ definitions:
       currentHealth: 
         type: number
         format: double
+      targetHealth: 
+        type: number
+        format: double  
       currentStep:
         type: integer
         format: int64
@@ -647,7 +650,7 @@ responses:
   BadRequest:
     description: The request is invalid.
     schema:
-      $ref: "#/definitions/Error"
+      $ref: "#/definitions/Error"    
   Forbidden:
     description: The requester does not have access rights to the resource.
     schema:

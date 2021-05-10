@@ -43,6 +43,9 @@ type Release struct {
 	// Enum: [PENDING RUNNING FINISHED FAILED]
 	State string `json:"state,omitempty"`
 
+	// target health
+	TargetHealth float64 `json:"targetHealth,omitempty"`
+
 	// target version ID
 	TargetVersionID int64 `json:"targetVersionID,omitempty"`
 }
