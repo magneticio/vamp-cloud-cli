@@ -12,7 +12,7 @@ var getCmd = &cobra.Command{
 	Short: "Get existing artifact",
 	Long: AddAppName(`Get an existing artifact
     Example:
-    $AppName get token <application_name>`),
+    $AppName get installer <application_name>`),
 	SilenceUsage:  true,
 	SilenceErrors: true,
 	RunE: func(cmd *cobra.Command, args []string) error {

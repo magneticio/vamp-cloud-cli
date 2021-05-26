@@ -10,12 +10,12 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var getTokenCmd = &cobra.Command{
-	Use:   "token",
-	Short: "Get the installer token",
-	Long: AddAppName(`Get an installer token for an application
+var getInstallerCmd = &cobra.Command{
+	Use:   "installer",
+	Short: "Get the installer command",
+	Long: AddAppName(`Get an installer command for an application
     Usage:
-    $AppName get token <application_name>`),
+    $AppName get installer <application_name>`),
 	SilenceUsage:  true,
 	SilenceErrors: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -30,7 +30,7 @@ var getTokenCmd = &cobra.Command{
 		}
 		applicationName := args[0]
 
-		logging.Info("Getting installer token", logging.NewPair("application", applicationName))
+		logging.Info("Getting installer command", logging.NewPair("application", applicationName))
 
 		httpClient, err := adapters.NewApiClient(Config.VampCloudApiURL, ApiVersion, Config.APIKey)
 		if err != nil {
@@ -53,5 +53,5 @@ var getTokenCmd = &cobra.Command{
 }
 
 func init() {
-	getCmd.AddCommand(getTokenCmd)
+	getCmd.AddCommand(getInstallerCmd)
 }

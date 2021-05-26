@@ -157,7 +157,7 @@ Retrieves the Release Agent installation command for the specified application i
 
 Example:
 ```
-vamp-cloud-cli get token <application-name>
+vamp-cloud-cli get installer <application-name>
 ```
 
 ### Watch release
