@@ -51,12 +51,19 @@ var attachServiceCmd = &cobra.Command{
 
 		usecase := usecase.NewAttachServiceToApplicationUsecase(ingressClient, applicationClient, serviceClient, policyClient)
 
+		if len(domainName) > 0 && len(routePath) == 0 {
+			return fmt.Errorf("required flag \"route\" not set")
+		}
+		if len(routePath) > 0 && len(domainName) == 0 {
+			return fmt.Errorf("required flag \"ingress\" not set")
+		}
+
 		err = usecase(applicationName, serviceName, policyName, domainName, routePath)
 		if err != nil {
 			return err
 		}
 
-		fmt.Printf("Service \"%s\" will be exposed at %s%s\n", serviceName, domainName, routePath)
+		fmt.Printf("Service \"%s\" is attached to \"%s\"\n", serviceName, applicationName)
 
 		return nil
 	},
@@ -68,9 +75,7 @@ func init() {
 	attachServiceCmd.Flags().StringVar(&applicationName, "application", "", "Vamp cloud application name")
 	attachServiceCmd.MarkFlagRequired("application")
 	attachServiceCmd.Flags().StringVar(&domainName, "ingress", "", "Vamp cloud ingress domain name")
-	attachServiceCmd.MarkFlagRequired("ingress")
 	attachServiceCmd.Flags().StringVar(&policyName, "policy", "", "Vamp cloud policy domain name")
 	attachServiceCmd.MarkFlagRequired("policy")
 	attachServiceCmd.Flags().StringVar(&routePath, "route", "", "Vamp cloud route path")
-	attachServiceCmd.MarkFlagRequired("route")
 }

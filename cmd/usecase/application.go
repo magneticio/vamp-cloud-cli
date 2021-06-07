@@ -105,33 +105,35 @@ func NewAttachServiceToApplicationUsecase(ingressClient ingressAdapters.VampClou
 		}
 
 		route := models.NewRoute(service.ID, routePath)
-		var ingress *models.Ingress
+		if len(domainName) > 0 {
+			var ingress *models.Ingress
 
-		ingress, getErr := ingressClient.GetIngressByApplicationIDAndDomainName(application.ID, domainName)
-		if getErr != nil {
+			ingress, getErr := ingressClient.GetIngressByApplicationIDAndDomainName(application.ID, domainName)
+			if getErr != nil {
 
-			if !errors.Is(getErr, ingressAdapters.ErrorIngressNotFound) {
-				return NewResourceNotFoundError(fmt.Errorf("failed to retrieve ingress: %w", getErr))
+				if !errors.Is(getErr, ingressAdapters.ErrorIngressNotFound) {
+					return NewResourceNotFoundError(fmt.Errorf("failed to retrieve ingress: %w", getErr))
+				}
+
+				newIngress := models.NewIngress(0, application.ID, domainName, "", models.NO_TLS_TYPE, []models.Route{route})
+
+				_, postErr := ingressClient.PostIngress(newIngress)
+				if postErr != nil {
+					return fmt.Errorf("failed to post ingress: %w", postErr)
+				}
+
 			}
 
-			newIngress := models.NewIngress(0, application.ID, domainName, "", models.NO_TLS_TYPE, []models.Route{route})
+			if ingress != nil {
 
-			_, postErr := ingressClient.PostIngress(newIngress)
-			if postErr != nil {
-				return fmt.Errorf("failed to post ingress: %w", postErr)
+				ingress.Routes = []models.Route{route}
+
+				err = ingressClient.PatchIngress(*ingress)
+				if err != nil {
+					return fmt.Errorf("failed to patch ingress: %w", err)
+				}
+
 			}
-
-		}
-
-		if ingress != nil {
-
-			ingress.Routes = []models.Route{route}
-
-			err = ingressClient.PatchIngress(*ingress)
-			if err != nil {
-				return fmt.Errorf("failed to patch ingress: %w", err)
-			}
-
 		}
 
 		err = applicationClient.AttachServiceToApplication(application.ID, service.ID, policy.ID)
