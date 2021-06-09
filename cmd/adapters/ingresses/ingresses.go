@@ -3,12 +3,17 @@ package ingresses
 import (
 	"errors"
 	"fmt"
-
 	"github.com/magneticio/vamp-cloud-cli/client"
 	"github.com/magneticio/vamp-cloud-cli/client/operations"
 	"github.com/magneticio/vamp-cloud-cli/cmd/models"
 	"github.com/magneticio/vamp-cloud-cli/cmd/utils/logging"
 	dto "github.com/magneticio/vamp-cloud-cli/models"
+	"regexp"
+	"strings"
+)
+
+const (
+	VERSION = "VERSION"
 )
 
 type VampCloudIngressesClient interface {
@@ -94,6 +99,10 @@ func (c *VampCloudAnansiIngressClient) PostIngress(ingress models.Ingress) (int6
 
 	params := operations.NewPostApplicationsIDIngressesParams().WithID(ingress.ApplicationID).WithIngress(&ingressInput)
 
+	err := checkPreviewRoute(params.Ingress.Routes)
+	if err != nil {
+		return 0, fmt.Errorf("failed to create ingress: %w", err)
+	}
 	operationResult, err := c.client.Operations.PostApplicationsIDIngresses(params, nil)
 	if err != nil {
 		return 0, fmt.Errorf("failed to create ingress: %w", err)
@@ -107,6 +116,32 @@ func (c *VampCloudAnansiIngressClient) PostIngress(ingress models.Ingress) (int6
 
 }
 
+func checkPreviewRoute(routes []*dto.Route) error {
+
+	re := regexp.MustCompile(`%%(.*)%%`)
+	for _, v := range routes {
+		path := strings.Split(v.Path, "/")
+
+		for _, v2 := range path {
+			result := re.FindSubmatch([]byte(v2))
+			if len(result) > 0 && !validPlaceholder(result[1]) {
+				return fmt.Errorf("placeholder validation failed")
+			}
+		}
+	}
+	return nil
+}
+
+func validPlaceholder(placeholder []byte) bool {
+
+	switch string(placeholder) {
+	case VERSION:
+		return true
+	default:
+		return false
+	}
+}
+
 func (c *VampCloudAnansiIngressClient) PatchIngress(ingress models.Ingress) error {
 
 	logging.Info("Patching ingress", logging.NewPair("domain-name", ingress.DomainName), logging.NewPair("ingress-id", ingress.ID), logging.NewPair("application-id", ingress.ApplicationID))
@@ -115,7 +150,11 @@ func (c *VampCloudAnansiIngressClient) PatchIngress(ingress models.Ingress) erro
 
 	params := operations.NewPatchApplicationsApplicationIDIngressesIngressIDParams().WithApplicationID(ingress.ApplicationID).WithIngressID(ingress.ID).WithIngress(&ingressInput)
 
-	_, err := c.client.Operations.PatchApplicationsApplicationIDIngressesIngressID(params, nil)
+	err := checkPreviewRoute(params.Ingress.Routes)
+	if err != nil {
+		return fmt.Errorf("failed to create ingress: %w", err)
+	}
+	_, err = c.client.Operations.PatchApplicationsApplicationIDIngressesIngressID(params, nil)
 	if err != nil {
 		return fmt.Errorf("failed to patch ingress: %w", err)
 	}
