@@ -125,7 +125,7 @@ func checkPreviewRoute(routes []*dto.Route) error {
 		for _, v2 := range path {
 			result := re.FindSubmatch([]byte(v2))
 			if len(result) > 0 && !validPlaceholder(result[1]) {
-				return fmt.Errorf("placeholder validation failed")
+				return fmt.Errorf("placeholder '%s' is not supported", result[0])
 			}
 		}
 	}
@@ -152,7 +152,7 @@ func (c *VampCloudAnansiIngressClient) PatchIngress(ingress models.Ingress) erro
 
 	err := checkPreviewRoute(params.Ingress.Routes)
 	if err != nil {
-		return fmt.Errorf("failed to create ingress: %w", err)
+		return fmt.Errorf("failed to patch ingress: %w", err)
 	}
 	_, err = c.client.Operations.PatchApplicationsApplicationIDIngressesIngressID(params, nil)
 	if err != nil {
