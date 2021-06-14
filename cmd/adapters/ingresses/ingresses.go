@@ -9,11 +9,10 @@ import (
 	"github.com/magneticio/vamp-cloud-cli/cmd/utils/logging"
 	dto "github.com/magneticio/vamp-cloud-cli/models"
 	"regexp"
-	"strings"
 )
 
 const (
-	VERSION = "VERSION"
+	VERSION_PLACEHOLDER = "VERSION"
 )
 
 type VampCloudIngressesClient interface {
@@ -118,24 +117,24 @@ func (c *VampCloudAnansiIngressClient) PostIngress(ingress models.Ingress) (int6
 
 func checkPreviewRoute(routes []*dto.Route) error {
 
-	re := regexp.MustCompile(`%%(.*)%%`)
+	re := regexp.MustCompile(`%%([^/]*)%%`)
 	for _, v := range routes {
-		path := strings.Split(v.Path, "/")
-
-		for _, v2 := range path {
-			result := re.FindSubmatch([]byte(v2))
-			if len(result) > 0 && !validPlaceholder(result[1]) {
-				return fmt.Errorf("placeholder '%s' is not supported", result[0])
+		result := re.FindAllStringSubmatch(v.Path, -1)
+		if len(result) > 0 {
+			for _, v2 := range result {
+				if len(v2) > 1 && !validPlaceholder(v2[1]) {
+					return fmt.Errorf("placeholder '%s' is not supported", v2[0])
+				}
 			}
 		}
 	}
 	return nil
 }
 
-func validPlaceholder(placeholder []byte) bool {
+func validPlaceholder(placeholder string) bool {
 
-	switch string(placeholder) {
-	case VERSION:
+	switch placeholder {
+	case VERSION_PLACEHOLDER:
 		return true
 	default:
 		return false
