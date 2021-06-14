@@ -56,6 +56,7 @@ func TestCheckPreviewRoute(t *testing.T) {
 				"some-path/%%%VERSION%%%",
 				"some-path/%%%VERSION%%",
 				"some-path-%%VERSION%%/another-path-%%DEBUG%%/test",
+				"some-path-%%VERSION%%/%%VERSION%%another-path-%%DEBUG%%/test",
 			}
 
 			for _, v := range paths {
