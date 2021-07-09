@@ -5,6 +5,8 @@ import (
 	"time"
 
 	"github.com/google/go-cmp/cmp"
+	"github.com/spf13/cobra"
+
 	"github.com/magneticio/vamp-cloud-cli/cmd/adapters"
 	applicationAdapters "github.com/magneticio/vamp-cloud-cli/cmd/adapters/applications"
 	policyAdapters "github.com/magneticio/vamp-cloud-cli/cmd/adapters/policies"
@@ -15,7 +17,6 @@ import (
 	"github.com/magneticio/vamp-cloud-cli/cmd/utils"
 	"github.com/magneticio/vamp-cloud-cli/cmd/utils/logging"
 	"github.com/magneticio/vamp-cloud-cli/cmd/views"
-	"github.com/spf13/cobra"
 )
 
 var watchReleaseCmd = &cobra.Command{
@@ -67,29 +68,33 @@ var watchReleaseCmd = &cobra.Command{
 		printer := utils.NewTablePrinter()
 
 		utils.ClearScreen()
-
+		fmt.Printf("Release details: %s\n\n", release.Release.ReleasePage)
 		fmt.Print(printer.FormatToTable(*currentView))
 
 		if currentView.IsFailed() {
+			fmt.Printf("\nRelease details: %s\n", release.Release.ReleasePage)
 			return fmt.Errorf("release of version %s failed", release.TargetServiceName)
+
 		}
 
 		if currentView.IsFinished() {
+			fmt.Printf("\nRelease details: %s", release.Release.ReleasePage)
 			return nil
 		}
 
 		for range time.Tick(time.Second * 30) {
-
 			currentView, err = watchRelease(getReleaseStatus, *release, *currentView, serviceName, printer)
 			if err != nil {
 				return err
 			}
 
 			if currentView.IsFailed() {
+				fmt.Printf("\nRelease details: %s", release.Release.ReleasePage)
 				return fmt.Errorf("release of version %s failed", release.TargetServiceName)
 			}
 
 			if currentView.IsFinished() {
+				fmt.Printf("\nRelease details: %s", release.Release.ReleasePage)
 				return nil
 			}
 

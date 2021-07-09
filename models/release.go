@@ -36,6 +36,9 @@ type Release struct {
 	// policy ID
 	PolicyID int64 `json:"policyID,omitempty"`
 
+	// release page
+	ReleasePage string `json:"releasePage,omitempty"`
+
 	// source version ID
 	SourceVersionID int64 `json:"sourceVersionID,omitempty"`
 
