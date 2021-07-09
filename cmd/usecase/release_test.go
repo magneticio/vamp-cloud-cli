@@ -5,10 +5,11 @@ import (
 	"fmt"
 	"testing"
 
+	. "github.com/smartystreets/goconvey/convey"
+
 	"github.com/magneticio/vamp-cloud-cli/cmd/models"
 	"github.com/magneticio/vamp-cloud-cli/cmd/usecase"
 	mocks "github.com/magneticio/vamp-cloud-cli/mocks/adaptersmocks"
-	. "github.com/smartystreets/goconvey/convey"
 )
 
 func TestGetReleaseStatusUsecase(t *testing.T) {
@@ -52,6 +53,7 @@ func TestGetReleaseStatusUsecase(t *testing.T) {
 					2,
 					5,
 					0.9,
+					"https://dev.vamp.cloud/%v/release/%v",
 				)
 
 				releaseClient.On("GetReleaseByID", releaseId).Return(&releaseStatus, nil)
@@ -68,6 +70,7 @@ func TestGetReleaseStatusUsecase(t *testing.T) {
 						2,
 						5,
 						0.9,
+						"https://dev.vamp.cloud/%v/release/%v",
 					)
 
 					So(err, ShouldBeNil)
@@ -181,6 +184,7 @@ func TestGetLastReleaseUsecase(t *testing.T) {
 							3,
 							4,
 							0.9,
+							"https://dev.vamp.cloud/%v/release/%v",
 						)
 
 						releaseClient.On("GetLastRelease", application.ID, service.ID).Return(&release, nil)
