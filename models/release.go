@@ -29,15 +29,15 @@ type Release struct {
 	// current step
 	CurrentStep int64 `json:"currentStep,omitempty"`
 
+	// html url
+	HTMLURL string `json:"html_url,omitempty"`
+
 	// id
 	// Min Length: 1
 	ID string `json:"id,omitempty"`
 
 	// policy ID
 	PolicyID int64 `json:"policyID,omitempty"`
-
-	// release page
-	ReleasePage string `json:"releasePage,omitempty"`
 
 	// source version ID
 	SourceVersionID int64 `json:"sourceVersionID,omitempty"`

@@ -68,17 +68,17 @@ var watchReleaseCmd = &cobra.Command{
 		printer := utils.NewTablePrinter()
 
 		utils.ClearScreen()
-		fmt.Printf("Release details: %s\n\n", release.Release.ReleasePage)
+		fmt.Printf("Release details: %s\n\n", release.Release.HtmlUrl)
 		fmt.Print(printer.FormatToTable(*currentView))
 
 		if currentView.IsFailed() {
-			fmt.Printf("\nRelease details: %s\n", release.Release.ReleasePage)
+			fmt.Printf("\nRelease details: %s\n", release.Release.HtmlUrl)
 			return fmt.Errorf("release of version %s failed", release.TargetServiceName)
 
 		}
 
 		if currentView.IsFinished() {
-			fmt.Printf("\nRelease details: %s", release.Release.ReleasePage)
+			fmt.Printf("\nRelease details: %s", release.Release.HtmlUrl)
 			return nil
 		}
 
@@ -89,12 +89,12 @@ var watchReleaseCmd = &cobra.Command{
 			}
 
 			if currentView.IsFailed() {
-				fmt.Printf("\nRelease details: %s", release.Release.ReleasePage)
+				fmt.Printf("\nRelease details: %s", release.Release.HtmlUrl)
 				return fmt.Errorf("release of version %s failed", release.TargetServiceName)
 			}
 
 			if currentView.IsFinished() {
-				fmt.Printf("\nRelease details: %s", release.Release.ReleasePage)
+				fmt.Printf("\nRelease details: %s", release.Release.HtmlUrl)
 				return nil
 			}
 

@@ -85,5 +85,5 @@ func (c *VampCloudAnansiReleasesClient) GetReleaseByID(id string) (*models.Relea
 
 func releaseDTOToModel(release dto.Release) models.Release {
 
-	return models.NewRelease(release.ID, release.State, release.PolicyID, release.SourceVersionID, release.TargetVersionID, release.CurrentStep, release.TargetHealth, release.ReleasePage)
+	return models.NewRelease(release.ID, release.State, release.PolicyID, release.SourceVersionID, release.TargetVersionID, release.CurrentStep, release.TargetHealth, release.HTMLURL)
 }

@@ -139,10 +139,10 @@ type Release struct {
 	Health          float64
 	CurrentStep     int64
 	Status          string
-	ReleasePage     string
+	HtmlUrl         string
 }
 
-func NewRelease(id, status string, policyID, sourceServiceID, targetServiceID, currentStep int64, health float64, releasePage string) Release {
+func NewRelease(id, status string, policyID, sourceServiceID, targetServiceID, currentStep int64, health float64, htmlUrl string) Release {
 	return Release{
 		ID:              id,
 		PolicyID:        policyID,
@@ -151,7 +151,7 @@ func NewRelease(id, status string, policyID, sourceServiceID, targetServiceID, c
 		Health:          health,
 		CurrentStep:     currentStep,
 		Status:          status,
-		ReleasePage:     releasePage,
+		HtmlUrl:         htmlUrl,
 	}
 }
 
