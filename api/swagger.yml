@@ -610,7 +610,7 @@ definitions:
       currentStep:
         type: integer
         format: int64
-      html_url:
+      htmlUrl:
         type: string
   Policies:
     type: object

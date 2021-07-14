@@ -29,8 +29,8 @@ type Release struct {
 	// current step
 	CurrentStep int64 `json:"currentStep,omitempty"`
 
-	// html url
-	HTMLURL string `json:"html_url,omitempty"`
+	// html Url
+	HTMLURL string `json:"htmlUrl,omitempty"`
 
 	// id
 	// Min Length: 1

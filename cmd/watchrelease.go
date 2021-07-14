@@ -89,7 +89,7 @@ var watchReleaseCmd = &cobra.Command{
 			}
 
 			if currentView.IsFailed() {
-				fmt.Printf("\nRelease details: %s", release.Release.HtmlUrl)
+				fmt.Printf("\nRelease details: %s\n", release.Release.HtmlUrl)
 				return fmt.Errorf("release of version %s failed", release.TargetServiceName)
 			}
 
