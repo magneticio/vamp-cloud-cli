@@ -78,7 +78,7 @@ var watchReleaseCmd = &cobra.Command{
 		}
 
 		if currentView.IsFinished() {
-			fmt.Printf("\nRelease details: %s", release.Release.HtmlUrl)
+			fmt.Printf("\nRelease details: %s\n", release.Release.HtmlUrl)
 			return nil
 		}
 
@@ -94,7 +94,7 @@ var watchReleaseCmd = &cobra.Command{
 			}
 
 			if currentView.IsFinished() {
-				fmt.Printf("\nRelease details: %s", release.Release.HtmlUrl)
+				fmt.Printf("\nRelease details: %s\n", release.Release.HtmlUrl)
 				return nil
 			}
 
