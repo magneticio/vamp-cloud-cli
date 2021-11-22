@@ -443,7 +443,7 @@ definitions:
         format: int64
       ingressType:
         type: string
-        enum: [NGINX, CONTOUR]
+        enum: [NGINX, CONTOUR, NONE]
       namespace:
         type: string
         minLength: 1
