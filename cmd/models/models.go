@@ -92,6 +92,7 @@ type IngressType string
 const (
 	NGINX_INGRESS_TYPE   IngressType = "NGINX"
 	CONTOUR_INGRESS_TYPE IngressType = "CONTOUR"
+	NONE_INGRESS_TYPE    IngressType = "NONE"
 )
 
 // Service represents a vamp cloud service

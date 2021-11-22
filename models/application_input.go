@@ -26,7 +26,7 @@ type ApplicationInput struct {
 	Description string `json:"description,omitempty"`
 
 	// ingress type
-	// Enum: [NGINX CONTOUR]
+	// Enum: [NGINX CONTOUR NONE]
 	IngressType string `json:"ingressType,omitempty"`
 
 	// name
@@ -64,7 +64,7 @@ var applicationInputTypeIngressTypePropEnum []interface{}
 
 func init() {
 	var res []string
-	if err := json.Unmarshal([]byte(`["NGINX","CONTOUR"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["NGINX","CONTOUR","NONE"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -79,6 +79,9 @@ const (
 
 	// ApplicationInputIngressTypeCONTOUR captures enum value "CONTOUR"
 	ApplicationInputIngressTypeCONTOUR string = "CONTOUR"
+
+	// ApplicationInputIngressTypeNONE captures enum value "NONE"
+	ApplicationInputIngressTypeNONE string = "NONE"
 )
 
 // prop value enum

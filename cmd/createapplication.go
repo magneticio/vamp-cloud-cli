@@ -4,13 +4,14 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/spf13/cobra"
+
 	"github.com/magneticio/vamp-cloud-cli/cmd/adapters"
 	applicationAdapters "github.com/magneticio/vamp-cloud-cli/cmd/adapters/applications"
 	clusterAdapters "github.com/magneticio/vamp-cloud-cli/cmd/adapters/clusters"
 	"github.com/magneticio/vamp-cloud-cli/cmd/models"
 	"github.com/magneticio/vamp-cloud-cli/cmd/usecase"
 	"github.com/magneticio/vamp-cloud-cli/cmd/utils/logging"
-	"github.com/spf13/cobra"
 )
 
 var clusterName string
@@ -39,8 +40,8 @@ var createApplicationCmd = &cobra.Command{
 
 		ingressType = strings.ToUpper(ingressType)
 
-		if ingressType != string(models.CONTOUR_INGRESS_TYPE) && ingressType != string(models.NGINX_INGRESS_TYPE) {
-			return fmt.Errorf("invalid ingress type. Choose either CONTOUR or NGINX")
+		if ingressType != string(models.CONTOUR_INGRESS_TYPE) && ingressType != string(models.NGINX_INGRESS_TYPE) && ingressType != string(models.NONE_INGRESS_TYPE) {
+			return fmt.Errorf("invalid ingress type. Choose either CONTOUR, NGINX OR NONE")
 		}
 
 		logging.Info("Creating application", logging.NewPair("name", name))
@@ -75,7 +76,7 @@ func init() {
 	createApplicationCmd.MarkFlagRequired("cluster")
 	createApplicationCmd.Flags().StringVar(&namespace, "namespace", "", "Vamp cloud application namespace")
 	createApplicationCmd.MarkFlagRequired("namespace")
-	createApplicationCmd.Flags().StringVar(&ingressType, "ingress-type", "CONTOUR", "Vamp cloud application ingress type. Either CONTOUR or NGINX")
+	createApplicationCmd.Flags().StringVar(&ingressType, "ingress-type", "CONTOUR", "Vamp cloud application ingress type. Either CONTOUR, NGINX OR NONE")
 	createApplicationCmd.Flags().StringVar(&description, "description", "", "Vamp cloud application description")
 
 }
